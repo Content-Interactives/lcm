@@ -1,275 +1,354 @@
 import React, { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { BookOpen, Calculator, Lightbulb, RefreshCw, Check, X, SkipForward } from 'lucide-react';
 
 const LCM = () => {
-  const [inputNum1, setInputNum1] = useState('');
-  const [inputNum2, setInputNum2] = useState('');
-  const [calculatedNum1, setCalculatedNum1] = useState('');
-  const [calculatedNum2, setCalculatedNum2] = useState('');
-  const [lcm, setLCM] = useState(null);
-  const [multiples1, setMultiples1] = useState([]);
-  const [multiples2, setMultiples2] = useState([]);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [currentStep1, setCurrentStep1] = useState(0);
-  const [currentStep2, setCurrentStep2] = useState(0);
-  const [userGuess1, setUserGuess1] = useState('');
-  const [userGuess2, setUserGuess2] = useState('');
-  const [guessStatus1, setGuessStatus1] = useState(null);
-  const [guessStatus2, setGuessStatus2] = useState(null);
-  const [showResult, setShowResult] = useState(false);
+	const [isAnimating, setIsAnimating] = useState(false);
+	const [currentStep, setCurrentStep] = useState('initial'); // 'initial', 'explore', 'continue1', 'continue2', etc.
+	const [isExploreShrinking, setIsExploreShrinking] = useState(false);
+	const [isTextShrinking, setIsTextShrinking] = useState(false);
+	const [showNumbers, setShowNumbers] = useState(false);
+	const [showNewText, setShowNewText] = useState(false);
+	const [showContinue, setShowContinue] = useState(false);
+	const [isContinueShrinking, setIsContinueShrinking] = useState(false);
+	const [isFirstTextShrinking, setIsFirstTextShrinking] = useState(false);
 
-  const MIN_VALUE = 1;
-  const MAX_VALUE = 100;
+	const handleReset = () => {
+		setCurrentStep('initial');
+		// Reset all states to initial values
+		setIsAnimating(false);
+		setIsExploreShrinking(false);
+		setIsTextShrinking(false);
+		setShowNumbers(false);
+		setShowNewText(false);
+		setShowContinue(false);
+		setIsContinueShrinking(false);
+		setIsFirstTextShrinking(false);
+		// Add more state resets here as we add them
+	};
 
-  const clampValue = (value) => {
-    const num = parseInt(value);
-    if (isNaN(num)) return '';
-    return Math.max(MIN_VALUE, Math.min(MAX_VALUE, num)).toString();
-  };
+	const handleContinue = () => {
+		setCurrentStep('continue1');
+		setIsContinueShrinking(true);
+		setIsFirstTextShrinking(true);
+		setTimeout(() => {
+			setShowContinue(false);
+			setIsContinueShrinking(false);
+			setShowNewText(false);
+			setIsFirstTextShrinking(false);
+			// Add next step logic here
+		}, 500);
+	};
 
-  const handleInputChange = (setter) => (e) => {
-    const rawValue = e.target.value;
-    const clampedValue = clampValue(rawValue);
-    setter(clampedValue);
-  };
+	const handleExploreClick = () => {
+		setCurrentStep('explore');
+		setIsAnimating(true);
+		setIsExploreShrinking(true);
+		setIsTextShrinking(true);
+		// Add animation logic here as we build the interactive
+		setTimeout(() => {
+			setIsAnimating(false);
+			setShowNumbers(true);
+			setTimeout(() => {
+				setShowNewText(true);
+				setTimeout(() => {
+					setShowContinue(true);
+				}, 800);
+			}, 1700);
+		}, 500);
+	};
 
-  const calculateLCM = () => {
-    const a = parseInt(inputNum1);
-    const b = parseInt(inputNum2);
-    if (isNaN(a) || isNaN(b)) {
-      alert('Please enter valid numbers.');
-      return;
-    }
+	return (
+		<div className="w-[464px] mx-auto mt-5 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] bg-white rounded-lg select-none">
+			<style>
+				{`
+					@property --r {
+						syntax: '<angle>';
+						inherits: false;
+						initial-value: 0deg;
+					}
 
-    setIsCalculating(true);
+					@keyframes fadeIn {
+						from {
+							opacity: 0;
+							transform: translateY(10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
+					@keyframes fadeOut {
+						from {
+							opacity: 1;
+						}
+						to {
+							opacity: 0;
+						}
+					}
+					.text-animation {
+						animation: fadeIn 0.5s ease-out forwards;
+					}
+					.text-fade-out {
+						animation: fadeIn 0.5s ease-out reverse forwards;
+					}
+					.shrink-animation {
+						animation: shrinkButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+					@keyframes shrinkButton {
+						from {
+							transform: scale(1);
+							opacity: 1;
+						}
+						to {
+							transform: scale(0);
+							opacity: 0;
+						}
+					}
+					@keyframes growButton {
+						from {
+							transform: scale(0);
+							opacity: 0;
+						}
+						to {
+							transform: scale(1);
+							opacity: 1;
+						}
+					}
+					.continue-animation {
+						animation: growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+					.fade-in {
+						opacity: 1;
+						transition: opacity 0.5s;
+					}
+					.fade-out {
+						opacity: 0;
+						transition: opacity 0.5s;
+					}
+					.zoom-in {
+						transform: scale(1.25);
+						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+						z-index: 10;
+					}
+					.zoom-in-visual {
+						transform: scale(2) translate(-10px, 30px);
+						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+						z-index: 1;
+					}
+					.zoom-out-visual {
+						transform: scale(1) translate(0, -110px);
+						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+						z-index: 1;
+					}
+					.visual-clip {
+						overflow: hidden;
+						position: relative;
+					}
+					.equation-faded {
+						opacity: 0.25 !important;
+						transition: opacity 0.4s !important;
+					}
+					.equation-opaque {
+						opacity: 1 !important;
+						transition: opacity 0.4s !important;
+					}
+					.slide-right {
+						transform: translateX(100%);
+						transition: transform 0.5s ease-out;
+					}
+					@keyframes fadeIn {
+						from {
+							opacity: 0;
+							transform: translateX(-10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateX(0);
+						}
+					}
+					.shift-right {
+						transform: translateX(-63px);
+						transition: transform 0.5s ease-out;
+					}
+					@keyframes slideEqualSign {
+						from {
+							transform: translateX(0);
+						}
+						to {
+							transform: translateX(25px);
+						}
+					}
+					@keyframes fadeInDown {
+						from {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
+					.fade-in-down {
+						animation: fadeInDown 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+					}
 
-    const gcd = (x, y) => {
-      while(y) {
-        let t = y;
-        y = x % y;
-        x = t;
-      }
-      return x;
-    };
+					/* Glow Effect Styles */
+					.glow-button { 
+						position: absolute;
+						bottom: 1rem;
+						right: 1rem;
+						border-radius: 8px;
+						cursor: pointer;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						z-index: 3;
+						transition: all .3s ease;
+						padding: 7px;
+					}
 
-    const lcmValue = Math.abs(a * b) / gcd(a, b);
+					.glow-button::before {
+						content: "";
+						display: block;
+						position: absolute;
+						background: #fff;
+						inset: 2px;
+						border-radius: 4px;
+						z-index: -2;
+					}
 
-    let m1 = [];
-    let m2 = [];
-    for (let i = a; i <= lcmValue; i += a) {
-      m1.push(i);
-    }
-    for (let i = b; i <= lcmValue; i += b) {
-      m2.push(i);
-    }
+					.simple-glow { 
+						background: conic-gradient(
+							from var(--r),
+							transparent 0%,
+							rgb(0, 255, 132) 2%,
+							rgb(0, 214, 111) 8%,
+							rgb(0, 174, 90) 12%,
+							rgb(0, 133, 69) 14%,
+							transparent 15%
+						);
+						animation: rotating 3s linear infinite;
+						transition: animation 0.3s ease;
+					}
 
-    setLCM(lcmValue);
-    setMultiples1(m1);
-    setMultiples2(m2);
-    setCalculatedNum1(a.toString());
-    setCalculatedNum2(b.toString());
-    setCurrentStep1(0);
-    setCurrentStep2(0);
-    setUserGuess1('');
-    setUserGuess2('');
-    setGuessStatus1(null);
-    setGuessStatus2(null);
-    setShowResult(m1.length === 1 && m2.length === 1);
-    setIsCalculating(false);
-  };
+					.simple-glow.stopped {
+						animation: none;
+						background: none;
+					}
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      calculateLCM();
-    }
-  };
+					@keyframes rotating {
+						0% {
+							--r: 0deg;
+						}
+						100% {
+							--r: 360deg;
+						}
+					}
 
-  const generateRandomNumbers = () => {
-    const randomNum1 = Math.floor(Math.random() * (MAX_VALUE - MIN_VALUE + 1)) + MIN_VALUE;
-    const randomNum2 = Math.floor(Math.random() * (MAX_VALUE - MIN_VALUE + 1)) + MIN_VALUE;
-    setInputNum1(randomNum1.toString());
-    setInputNum2(randomNum2.toString());
-  };
+					.explore-button {
+						background-color: #008545;
+						color: white;
+						border: none;
+						border-radius: 4px;
+						padding: 0.375rem 0.75rem;
+						font-size: 0.875rem;
+						font-weight: 600;
+						cursor: pointer;
+						transition: background-color 0.2s;
+					}
 
-  const checkGuess = (guessValue, correctValue, currentStep, setCurrentStep, setGuessStatus, maxStep) => {
-    const guess = parseInt(guessValue);
-    if (guess === correctValue) {
-      setGuessStatus('correct');
-      if (currentStep < maxStep - 1) {
-        setCurrentStep(currentStep + 1);
-      } else {
-        setCurrentStep(maxStep);
-      }
-      checkCompletion();
-    } else {
-      setGuessStatus('incorrect');
-    }
-  };
+					.explore-button:hover {
+						background-color: #00783E;
+					}
+				`}
+			</style>
+			<div className="p-4">
+				<div className="flex justify-between items-center mb-4">
+					<h2 className="text-[#5750E3] text-sm font-medium select-none">LCM Explorer</h2>
+					<div className="flex gap-2">
+						{/* Reset button */}
+						<button
+							className="reset-button
+								bg-[#5750E3] text-white border-none rounded
+								cursor-pointer flex items-center justify-center
+								text-xs font-bold px-2 py-1
+								transition-colors duration-200
+								hover:bg-[#4a42c7]
+								disabled:opacity-50 disabled:cursor-not-allowed"
+							onClick={handleReset}
+							title="Reset interactive"
+							disabled={isAnimating || (currentStep !== 'initial' && !showContinue)}
+							style={{
+								fontFamily: 'system-ui, -apple-system, sans-serif',
+								lineHeight: 1,
+							}}
+						>
+							Reset
+						</button>
+					</div>
+				</div>
 
-  const skipStep = (currentStep, setCurrentStep, setGuessStatus, maxStep) => {
-    setGuessStatus(null);
-    if (currentStep < maxStep - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      setCurrentStep(maxStep);
-    }
-    checkCompletion();
-  };
+				<div className="space-y-4">
+					{/* Visual Section */}
+					<div className="w-[400px] mx-auto bg-white border border-[#5750E3]/30 rounded-md relative min-h-[260px] flex items-center justify-center visual-clip">
+						{/* TODO: Add LCM visualization content here */}
+						{!showNumbers && (
+							<div className={`glow-button ${currentStep === 'initial' ? 'simple-glow' : 'simple-glow stopped'} ${isExploreShrinking ? 'shrink-animation' : ''}`}>
+								<button
+									className={`explore-button select-none ${isExploreShrinking ? 'shrink-animation' : ''}`}
+									onClick={handleExploreClick}
+									disabled={isAnimating}
+									style={{ transformOrigin: 'center' }}
+								>
+									Click to Explore!
+								</button>
+							</div>
+						)}
+						{showNumbers && (
+							<div className="flex flex-col items-center gap-4">
+								<div className="flex items-center gap-8 text-animation" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
+									<div className="text-4xl font-bold text-[#5750E3]">12</div>
+									<div className="text-4xl font-bold text-[#5750E3]">18</div>
+								</div>
+								<div className="text-2xl font-bold text-gray-700" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out 0.4s forwards' }}>
+									LCM = <span className="inline-block" style={{ opacity: 0, animation: 'growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards' }}>?</span>
+								</div>
+							</div>
+						)}
+						{showContinue && (
+							<div className={`glow-button ${isContinueShrinking ? 'simple-glow stopped' : 'simple-glow'}`} style={{ position: 'absolute', bottom: '1rem', right: '1rem', zIndex: 50 }}>
+								<button
+									className={`px-3 py-1.5 bg-[#008545] hover:bg-[#00783E] text-white text-sm rounded transition-colors duration-200 select-none
+										${isContinueShrinking ? 'shrink-animation' : 'continue-animation'}`}
+									onClick={handleContinue}
+									style={{
+										transformOrigin: 'center',
+										zIndex: 50,
+										borderRadius: '4px'
+									}}
+								>
+									Continue
+								</button>
+							</div>
+						)}
+					</div>
 
-  const skipAll = () => {
-    setCurrentStep1(multiples1.length);
-    setCurrentStep2(multiples2.length);
-    setGuessStatus1(null);
-    setGuessStatus2(null);
-    setShowResult(true);
-  };
-
-  const checkCompletion = () => {
-    if (currentStep1 >= multiples1.length - 1 && currentStep2 >= multiples2.length - 1) {
-      setShowResult(true);
-    }
-  };
-
-  const getInputClassName = (status) => {
-    let baseClass = "w-20 text-sm px-1 text-left";
-    switch (status) {
-      case 'correct':
-        return `${baseClass} border-green-500 focus:border-green-500`;
-      case 'incorrect':
-        return `${baseClass} border-red-500 focus:border-red-500`;
-      default:
-        return `${baseClass} border-gray-300 focus:border-blue-500`;
-    }
-  };
-
-  const renderMultiplesSection = (multiples, currentStep, setCurrentStep, userGuess, setUserGuess, guessStatus, setGuessStatus, color) => (
-    <div className={`bg-${color}-50 p-4 rounded`}>
-      <p className={`font-semibold text-${color}-600 mb-2`}>Multiples of {color === 'purple' ? calculatedNum1 : calculatedNum2}:</p>
-      <p className="break-words">
-        {multiples.slice(0, currentStep + 1).map((m, index) => (
-          <span key={index} className={m === lcm ? 'font-bold text-emerald-600' : ''}>{m}{index < currentStep ? ', ' : ''}</span>
-        ))}
-      </p>
-      {currentStep < multiples.length - 1 && (
-        <div className="flex items-center space-x-1 text-sm mt-2">
-          <Input
-            type="number"
-            value={userGuess}
-            onChange={(e) => setUserGuess(e.target.value)}
-            placeholder="Next multiple"
-            className={getInputClassName(guessStatus)}
-          />
-          <Button onClick={() => checkGuess(userGuess, multiples[currentStep], currentStep, setCurrentStep, setGuessStatus, multiples.length)} className="bg-gray-400 hover:bg-gray-500 px-2 py-1 text-xs text-white">
-            Check
-          </Button>
-          <Button onClick={() => skipStep(currentStep, setCurrentStep, setGuessStatus, multiples.length)} className="bg-gray-400 hover:bg-gray-500 px-2 py-1 text-xs text-white">
-            Skip
-          </Button>
-          {guessStatus === 'correct' && <Check className="text-green-500 w-4 h-4" />}
-          {guessStatus === 'incorrect' && <X className="text-red-500 w-4 h-4" />}
-        </div>
-      )}
-    </div>
-  );
-
-  return (
-    <div className="bg-gray-100 p-8 min-h-screen">
-      <Card className="w-full max-w-2xl mx-auto shadow-md bg-white">
-        <CardHeader className="bg-sky-100 text-sky-800">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-3xl font-bold">LCM Explorer</CardTitle>
-            <Calculator size={40} className="text-sky-600" />
-          </div>
-          <CardDescription className="text-sky-700 text-lg">Discover the Lowest Common Multiple!</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6 pt-6">
-          <Alert className="bg-blue-50 border-blue-100">
-            <Lightbulb className="h-4 w-4 text-blue-400" />
-            <AlertTitle className="text-blue-700">What is the Lowest Common Multiple (LCM)?</AlertTitle>
-            <AlertDescription className="text-blue-600">
-              The LCM of two or more numbers is the smallest positive number that is divisible by all of them. It's like finding the smallest jump that lands on all the numbers at once!
-            </AlertDescription>
-          </Alert>
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <div className="flex-grow flex space-x-2">
-                <Input
-                  type="number"
-                  value={inputNum1}
-                  onChange={handleInputChange(setInputNum1)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="First number"
-                  className="w-1/2 text-lg border-sky-200 focus:border-sky-400"
-                />
-                <Input
-                  type="number"
-                  value={inputNum2}
-                  onChange={handleInputChange(setInputNum2)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Second number"
-                  className="w-1/2 text-lg border-sky-200 focus:border-sky-400"
-                />
-              </div>
-              <Button
-                onClick={generateRandomNumbers}
-                className="bg-sky-400 hover:bg-sky-500 text-white h-10 whitespace-nowrap"
-              >
-                <RefreshCw className="mr-2 h-4 w-4" />
-                Random
-              </Button>
-            </div>
-            <p className="text-sm text-gray-500 text-center">
-              Enter numbers between 1 and 100
-            </p>
-            <Button 
-              onClick={calculateLCM} 
-              className="w-full bg-emerald-400 hover:bg-emerald-500 text-white text-xl py-6"
-              disabled={isCalculating}
-            >
-              {isCalculating ? 'Calculating...' : 'Find LCM'}
-            </Button>
-          </div>
-        </CardContent>
-        <CardFooter className="flex-col items-start bg-gray-50">
-          {lcm !== null && (
-            <>
-              <div className="w-full space-y-4">
-                {renderMultiplesSection(multiples1, currentStep1, setCurrentStep1, userGuess1, setUserGuess1, guessStatus1, setGuessStatus1, 'purple')}
-                {renderMultiplesSection(multiples2, currentStep2, setCurrentStep2, userGuess2, setUserGuess2, guessStatus2, setGuessStatus2, 'pink')}
-                {!showResult && (
-                  <Button 
-                    onClick={skipAll} 
-                    className="w-full bg-indigo-500 hover:bg-indigo-600 text-white"
-                  >
-                    <SkipForward className="mr-2 h-4 w-4" />
-                    Skip All
-                  </Button>
-                )}
-              </div>
-              {showResult && (
-                <Alert className="mt-4 w-full bg-emerald-50 border-emerald-200">
-                  <AlertTitle className="text-emerald-700 text-xl">Result</AlertTitle>
-                  <AlertDescription className="text-emerald-600 text-lg">
-                    The LCM of {calculatedNum1} and {calculatedNum2} is <span className="font-bold">{lcm}</span>.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </>
-          )}
-        </CardFooter>
-      </Card>
-      <div className="mt-4 text-center text-gray-700">
-        <p className="flex items-center justify-center">
-          <BookOpen className="mr-2 text-gray-600" />
-          LCM is used in real life for things like finding when two events will occur together again, or calculating the smallest box size that can fit different item quantities perfectly!
-        </p>
-      </div>
-    </div>
-  );
+					{/* Text Section */}
+					<div className="w-[400px] mx-auto bg-white border border-[#5750E3]/30 rounded-md p-4 min-h-[80px] relative flex items-center justify-center">
+						{!showNewText && (
+							<div className={`text-sm text-gray-600 text-center ${isTextShrinking ? 'shrink-animation' : ''}`}>
+								Welcome to the LCM Explorer! Click the button above to begin.
+							</div>
+						)}
+						{showNewText && (
+							<div className={`text-sm text-gray-700 text-center ${isFirstTextShrinking ? 'shrink-animation' : ''}`} style={isFirstTextShrinking ? {} : { opacity: 0, animation: 'growButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}>
+								To find the <b>Least Common Multiple</b> of any two positive numbers, we can use the prime factorization method.
+							</div>
+						)}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default LCM;
