@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
+import { BookOpen, Calculator, Lightbulb, RefreshCw, Check, X, SkipForward, Hash } from 'lucide-react';
 
 const LCM = () => {
 	const [isAnimating, setIsAnimating] = useState(false);
@@ -9,7 +14,8 @@ const LCM = () => {
 	const [showNewText, setShowNewText] = useState(false);
 	const [showContinue, setShowContinue] = useState(false);
 	const [isContinueShrinking, setIsContinueShrinking] = useState(false);
-	const [isFirstTextShrinking, setIsFirstTextShrinking] = useState(false);
+	const [isLCMFadingOut, setIsLCMFadingOut] = useState(false);
+	const [isNumbersMoving, setIsNumbersMoving] = useState(false);
 
 	const handleReset = () => {
 		setCurrentStep('initial');
@@ -21,20 +27,22 @@ const LCM = () => {
 		setShowNewText(false);
 		setShowContinue(false);
 		setIsContinueShrinking(false);
-		setIsFirstTextShrinking(false);
+		setIsLCMFadingOut(false);
+		setIsNumbersMoving(false);
 		// Add more state resets here as we add them
 	};
 
 	const handleContinue = () => {
 		setCurrentStep('continue1');
 		setIsContinueShrinking(true);
-		setIsFirstTextShrinking(true);
 		setTimeout(() => {
 			setShowContinue(false);
-			setIsContinueShrinking(false);
 			setShowNewText(false);
-			setIsFirstTextShrinking(false);
-			// Add next step logic here
+			setIsContinueShrinking(false);
+			setIsLCMFadingOut(true);
+			setTimeout(() => {
+				setIsNumbersMoving(true);
+			}, 500);
 		}, 500);
 	};
 
@@ -116,6 +124,9 @@ const LCM = () => {
 					.continue-animation {
 						animation: growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
+					.text-grow-animation {
+						animation: growButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
 					.fade-in {
 						opacity: 1;
 						transition: opacity 0.5s;
@@ -189,6 +200,44 @@ const LCM = () => {
 					}
 					.fade-in-down {
 						animation: fadeInDown 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+					}
+					.lcm-fade-out-down {
+						animation: lcmFadeOutDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+					.lcm-fade-in {
+						animation: fadeIn 0.5s ease-out 0.4s forwards;
+					}
+					@keyframes lcmFadeOutDown {
+						from {
+							opacity: 1;
+							transform: translateY(0);
+						}
+						to {
+							opacity: 0;
+							transform: translateY(20px);
+						}
+					}
+					.number-move-left {
+						animation: moveLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+					.number-move-right {
+						animation: moveRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+					@keyframes moveLeft {
+						from {
+							transform: translate(0, 0);
+						}
+						to {
+							transform: translate(-70px, -60px);
+						}
+					}
+					@keyframes moveRight {
+						from {
+							transform: translate(0, 0);
+						}
+						to {
+							transform: translate(70px, -60px);
+						}
 					}
 
 					/* Glow Effect Styles */
@@ -306,10 +355,10 @@ const LCM = () => {
 						{showNumbers && (
 							<div className="flex flex-col items-center gap-4">
 								<div className="flex items-center gap-8 text-animation" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
-									<div className="text-4xl font-bold text-[#5750E3]">12</div>
-									<div className="text-4xl font-bold text-[#5750E3]">18</div>
+									<div className={`text-4xl font-bold text-[#5750E3] ${isNumbersMoving ? 'number-move-left' : ''}`}>12</div>
+									<div className={`text-4xl font-bold text-[#5750E3] ${isNumbersMoving ? 'number-move-right' : ''}`}>18</div>
 								</div>
-								<div className="text-2xl font-bold text-gray-700" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out 0.4s forwards' }}>
+								<div className={`text-2xl font-bold text-gray-700 ${isLCMFadingOut ? 'lcm-fade-out-down' : 'lcm-fade-in'}`} style={{ opacity: 0 }}>
 									LCM = <span className="inline-block" style={{ opacity: 0, animation: 'growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards' }}>?</span>
 								</div>
 							</div>
@@ -340,7 +389,7 @@ const LCM = () => {
 							</div>
 						)}
 						{showNewText && (
-							<div className={`text-sm text-gray-700 text-center ${isFirstTextShrinking ? 'shrink-animation' : ''}`} style={isFirstTextShrinking ? {} : { opacity: 0, animation: 'growButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards' }}>
+							<div className={`text-sm text-gray-700 text-center ${isContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
 								To find the <b>Least Common Multiple</b> of any two positive numbers, we can use the prime factorization method.
 							</div>
 						)}
