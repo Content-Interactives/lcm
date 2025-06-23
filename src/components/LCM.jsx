@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../components/ui/alert';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
-import { BookOpen, Calculator, Lightbulb, RefreshCw, Check, X, SkipForward, Hash } from 'lucide-react';
 
 const LCM = () => {
 	const [isAnimating, setIsAnimating] = useState(false);
@@ -16,6 +11,10 @@ const LCM = () => {
 	const [isContinueShrinking, setIsContinueShrinking] = useState(false);
 	const [isLCMFadingOut, setIsLCMFadingOut] = useState(false);
 	const [isNumbersMoving, setIsNumbersMoving] = useState(false);
+	const [showLines, setShowLines] = useState(false);
+	const [showFirstPrimes, setShowFirstPrimes] = useState(false);
+	const [showSecondLines, setShowSecondLines] = useState(false);
+	const [showSecondPrimes, setShowSecondPrimes] = useState(false);
 
 	const handleReset = () => {
 		setCurrentStep('initial');
@@ -29,11 +28,16 @@ const LCM = () => {
 		setIsContinueShrinking(false);
 		setIsLCMFadingOut(false);
 		setIsNumbersMoving(false);
+		setShowLines(false);
+		setShowFirstPrimes(false);
+		setShowSecondLines(false);
+		setShowSecondPrimes(false);
 		// Add more state resets here as we add them
 	};
 
 	const handleContinue = () => {
 		setCurrentStep('continue1');
+		setShowNewText(false);
 		setIsContinueShrinking(true);
 		setTimeout(() => {
 			setShowContinue(false);
@@ -42,6 +46,18 @@ const LCM = () => {
 			setIsLCMFadingOut(true);
 			setTimeout(() => {
 				setIsNumbersMoving(true);
+				setTimeout(() => {
+					setShowLines(true);
+					setTimeout(() => {
+						setShowFirstPrimes(true);
+						setTimeout(() => {
+							setShowSecondLines(true);
+							setTimeout(() => {
+								setShowSecondPrimes(true);
+							}, 300);
+						}, 300);
+					}, 300);
+				}, 600);
 			}, 500);
 		}, 500);
 	};
@@ -240,6 +256,93 @@ const LCM = () => {
 						}
 					}
 
+					.line-appear {
+						animation: lineAppear 0.4s ease-out forwards;
+					}
+
+					.line-move-left {
+						animation: lineMoveLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-move-right {
+						animation: lineMoveRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-move-left-right {
+						animation: lineMoveLeftRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-move-right-right {
+						animation: lineMoveRightRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					@keyframes lineMoveLeft {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineMoveRight {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineMoveLeftRight {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineMoveRightRight {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineAppear {
+						from {
+							height: 0;
+							opacity: 0;
+						}
+						to {
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
 					/* Glow Effect Styles */
 					.glow-button { 
 						position: absolute;
@@ -308,6 +411,234 @@ const LCM = () => {
 					.explore-button:hover {
 						background-color: #00783E;
 					}
+
+					.prime-move-left-1 {
+						animation: primeMoveLeft1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-move-left-2 {
+						animation: primeMoveLeft2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-move-right-1 {
+						animation: primeMoveRight1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-move-right-2 {
+						animation: primeMoveRight2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-under-6-1 {
+						animation: primeUnder6_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-under-6-2 {
+						animation: primeUnder6_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-under-9-1 {
+						animation: primeUnder9_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-under-9-2 {
+						animation: primeUnder9_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes primeMoveLeft1 {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeMoveLeft2 {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeMoveRight1 {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeMoveRight2 {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeUnder6_1 {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeUnder6_2 {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeUnder9_1 {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					@keyframes primeUnder9_2 {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%);
+							opacity: 1;
+						}
+					}
+
+					.line-under-6-left {
+						animation: lineUnder6Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-under-6-right {
+						animation: lineUnder6Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-under-8-left {
+						animation: lineUnder8Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-under-8-right {
+						animation: lineUnder8Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					@keyframes lineUnder6Left {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineUnder6Right {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineUnder8Left {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineUnder8Right {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					.line-under-9-left {
+						animation: lineUnder9Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					.line-under-9-right {
+						animation: lineUnder9Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						transform-origin: top center;
+					}
+
+					@keyframes lineUnder9Left {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes lineUnder9Right {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 0;
+							opacity: 0;
+						}
+						100% {
+							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
+							height: 40px;
+							opacity: 1;
+						}
+					}
 				`}
 			</style>
 			<div className="p-4">
@@ -355,8 +686,60 @@ const LCM = () => {
 						{showNumbers && (
 							<div className="flex flex-col items-center gap-4">
 								<div className="flex items-center gap-8 text-animation" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
-									<div className={`text-4xl font-bold text-[#5750E3] ${isNumbersMoving ? 'number-move-left' : ''}`}>12</div>
-									<div className={`text-4xl font-bold text-[#5750E3] ${isNumbersMoving ? 'number-move-right' : ''}`}>18</div>
+									<div className="relative">
+										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-left' : ''}`}>12</div>
+										{showLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left' : 'line-appear'}`} style={{ left: '50%' }}></div>
+										)}
+										{showLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left-right' : 'line-appear'}`} style={{ left: '50%' }}></div>
+										)}
+										{showFirstPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showFirstPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-2' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>6</div>
+										)}
+										{showSecondLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-left' : 'line-appear'}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
+										)}
+										{showSecondLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-right' : 'line-appear'}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
+										)}
+										{showSecondPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showSecondPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+										)}
+									</div>
+									<div className="relative">
+										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-right' : ''}`}>18</div>
+										{showLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-right' : 'line-appear'}`} style={{ left: '50%' }}></div>
+										)}
+										{showLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-right-right' : 'line-appear'}`} style={{ left: '50%' }}></div>
+										)}
+										{showFirstPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showFirstPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-2' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>9</div>
+										)}
+										{showSecondLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-9-left' : 'line-appear'}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
+										)}
+										{showSecondLines && (
+											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-9-right' : 'line-appear'}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
+										)}
+										{showSecondPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+										)}
+										{showSecondPrimes && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-2' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+										)}
+									</div>
 								</div>
 								<div className={`text-2xl font-bold text-gray-700 ${isLCMFadingOut ? 'lcm-fade-out-down' : 'lcm-fade-in'}`} style={{ opacity: 0 }}>
 									LCM = <span className="inline-block" style={{ opacity: 0, animation: 'growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards' }}>?</span>
