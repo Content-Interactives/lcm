@@ -24,6 +24,16 @@ const LCM = () => {
 	const [firstLinesShrink, setFirstLinesShrink] = useState(false);
 	const [nonPrimesFadeOut, setNonPrimesFadeOut] = useState(false);
 	const [firstPrimesMoveDown, setFirstPrimesMoveDown] = useState(false);
+	const [secondPrimesMoveUp, setSecondPrimesMoveUp] = useState(false);
+	const [primesGroupTogether, setPrimesGroupTogether] = useState(false);
+	const [mainNumbersMoveDown, setMainNumbersMoveDown] = useState(false);
+	const [showMultiplicationSymbols, setShowMultiplicationSymbols] = useState(false);
+	const [showSeparatingLines, setShowSeparatingLines] = useState(false);
+	const [showSeparatingLinesRight, setShowSeparatingLinesRight] = useState(false);
+	const [showPowerExpressions, setShowPowerExpressions] = useState(false);
+	const [showFinalText, setShowFinalText] = useState(false);
+	const [showThirdContinue, setShowThirdContinue] = useState(false);
+	const [isThirdContinueShrinking, setIsThirdContinueShrinking] = useState(false);
 	
 	const handleReset = () => {
 		setCurrentStep('initial');
@@ -50,6 +60,16 @@ const LCM = () => {
 		setFirstLinesShrink(false);
 		setNonPrimesFadeOut(false);
 		setFirstPrimesMoveDown(false);
+		setSecondPrimesMoveUp(false);
+		setPrimesGroupTogether(false);
+		setMainNumbersMoveDown(false);
+		setShowMultiplicationSymbols(false);
+		setShowSeparatingLines(false);
+		setShowSeparatingLinesRight(false);
+		setShowPowerExpressions(false);
+		setShowFinalText(false);
+		setShowThirdContinue(false);
+		setIsThirdContinueShrinking(false);
 		// Add more state resets here as we add them
 	};
 
@@ -108,10 +128,48 @@ const LCM = () => {
 						setTimeout(() => {
 							// Step 4: First prime factors (2's) move down and left
 							setFirstPrimesMoveDown(true);
-						}, 300);
-					}, 300);
-				}, 300);
-			}, 300);
+							setSecondPrimesMoveUp(true);
+							setMainNumbersMoveDown(true);
+							setTimeout(() => {
+								// Step 5: Group the primes together
+								setPrimesGroupTogether(true);
+								setTimeout(() => {
+									// Step 6: Show multiplication symbols
+									setShowMultiplicationSymbols(true);
+									setTimeout(() => {
+										// Step 7: Show separating lines under both sets of 2's and 3's simultaneously
+										setShowSeparatingLines(true);
+										setShowSeparatingLinesRight(true);
+										setTimeout(() => {
+											// Step 8: Show power expressions (2² and 3²)
+											setShowPowerExpressions(true);
+											setTimeout(() => {
+												// Step 9: Show final text
+												setShowFinalText(true);
+												setTimeout(() => {
+													// Step 10: Show third continue button
+													setShowThirdContinue(true);
+												}, 800);
+											}, 1000);
+										}, 600);
+									}, 600);
+								}, 600);
+							}, 600);
+						}, 500);
+					}, 500);
+				}, 500);
+			}, 400);
+		}, 300);
+	};
+
+	const handleThirdContinue = () => {
+		// TODO: Add fourth step animation logic here
+		setIsThirdContinueShrinking(true);
+		setTimeout(() => {
+			setShowThirdContinue(false);
+			setShowFinalText(false);
+			setIsThirdContinueShrinking(false);
+			// Add next step logic here
 		}, 500);
 	};
 
@@ -745,67 +803,83 @@ const LCM = () => {
 					}
 
 					.lines-shrink {
-						animation: linesShrinkAnimation 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-appear {
-						animation: linesShrinkAppear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-move-left {
-						animation: linesShrinkMoveLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkMoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-move-left-right {
-						animation: linesShrinkMoveLeftRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkMoveLeftRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-move-right {
-						animation: linesShrinkMoveRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkMoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-move-right-right {
-						animation: linesShrinkMoveRightRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkMoveRightRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-under-6-left {
-						animation: linesShrinkUnder6Left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkUnder6Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-under-6-right {
-						animation: linesShrinkUnder6Right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkUnder6Right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-under-9-left {
-						animation: linesShrinkUnder9Left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkUnder9Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.lines-shrink-under-9-right {
-						animation: linesShrinkUnder9Right 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: linesShrinkUnder9Right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.non-primes-fade-out {
-						animation: nonPrimesFadeOut 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: nonPrimesFadeOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.non-primes-fade-out-left {
-						animation: nonPrimesFadeOutLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: nonPrimesFadeOutLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.non-primes-fade-out-right {
-						animation: nonPrimesFadeOutRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: nonPrimesFadeOutRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.first-primes-move-down {
-						animation: firstPrimesMoveDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: firstPrimesMoveDown 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.first-primes-move-down-left {
-						animation: firstPrimesMoveDownLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: firstPrimesMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 					}
 
 					.first-primes-move-down-right {
-						animation: firstPrimesMoveDownRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+						animation: firstPrimesMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+					}
+
+					.second-primes-move-up-left {
+						animation: secondPrimesMoveUpLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+					}
+
+					.second-primes-move-up-right {
+						animation: secondPrimesMoveUpRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+					}
+
+					.primes-group-left {
+						animation: primesGroupLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.primes-group-right {
+						animation: primesGroupRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
 					@keyframes firstPrimesMoveDownLeft {
@@ -813,7 +887,7 @@ const LCM = () => {
 							transform: translate(-70px, -60px) translateX(-50%);
 						}
 						100% {
-							transform: translate(-90px, 20px) translateX(-150%);
+							transform: translate(-90px, -48px) translateX(-150%);
 						}
 					}
 
@@ -822,7 +896,25 @@ const LCM = () => {
 							transform: translate(70px, -60px) translateX(-50%);
 						}
 						100% {
-							transform: translate(50px, 20px) translateX(-150%);
+							transform: translate(50px, -48px) translateX(-150%);
+						}
+					}
+
+					@keyframes secondPrimesMoveUpLeft {
+						0% {
+							transform: translate(-70px, -60px) translateX(-50%);
+						}
+						100% {
+							transform: translate(-520%, -400%);
+						}
+					}
+
+					@keyframes secondPrimesMoveUpRight {
+						0% {
+							transform: translate(70px, -60px) translateX(-50%);
+						}
+						100% {
+							transform: translate(400%, -400%);
 						}
 					}
 
@@ -982,6 +1074,156 @@ const LCM = () => {
 							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
 						}
 					}
+
+					.main-numbers-move-down {
+						animation: mainNumbersMoveDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.main-numbers-move-down-left {
+						animation: mainNumbersMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+					}
+
+					.main-numbers-move-down-right {
+						animation: mainNumbersMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+					}
+
+					@keyframes mainNumbersMoveDown {
+						from {
+							transform: translate(0, 0);
+						}
+						to {
+							transform: translate(0, 20px);
+						}
+					}
+
+					@keyframes mainNumbersMoveDownLeft {
+						from {
+							transform: translate(-70px, -60px);
+						}
+						to {
+							transform: translate(-70px, -10px);
+						}
+					}
+
+					@keyframes mainNumbersMoveDownRight {
+						from {
+							transform: translate(70px, -60px);
+						}
+						to {
+							transform: translate(70px, -10px);
+						}
+					}
+
+					.multiplication-symbols-fade-in {
+						animation: multiplicationSymbolsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes multiplicationSymbolsFadeIn {
+						from {
+							opacity: 0;
+						}
+						to {
+							opacity: 1;
+						}
+					}
+
+					.separating-lines-fade-in {
+						animation: separatingLinesFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-in-left {
+						animation: separatingLinesFadeInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-in-right {
+						animation: separatingLinesFadeInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-in-right-side-left {
+						animation: separatingLinesFadeInRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-in-right-side-right {
+						animation: separatingLinesFadeInRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.power-expressions-fade-in {
+						animation: powerExpressionsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes separatingLinesFadeIn {
+						from {
+							height: 0;
+							opacity: 0;
+						}
+						to {
+							height: 20px;
+							opacity: 1;
+						}
+					}
+
+					@keyframes separatingLinesFadeInLeft {
+						from {
+							height: 0;
+							opacity: 0;
+							transform: translateX(-25px) skewX(30deg);
+						}
+						to {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeInRight {
+						from {
+							height: 0;
+							opacity: 0;
+							transform: translateX(-45px) skewX(-30deg);
+						}
+						to {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-58px, 10px) skewX(-30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeInRightSideLeft {
+						from {
+							height: 0;
+							opacity: 0;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+						to {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeInRightSideRight {
+						from {
+							height: 0;
+							opacity: 0;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+						to {
+							height: 38px;
+							opacity: 1;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+					}
+
+					@keyframes powerExpressionsFadeIn {
+						from {
+							opacity: 0;
+							transform: translateY(10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
 				`}
 			</style>
 			<div className="p-4">
@@ -989,13 +1231,13 @@ const LCM = () => {
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">LCM Explorer</h2>
 					<button 
 						className={`text-sm px-3 py-1 rounded border transition-colors ${
-							(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue
+							(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue
 								? 'text-gray-400 border-gray-200 cursor-not-allowed'
 								: 'text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400'
 						}`}
 						onClick={handleReset}
 						title="Reset interactive"
-						disabled={(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue}
+						disabled={(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue}
 					>
 						Reset
 					</button>
@@ -1021,7 +1263,7 @@ const LCM = () => {
 							<div className="flex flex-col items-center gap-4" style={{ transform: 'translateY(-17px)' }}>
 								<div className="flex items-center gap-8 text-animation" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
 									<div className="relative">
-										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-left' : ''}`}>12</div>
+										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-left' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''}`}>12</div>
 										{showLines && (
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
 										)}
@@ -1030,6 +1272,21 @@ const LCM = () => {
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showFirstPrimes && showMultiplicationSymbols && (
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showSeparatingLines && (
+											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-left ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2²</div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 77px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 43px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-left' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>6</div>
@@ -1041,14 +1298,20 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-right' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showSecondPrimes && showMultiplicationSymbols && (
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showSeparatingLines && (
+											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 									</div>
 									<div className="relative">
-										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-right' : ''}`}>18</div>
+										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-right' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''}`}>18</div>
 										{showLines && (
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
 										)}
@@ -1057,6 +1320,9 @@ const LCM = () => {
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showFirstPrimes && showMultiplicationSymbols && (
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-right' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>9</div>
@@ -1068,10 +1334,28 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-9-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-right' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+										)}
+										{showSecondPrimes && showMultiplicationSymbols && (
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showSeparatingLinesRight && (
+											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right-side-left ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-2' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+										)}
+										{showSeparatingLinesRight && (
+											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right-side-right ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 28px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2</div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 62px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showPowerExpressions && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3²</div>
 										)}
 									</div>
 								</div>
@@ -1112,6 +1396,22 @@ const LCM = () => {
 								</button>
 							</div>
 						)}
+						{showThirdContinue && (
+							<div className={`glow-button ${isThirdContinueShrinking ? 'simple-glow stopped' : 'simple-glow'}`} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', zIndex: 50 }}>
+								<button
+									className={`px-3 py-1.5 bg-[#008545] hover:bg-[#00783E] text-white text-sm rounded transition-colors duration-200 select-none
+										${isThirdContinueShrinking ? 'shrink-animation' : 'continue-animation'}`}
+									onClick={handleThirdContinue}
+									style={{
+										transformOrigin: 'center',
+										zIndex: 50,
+										borderRadius: '4px'
+									}}
+								>
+									Continue
+								</button>
+							</div>
+						)}
 					</div>
 
 					{/* Text Section */}
@@ -1121,14 +1421,19 @@ const LCM = () => {
 								Welcome to the LCM Explorer! Click the button above to begin.
 							</div>
 						)}
-						{showNewText && !showSecondStepText && (
+						{showNewText && !showSecondStepText && !showFinalText && (
 							<div className={`text-sm text-gray-700 text-center ${isContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
 								To find the <b>Least Common Multiple</b> of any two positive numbers, we can use the prime factorization method.
 							</div>
 						)}
-						{showSecondStepText && (
+						{showSecondStepText && !showFinalText && (
 							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center ${isSecondContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
 								First break down each number into their prime factors, then we can find the highest power of each prime factor.
+							</div>
+						)}
+						{showFinalText && (
+							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center text-grow-animation`} style={{ opacity: 0 }}>
+								Once we find the highest power prime for each number, we can multiply them to find the LCM!
 							</div>
 						)}
 					</div>
