@@ -34,7 +34,19 @@ const LCM = () => {
 	const [showFinalText, setShowFinalText] = useState(false);
 	const [showThirdContinue, setShowThirdContinue] = useState(false);
 	const [isThirdContinueShrinking, setIsThirdContinueShrinking] = useState(false);
-	
+	const [fadeOutPrimes, setFadeOutPrimes] = useState(false);
+	const [multiplicationSymbolsFadeOut, setMultiplicationSymbolsFadeOut] = useState(false);
+	const [separatingLinesFadeOut, setSeparatingLinesFadeOut] = useState(false);
+	const [powerExpressionsFadeOut, setPowerExpressionsFadeOut] = useState(false);
+	const [exponentsMoveTogether, setExponentsMoveTogether] = useState(false);
+	const [showFinalMultiplication, setShowFinalMultiplication] = useState(false);
+	const [showLCMText, setShowLCMText] = useState(false);
+	const [exponentsJumpOut, setExponentsJumpOut] = useState(false);
+	const [showReplacementNumbers, setShowReplacementNumbers] = useState(false);
+	const [replacementNumbersJumpIn, setReplacementNumbersJumpIn] = useState(false);
+	const [replacementNumbersFadeOut, setReplacementNumbersFadeOut] = useState(false);
+	const [multiplicationSymbolFadeOut, setMultiplicationSymbolFadeOut] = useState(false);
+
 	const handleReset = () => {
 		setCurrentStep('initial');
 		// Reset all states to initial values
@@ -70,6 +82,18 @@ const LCM = () => {
 		setShowFinalText(false);
 		setShowThirdContinue(false);
 		setIsThirdContinueShrinking(false);
+		setFadeOutPrimes(false);
+		setMultiplicationSymbolsFadeOut(false);
+		setSeparatingLinesFadeOut(false);
+		setPowerExpressionsFadeOut(false);
+		setExponentsMoveTogether(false);
+		setShowFinalMultiplication(false);
+		setShowLCMText(false);
+		setExponentsJumpOut(false);
+		setShowReplacementNumbers(false);
+		setReplacementNumbersJumpIn(false);
+		setReplacementNumbersFadeOut(false);
+		setMultiplicationSymbolFadeOut(false);
 		// Add more state resets here as we add them
 	};
 
@@ -169,6 +193,34 @@ const LCM = () => {
 			setShowThirdContinue(false);
 			setShowFinalText(false);
 			setIsThirdContinueShrinking(false);
+			setFadeOutPrimes(true);
+			setMultiplicationSymbolsFadeOut(true);
+			setTimeout(() => {
+				setSeparatingLinesFadeOut(true);
+				setTimeout(() => {
+					setPowerExpressionsFadeOut(true);
+					setTimeout(() => {
+						setExponentsMoveTogether(true);
+						setTimeout(() => {
+							setShowFinalMultiplication(true);
+							setShowLCMText(true);
+							setTimeout(() => {
+								setExponentsJumpOut(true);
+								setTimeout(() => {
+									setShowReplacementNumbers(true);
+									setTimeout(() => {
+										setReplacementNumbersJumpIn(true);
+										setTimeout(() => {
+											setReplacementNumbersFadeOut(true);
+											setMultiplicationSymbolFadeOut(true);
+										}, 1000); // Wait for jump-in to complete before fade out
+									}, 100); // Small delay before jump-in starts
+								}, 800); // Wait for jump-out to complete
+							}, 1000); // Wait for LCM text to appear first
+						}, 600); // Wait for exponents to move first
+					}, 500); // Wait for power expressions to fade out first
+				}, 500); // Wait for separating lines to fade out first
+			}, 500); // Wait for multiplication symbols to fade out first
 			// Add next step logic here
 		}, 500);
 	};
@@ -1118,6 +1170,10 @@ const LCM = () => {
 						animation: multiplicationSymbolsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
+					.multiplication-symbols-fade-out {
+						animation: multiplicationSymbolsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
 					@keyframes multiplicationSymbolsFadeIn {
 						from {
 							opacity: 0;
@@ -1127,28 +1183,61 @@ const LCM = () => {
 						}
 					}
 
+					@keyframes multiplicationSymbolsFadeOut {
+						from {
+							opacity: 1;
+						}
+						to {
+							opacity: 0;
+						}
+					}
+
 					.separating-lines-fade-in {
 						animation: separatingLinesFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-out {
+						animation: separatingLinesFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
 					.separating-lines-fade-in-left {
 						animation: separatingLinesFadeInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
+					.separating-lines-fade-out-left {
+						animation: separatingLinesFadeOutLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
 					.separating-lines-fade-in-right {
 						animation: separatingLinesFadeInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.separating-lines-fade-out-right {
+						animation: separatingLinesFadeOutRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
 					.separating-lines-fade-in-right-side-left {
 						animation: separatingLinesFadeInRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
+					.separating-lines-fade-out-right-side-left {
+						animation: separatingLinesFadeOutRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
 					.separating-lines-fade-in-right-side-right {
 						animation: separatingLinesFadeInRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
+					.separating-lines-fade-out-right-side-right {
+						animation: separatingLinesFadeOutRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
 					.power-expressions-fade-in {
 						animation: powerExpressionsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.power-expressions-fade-out {
+						animation: powerExpressionsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
 					@keyframes separatingLinesFadeIn {
@@ -1224,6 +1313,402 @@ const LCM = () => {
 							transform: translateY(0);
 						}
 					}
+
+					@keyframes powerExpressionsFadeOut {
+						from {
+							opacity: 1;
+							transform: translateY(0);
+						}
+						to {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+					}
+
+					/* Prime factor fade out animations */
+					.prime-fade-out-left-1 {
+						animation: primeFadeOutLeft1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-fade-out-left-2 {
+						animation: primeFadeOutLeft2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-fade-out-left-3 {
+						animation: primeFadeOutLeft3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-fade-out-right-1 {
+						animation: primeFadeOutRight1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-fade-out-right-2 {
+						animation: primeFadeOutRight2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.prime-fade-out-right-3 {
+						animation: primeFadeOutRight3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes primeFadeOutLeft1 {
+						0% {
+							opacity: 1;
+							transform: translate(-90px, -48px) translateX(-150%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-90px, -48px) translateX(-150%);
+						}
+					}
+
+					@keyframes primeFadeOutLeft2 {
+						0% {
+							opacity: 1;
+							transform: translate(-520%, -400%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-520%, -400%);
+						}
+					}
+
+					@keyframes primeFadeOutLeft3 {
+						0% {
+							opacity: 1;
+							transform: translate(-520%, -400%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-520%, -400%);
+						}
+					}
+
+					@keyframes primeFadeOutRight1 {
+						0% {
+							opacity: 1;
+							transform: translate(50px, -48px) translateX(-150%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(50px, -48px) translateX(-150%);
+						}
+					}
+
+					@keyframes primeFadeOutRight2 {
+						0% {
+							opacity: 1;
+							transform: translate(400%, -400%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(400%, -400%);
+						}
+					}
+
+					@keyframes primeFadeOutRight3 {
+						0% {
+							opacity: 1;
+							transform: translate(400%, -400%);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(400%, -400%);
+						}
+					}
+
+					@keyframes separatingLinesFadeInRightSideRight {
+						from {
+							height: 0;
+							opacity: 0;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+						to {
+							height: 38px;
+							opacity: 1;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeOut {
+						from {
+							height: 20px;
+							opacity: 1;
+						}
+						to {
+							height: 0;
+							opacity: 0;
+						}
+					}
+
+					@keyframes separatingLinesFadeOutLeft {
+						from {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+						to {
+							height: 0;
+							opacity: 0;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeOutRight {
+						from {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-58px, 10px) skewX(-30deg);
+						}
+						to {
+							height: 0;
+							opacity: 0;
+							transform: translate(-58px, 10px) skewX(-30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeOutRightSideLeft {
+						from {
+							height: 38px;
+							opacity: 1;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+						to {
+							height: 0;
+							opacity: 0;
+							transform: translate(-11px, 10px) skewX(30deg);
+						}
+					}
+
+					@keyframes separatingLinesFadeOutRightSideRight {
+						from {
+							height: 38px;
+							opacity: 1;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+						to {
+							height: 0;
+							opacity: 0;
+							transform: translate(44px, 10px) skewX(-30deg);
+						}
+					}
+
+					.exponent-move-up-right {
+						animation: exponentMoveUpRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.exponent-move-up-left {
+						animation: exponentMoveUpLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.final-multiplication-fade-in {
+						animation: finalMultiplicationFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.lcm-text-fade-in {
+						animation: lcmTextFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes powerExpressionsFadeOut {
+						from {
+							opacity: 1;
+							transform: translateY(0);
+						}
+						to {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+					}
+
+					@keyframes exponentMoveUpRight {
+						from {
+							transform: translate(0px, 0px);
+						}
+						to {
+							transform: translate(140px, -60px);
+						}
+					}
+
+					@keyframes exponentMoveUpLeft {
+						from {
+							transform: translate(0px, 0px);
+						}
+						to {
+							transform: translate(-70px, -60px);
+						}
+					}
+
+					@keyframes finalMultiplicationFadeIn {
+						from {
+							opacity: 0;
+							transform: translate(-7px,-60px);
+						}
+						to {
+							opacity: 1;
+							transform: translate(-7px, -60px);
+						}
+					}
+
+					@keyframes lcmTextFadeIn {
+						from {
+							opacity: 0;
+							transform: translate(-123px, -110px);
+						}
+						to {
+							opacity: 1;
+							transform: translate(-123px, -110px);
+						}
+					}
+
+					.exponents-jump-out-left {
+						animation: exponentsJumpOutLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.exponents-jump-out-right {
+						animation: exponentsJumpOutRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes exponentsJumpOutLeft {
+						0% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(140px, -60px) scale(0);
+						}
+					}
+
+					@keyframes exponentsJumpOutRight {
+						0% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-70px, -60px) scale(0);
+						}
+					}
+
+					@keyframes exponentsJumpOutRight {
+						0% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-70px, -60px) scale(0);
+						}
+					}
+
+					.replacement-numbers-jump-in-left {
+						animation: replacementNumbersJumpInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.replacement-numbers-jump-in-right {
+						animation: replacementNumbersJumpInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes replacementNumbersJumpInLeft {
+						0% {
+							opacity: 0;
+							transform: translate(140px, -60px) scale(0);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1);
+						}
+					}
+
+					@keyframes replacementNumbersJumpInRight {
+						0% {
+							opacity: 0;
+							transform: translate(-70px, -60px) scale(0);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+					}
+
+					@keyframes replacementNumbersJumpInRight {
+						0% {
+							opacity: 0;
+							transform: translate(-70px, -60px) scale(0);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+					}
+
+					.replacement-numbers-fade-out-left {
+						animation: replacementNumbersFadeOutLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.replacement-numbers-fade-out-right {
+						animation: replacementNumbersFadeOutRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes replacementNumbersFadeOutLeft {
+						0% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(165px, -60px) scale(1);
+						}
+					}
+
+					@keyframes replacementNumbersFadeOutRight {
+						0% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-95px, -60px) scale(1);
+						}
+					}
+
+					.final-multiplication-fade-out {
+						animation: finalMultiplicationFadeOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes finalMultiplicationFadeOut {
+						0% {
+							opacity: 1;
+							transform: translate(140px, -60px) scale(1);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(140px, -60px) scale(0);
+						}
+					}
 				`}
 			</style>
 			<div className="p-4">
@@ -1271,22 +1756,25 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left-right' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
 										)}
 										{showFirstPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-1' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
 										)}
 										{showFirstPrimes && showMultiplicationSymbols && (
-											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showSeparatingLines && (
-											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-left ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+											<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-left' : 'separating-lines-fade-in-left'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2²</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${exponentsMoveTogether ? 'exponent-move-up-right' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-left' : ''} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2²</div>
+										)}
+										{showReplacementNumbers && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-left' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translate(140px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>4</div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 77px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 77px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 43px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 43px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-left' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>6</div>
@@ -1298,16 +1786,16 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-right' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-2' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
 										)}
 										{showSecondPrimes && showMultiplicationSymbols && (
-											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showSeparatingLines && (
-											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+											<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-right' : 'separating-lines-fade-in-right'} ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-3' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 									</div>
 									<div className="relative">
@@ -1319,10 +1807,10 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-right-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right-right' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
 										)}
 										{showFirstPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-1' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
 										)}
 										{showFirstPrimes && showMultiplicationSymbols && (
-											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showFirstPrimes && (
 											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-right-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-right' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>9</div>
@@ -1334,28 +1822,37 @@ const LCM = () => {
 											<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-9-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-right' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-2' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 										{showSecondPrimes && showMultiplicationSymbols && (
-											<div className={`absolute text-xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} multiplication-symbols-fade-in`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showSeparatingLinesRight && (
-											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right-side-left ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+											<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-left' : 'separating-lines-fade-in-right-side-left'} ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showSecondPrimes && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-3' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
 										)}
 										{showSeparatingLinesRight && (
-											<div className={`absolute w-0.5 bg-[#5750E3] separating-lines-fade-in-right-side-right ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
+											<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-right' : 'separating-lines-fade-in-right-side-right'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 28px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 28px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2</div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 62px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 62px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showPowerExpressions && (
-											<div className={`absolute text-2xl font-bold text-[#5750E3] power-expressions-fade-in ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3²</div>
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${exponentsMoveTogether ? 'exponent-move-up-left' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-right' : ''} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3²</div>
+										)}
+										{showReplacementNumbers && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-right' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translate(-70px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>9</div>
+										)}
+										{showFinalMultiplication && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] final-multiplication-fade-in ${multiplicationSymbolFadeOut ? ' final-multiplication-fade-out' : ''}`} style={{ left: '50%', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
+										)}
+										{showLCMText && (
+											<div className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in`} style={{ left: '50%', top: 'calc(100% + 125px)', transform: 'translateX(-50%)' }}>LCM&nbsp;=</div>
 										)}
 									</div>
 								</div>
@@ -1432,7 +1929,7 @@ const LCM = () => {
 							</div>
 						)}
 						{showFinalText && (
-							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center text-grow-animation`} style={{ opacity: 0 }}>
+							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center ${isThirdContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
 								Once we find the highest power prime for each number, we can multiply them to find the LCM!
 							</div>
 						)}
