@@ -46,6 +46,11 @@ const LCM = () => {
 	const [replacementNumbersJumpIn, setReplacementNumbersJumpIn] = useState(false);
 	const [replacementNumbersFadeOut, setReplacementNumbersFadeOut] = useState(false);
 	const [multiplicationSymbolFadeOut, setMultiplicationSymbolFadeOut] = useState(false);
+	const [showFinalResult, setShowFinalResult] = useState(false);
+	const [finalResultJumpIn, setFinalResultJumpIn] = useState(false);
+	const [lcmTextMoveRight, setLcmTextMoveRight] = useState(false);
+	const [showFinalMessage, setShowFinalMessage] = useState(false);
+	const [showFinalButton, setShowFinalButton] = useState(false);
 
 	const handleReset = () => {
 		setCurrentStep('initial');
@@ -94,6 +99,11 @@ const LCM = () => {
 		setReplacementNumbersJumpIn(false);
 		setReplacementNumbersFadeOut(false);
 		setMultiplicationSymbolFadeOut(false);
+		setShowFinalResult(false);
+		setFinalResultJumpIn(false);
+		setLcmTextMoveRight(false);
+		setShowFinalMessage(false);
+		setShowFinalButton(false);
 		// Add more state resets here as we add them
 	};
 
@@ -213,6 +223,19 @@ const LCM = () => {
 										setTimeout(() => {
 											setReplacementNumbersFadeOut(true);
 											setMultiplicationSymbolFadeOut(true);
+											setTimeout(() => {
+												setShowFinalResult(true);
+												setTimeout(() => {
+													setFinalResultJumpIn(true);
+													setLcmTextMoveRight(true);
+													setTimeout(() => {
+														setShowFinalMessage(true);
+														setTimeout(() => {
+															setShowFinalButton(true);
+														}, 800);
+													}, 1000);
+												}, 100); // Small delay before jump-in starts
+											}, 1000); // Wait for fade out to complete
 										}, 1000); // Wait for jump-in to complete before fade out
 									}, 100); // Small delay before jump-in starts
 								}, 800); // Wait for jump-out to complete
@@ -241,6 +264,10 @@ const LCM = () => {
 				}, 800);
 			}, 1700);
 		}, 500);
+	};
+
+	const handleFinalButton = () => {
+		handleReset();
 	};
 
 	return (
@@ -1702,11 +1729,43 @@ const LCM = () => {
 					@keyframes finalMultiplicationFadeOut {
 						0% {
 							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
+							transform: translate(-7px, -60px) scale(1);
 						}
 						100% {
 							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
+							transform: translate(-7px, -60px) scale(0);
+						}
+					}
+
+					.final-result-jump-in {
+						animation: finalResultJumpIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					.lcm-text-move-right {
+						animation: lcmTextMoveRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes finalResultJumpIn {
+						0% {
+							opacity: 0;
+							transform: translate(-7px, -60px) scale(0);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-7px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 1;
+							transform: translate(-7px, -60px) scale(1);
+						}
+					}
+
+					@keyframes lcmTextMoveRight {
+						0% {
+							transform: translate(-123px, -110px);
+						}
+						100% {
+							transform: translate(-88px, -110px);
 						}
 					}
 				`}
@@ -1852,7 +1911,10 @@ const LCM = () => {
 											<div className={`absolute text-2xl font-bold text-[#5750E3] final-multiplication-fade-in ${multiplicationSymbolFadeOut ? ' final-multiplication-fade-out' : ''}`} style={{ left: '50%', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
 										)}
 										{showLCMText && (
-											<div className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in`} style={{ left: '50%', top: 'calc(100% + 125px)', transform: 'translateX(-50%)' }}>LCM&nbsp;=</div>
+											<div className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveRight ? 'lcm-text-move-right' : ''}`} style={{ left: '50%', top: 'calc(100% + 125px)', transform: 'translateX(-50%)' }}>LCM&nbsp;=</div>
+										)}
+										{showFinalResult && (
+											<div className={`absolute text-2xl font-bold text-[#5750E3] ${finalResultJumpIn ? 'final-result-jump-in' : ''}`} style={{ left: '40%', top: 'calc(100% + 75px)', transform: 'translateX(-50%)', opacity: finalResultJumpIn ? 1 : 0 }}>36</div>
 										)}
 									</div>
 								</div>
@@ -1909,6 +1971,21 @@ const LCM = () => {
 								</button>
 							</div>
 						)}
+						{showFinalButton && (
+							<div className={`glow-button simple-glow`} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', zIndex: 50 }}>
+								<button
+									className={`px-3 py-1.5 bg-[#008545] hover:bg-[#00783E] text-white text-sm rounded transition-colors duration-200 select-none continue-animation`}
+									onClick={handleFinalButton}
+									style={{
+										transformOrigin: 'center',
+										zIndex: 50,
+										borderRadius: '4px'
+									}}
+								>
+									Try Again
+								</button>
+							</div>
+						)}
 					</div>
 
 					{/* Text Section */}
@@ -1931,6 +2008,11 @@ const LCM = () => {
 						{showFinalText && (
 							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center ${isThirdContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
 								Once we find the highest power prime for each number, we can multiply them to find the LCM!
+							</div>
+						)}
+						{showFinalMessage && (
+							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center text-grow-animation`} style={{ opacity: 0 }}>
+								Now you know how to find the LCM using the prime factorization method!
 							</div>
 						)}
 					</div>
