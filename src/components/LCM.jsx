@@ -1,4 +1,9 @@
 import React, { useState } from 'react';
+import FlexiWave from '../assets/All Flexi Poses/PNG/Flexi_Wave.png';
+import FlexiTeacher from '../assets/All Flexi Poses/PNG/Flexi_Teacher.png';
+import FlexiTelescope from '../assets/All Flexi Poses/PNG/Flexi_Telescope.png';
+import FlexiPoint from '../assets/All Flexi Poses/PNG/Flexi_Point.png';
+import FlexiThumbsUp from '../assets/All Flexi Poses/PNG/Flexi_ThumbsUp.png';
 
 const LCM = () => {
 	const [isAnimating, setIsAnimating] = useState(false);
@@ -51,6 +56,8 @@ const LCM = () => {
 	const [lcmTextMoveRight, setLcmTextMoveRight] = useState(false);
 	const [showFinalMessage, setShowFinalMessage] = useState(false);
 	const [showFinalButton, setShowFinalButton] = useState(false);
+	const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
+	const [isWelcomeFadingOut, setIsWelcomeFadingOut] = useState(false);
 
 	const handleReset = () => {
 		setCurrentStep('initial');
@@ -104,6 +111,8 @@ const LCM = () => {
 		setLcmTextMoveRight(false);
 		setShowFinalMessage(false);
 		setShowFinalButton(false);
+		setShowWelcomeMessage(true);
+		setIsWelcomeFadingOut(false);
 		// Add more state resets here as we add them
 	};
 
@@ -140,7 +149,7 @@ const LCM = () => {
 					}, 300);
 				}, 600);
 			}, 500);
-		}, 500);
+		}, 700); // Increased from 500ms to 700ms to account for flexi fade-out animation
 	};
 
 	const handleSecondContinue = () => {
@@ -192,8 +201,8 @@ const LCM = () => {
 						}, 500);
 					}, 500);
 				}, 500);
-			}, 400);
-		}, 300);
+			}, 600); // Increased from 400ms to 600ms to account for flexi fade-out animation
+		}, 500); // Increased from 300ms to 500ms to account for flexi fade-out animation
 	};
 
 	const handleThirdContinue = () => {
@@ -245,7 +254,7 @@ const LCM = () => {
 				}, 500); // Wait for separating lines to fade out first
 			}, 500); // Wait for multiplication symbols to fade out first
 			// Add next step logic here
-		}, 500);
+		}, 700); // Increased from 500ms to 700ms to account for flexi fade-out animation
 	};
 
 	const handleExploreClick = () => {
@@ -253,6 +262,11 @@ const LCM = () => {
 		setIsAnimating(true);
 		setIsExploreShrinking(true);
 		setIsTextShrinking(true);
+		setIsWelcomeFadingOut(true);
+		setTimeout(() => {
+			setShowWelcomeMessage(false);
+			setIsWelcomeFadingOut(false);
+		}, 200); // Wait for fade-out animation to complete
 		// Add animation logic here as we build the interactive
 		setTimeout(() => {
 			setIsAnimating(false);
@@ -263,7 +277,7 @@ const LCM = () => {
 					setShowContinue(true);
 				}, 800);
 			}, 1700);
-		}, 500);
+		}, 700); // Increased from 500ms to 700ms to account for flexi fade-out animation
 	};
 
 	const handleFinalButton = () => {
@@ -1180,7 +1194,7 @@ const LCM = () => {
 							transform: translate(-70px, -60px);
 						}
 						to {
-							transform: translate(-70px, -10px);
+							transform: translate(-70px, -30px);
 						}
 					}
 
@@ -1189,7 +1203,7 @@ const LCM = () => {
 							transform: translate(70px, -60px);
 						}
 						to {
-							transform: translate(70px, -10px);
+							transform: translate(70px, -30px);
 						}
 					}
 
@@ -1768,6 +1782,103 @@ const LCM = () => {
 							transform: translate(-88px, -110px);
 						}
 					}
+
+					/* Speech Bubble Styles */
+					.flexi-wave-bottom-left {
+						position: absolute;
+						left: 0.4rem;
+						bottom: 18px;
+						width: 70px;
+						max-width: 70px;
+						min-width: 40px;
+						width: 5rem;
+						height: auto;
+						z-index: 2;
+						pointer-events: none;
+					}
+					
+					.flexi-wave-bubble-container {
+						position: absolute;
+						left: 0;
+						bottom: 0;
+						display: flex;
+						align-items: flex-end;
+						z-index: 3;
+					}
+					
+					.speech-bubble {
+						position: relative;
+						margin-left: 5rem;
+						margin-right: 1rem;
+						margin-bottom: 70px;
+						background: #fff;
+						border-radius: 18px;
+						padding: 7px 13px;
+						font-size: 0.95rem;
+						color: #222;
+						box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+						min-width: 160px;
+						max-width: 90vw;
+						word-break: break-word;
+					}
+					
+					.speech-bubble:after {
+						content: '';
+						position: absolute;
+						left: -18px;
+						bottom: 16px;
+						width: 0;
+						height: 0;
+						border-top: 12px solid transparent;
+						border-bottom: 12px solid transparent;
+						border-right: 18px solid #fff;
+						filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.08));
+					}
+					
+					.flexi-telescope-fade-in {
+						animation: flexiFadeIn 0.6s ease-in-out;
+					}
+					
+					.speech-bubble-fade-in {
+						animation: speechBubbleFadeIn 0.5s ease-in-out 0.2s both;
+					}
+					
+					@keyframes flexiFadeIn {
+						from {
+							opacity: 0;
+							transform: translateY(10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateY(0);
+						}
+					}
+					
+					@keyframes speechBubbleFadeIn {
+						from {
+							opacity: 0;
+							transform: translateX(-10px);
+						}
+						to {
+							opacity: 1;
+							transform: translateX(0);
+						}
+					}
+					
+					.flexi-first-step-fade-out {
+						animation: flexiFirstStepFadeOut 0.2s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
+					}
+					
+					@keyframes flexiFirstStepFadeOut {
+						from {
+							opacity: 1;
+							transform: translateY(0);
+						}
+						to {
+							opacity: 0;
+							transform: translateY(-10px);
+						}
+					}
 				`}
 			</style>
 			<div className="p-4">
@@ -1789,7 +1900,7 @@ const LCM = () => {
 
 				<div className="space-y-4">
 					{/* Visual Section */}
-					<div className="w-[400px] mx-auto bg-white border border-[#5750E3]/30 rounded-md relative min-h-[260px] flex items-center justify-center visual-clip">
+					<div className="w-[400px] mx-auto bg-white border border-[#5750E3]/30 rounded-md relative min-h-[400px] flex items-center justify-center visual-clip">
 						{/* TODO: Add LCM visualization content here */}
 						{!showNumbers && (
 							<div className={`glow-button ${currentStep === 'initial' ? 'simple-glow' : 'simple-glow stopped'} ${isExploreShrinking ? 'shrink-animation' : ''}`} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', zIndex: 3 }}>
@@ -1804,7 +1915,7 @@ const LCM = () => {
 							</div>
 						)}
 						{showNumbers && (
-							<div className="flex flex-col items-center gap-4" style={{ transform: 'translateY(-17px)' }}>
+							<div className="flex flex-col items-center gap-4 absolute top-20 left-1/2 transform -translate-x-1/2">
 								<div className="flex items-center gap-8 text-animation" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
 									<div className="relative">
 										<div className={`text-4xl font-bold text-black ${isNumbersMoving ? 'number-move-left' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''}`}>12</div>
@@ -1986,33 +2097,50 @@ const LCM = () => {
 								</button>
 							</div>
 						)}
-					</div>
 
-					{/* Text Section */}
-					<div className="w-[400px] mx-auto bg-white border border-[#5750E3]/30 rounded-md p-4 min-h-[80px] relative flex items-center justify-center">
-						{!showNewText && (
-							<div className={`text-sm text-gray-600 text-center ${isTextShrinking ? 'shrink-animation' : ''}`}>
-								Welcome to the LCM Explorer! Click the button above to begin.
-							</div>
-						)}
-						{showNewText && !showSecondStepText && !showFinalText && (
-							<div className={`text-sm text-gray-700 text-center ${isContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
-								To find the <b>Least Common Multiple</b> of any two positive numbers, we can use the prime factorization method.
-							</div>
-						)}
-						{showSecondStepText && !showFinalText && (
-							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center ${isSecondContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
-								First break down each number into their prime factors, then we can find the highest power of each prime factor.
-							</div>
-						)}
-						{showFinalText && (
-							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center ${isThirdContinueShrinking ? 'shrink-animation' : 'text-grow-animation'}`} style={{ opacity: 0 }}>
-								Once we find the highest power prime for each number, we can multiply them to find the LCM!
-							</div>
-						)}
-						{showFinalMessage && (
-							<div className={`absolute inset-0 flex items-center justify-center text-sm text-gray-700 text-center text-grow-animation`} style={{ opacity: 0 }}>
-								Now you know how to find the LCM using the prime factorization method!
+						{/* Flexi Speech Bubble Section */}
+						{(showWelcomeMessage || showNewText || showSecondStepText || showFinalText || showFinalMessage) && (
+							<div className="absolute left-0 bottom-0 w-full h-full flex items-end justify-start pointer-events-none px-2 sm:px-0">
+								{showWelcomeMessage && (
+									<div className={`flexi-wave-bubble-container ${isWelcomeFadingOut ? 'flexi-first-step-fade-out' : ''}`}>
+										<img src={FlexiWave} alt="Flexi Wave" className="flexi-wave-bottom-left" />
+										<div className={`speech-bubble ${isWelcomeFadingOut ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
+											Welcome to the LCM Explorer! Click the button below to begin.
+										</div>
+									</div>
+								)}
+								{showNewText && !showSecondStepText && !showFinalText && (
+									<div className={`flexi-wave-bubble-container ${isContinueShrinking ? 'flexi-first-step-fade-out' : ''}`}>
+										<img src={FlexiTeacher} alt="Flexi Teacher" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
+										<div className={`speech-bubble ${isContinueShrinking ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
+											To find the <b>Least Common Multiple</b> of any two positive numbers, we can use the prime factorization method.
+										</div>
+									</div>
+								)}
+								{showSecondStepText && !showFinalText && (
+									<div className={`flexi-wave-bubble-container ${isSecondContinueShrinking ? 'flexi-first-step-fade-out' : ''}`}>
+										<img src={FlexiTelescope} alt="Flexi Telescope" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
+										<div className={`speech-bubble ${isSecondContinueShrinking ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
+											First break down each number into their prime factors, then we can find the highest power of each prime factor.
+										</div>
+									</div>
+								)}
+								{showFinalText && (
+									<div className={`flexi-wave-bubble-container ${isThirdContinueShrinking ? 'flexi-first-step-fade-out' : ''}`}>
+										<img src={FlexiPoint} alt="Flexi Point" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
+										<div className={`speech-bubble ${isThirdContinueShrinking ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
+											Once we find the highest power prime for each number, we can multiply them to find the LCM!
+										</div>
+									</div>
+								)}
+								{showFinalMessage && (
+									<div className="flexi-wave-bubble-container">
+										<img src={FlexiThumbsUp} alt="Flexi Thumbs Up" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
+										<div className="speech-bubble speech-bubble-fade-in">
+											Now you know how to find the LCM using the prime factorization method!
+										</div>
+									</div>
+								)}
 							</div>
 						)}
 					</div>
