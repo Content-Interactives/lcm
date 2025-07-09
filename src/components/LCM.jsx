@@ -303,6 +303,62 @@ const LCM = () => {
 		handleReset();
 	};
 
+	// TEMPORARY: Skip to final step function
+	const handleSkipToFinal = () => {
+		setCurrentStep('final');
+		setShowNumbers(true);
+		setShowFinalResult(true);
+		setFinalResultJumpIn(true);
+		setLcmTextMoveRight(true);
+		setShowFinalMessage(true);
+		setShowFinalButton(true);
+		setShowLCMText(true); // for the LCM = label
+		// Hide everything else
+		setShowLines(false);
+		setShowFirstPrimes(false);
+		setShowSecondLines(false);
+		setShowSecondPrimes(false);
+		setShowMultiplicationSymbols(false);
+		setShowSeparatingLines(false);
+		setShowSeparatingLinesRight(false);
+		setShowPowerExpressions(false);
+		setShowFinalMultiplication(false);
+		setIsAnimating(false);
+		setIsExploreShrinking(false);
+		setIsTextShrinking(false);
+		setShowNewText(false);
+		setShowContinue(false);
+		setIsContinueShrinking(false);
+		setIsLCMFadingOut(false);
+		setIsNumbersMoving(false);
+		setFadeNonPrimes(false);
+		setShowSecondStepText(false);
+		setShowSecondContinue(false);
+		setIsSecondContinueShrinking(false);
+		setLinesShrink(false);
+		setSecondLinesShrink(false);
+		setFirstLinesShrink(false);
+		setNonPrimesFadeOut(false);
+		setFirstPrimesMoveDown(false);
+		setSecondPrimesMoveUp(false);
+		setPrimesGroupTogether(false);
+		setMainNumbersMoveDown(false);
+		setShowThirdContinue(false);
+		setIsThirdContinueShrinking(false);
+		setFadeOutPrimes(false);
+		setMultiplicationSymbolsFadeOut(false);
+		setSeparatingLinesFadeOut(false);
+		setPowerExpressionsFadeOut(false);
+		setExponentsMoveTogether(false);
+		setExponentsJumpOut(false);
+		setShowReplacementNumbers(false);
+		setReplacementNumbersJumpIn(false);
+		setReplacementNumbersFadeOut(false);
+		setMultiplicationSymbolFadeOut(false);
+		setShowWelcomeMessage(false);
+		setIsWelcomeFadingOut(false);
+	};
+
 	return (
 		<div className="w-full max-w-[464px] mx-auto mt-5 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] bg-white rounded-lg select-none">
 			<style>
@@ -4748,18 +4804,28 @@ const LCM = () => {
 			<div className="p-4">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">LCM Explorer</h2>
-					<button 
-						className={`text-sm px-3 py-1 rounded border transition-colors ${
-							(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue
-								? 'text-gray-400 border-gray-200 cursor-not-allowed'
-								: 'text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400'
-						}`}
-						onClick={handleReset}
-						title="Reset interactive"
-						disabled={(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue}
-					>
-						Reset
-					</button>
+					<div className="flex gap-2">
+						{/* TEMPORARY: Skip to final button */}
+						<button 
+							className="text-sm px-3 py-1 rounded border transition-colors bg-orange-500 hover:bg-orange-600 text-white border-orange-600 hover:border-orange-700"
+							onClick={handleSkipToFinal}
+							title="TEMPORARY: Skip to final step"
+						>
+							Skip to Final
+						</button>
+						<button 
+							className={`text-sm px-3 py-1 rounded border transition-colors ${
+								(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue
+									? 'text-gray-400 border-gray-200 cursor-not-allowed'
+									: 'text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400'
+							}`}
+							onClick={handleReset}
+							title="Reset interactive"
+							disabled={(isAnimating || isContinueShrinking || isExploreShrinking || isTextShrinking || isLCMFadingOut || isNumbersMoving) && !showContinue && !showSecondContinue && !showThirdContinue}
+						>
+							Reset
+						</button>
+					</div>
 				</div>
 
 				<div className="space-y-4">
@@ -4894,9 +4960,11 @@ const LCM = () => {
 											)}
 										</div>
 									</div>
-									<div className={`text-2xl font-bold text-gray-700 ${isLCMFadingOut ? 'lcm-fade-out-down' : 'lcm-fade-in'}`} style={{ opacity: 0 }}>
-										LCM = <span className="inline-block" style={{ opacity: 0, animation: 'growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards' }}>?</span>
-									</div>
+									{!showFinalResult && (
+										<div className={`text-2xl font-bold text-gray-700 ${isLCMFadingOut ? 'lcm-fade-out-down' : 'lcm-fade-in'}`} style={{ opacity: 0 }}>
+											LCM = <span className="inline-block" style={{ opacity: 0, animation: 'growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1s forwards' }}>?</span>
+										</div>
+									)}
 								</div>
 							)}
 							{showContinue && (
