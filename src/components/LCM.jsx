@@ -56,6 +56,7 @@ const LCM = () => {
 	const [lcmTextMoveRight, setLcmTextMoveRight] = useState(false);
 	const [showFinalMessage, setShowFinalMessage] = useState(false);
 	const [showFinalButton, setShowFinalButton] = useState(false);
+	const [isFinalButtonShrinking, setIsFinalButtonShrinking] = useState(false);
 	const [showWelcomeMessage, setShowWelcomeMessage] = useState(true);
 	const [isWelcomeFadingOut, setIsWelcomeFadingOut] = useState(false);
 	const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -300,7 +301,12 @@ const LCM = () => {
 	};
 
 	const handleFinalButton = () => {
-		handleReset();
+		setIsFinalButtonShrinking(true);
+		setTimeout(() => {
+			setShowFinalButton(false);
+			setShowFinalMessage(false);
+			setIsFinalButtonShrinking(false);
+		}, 500);
 	};
 
 	// TEMPORARY: Skip to final step function
@@ -5016,9 +5022,10 @@ const LCM = () => {
 								</div>
 							)}
 							{showFinalButton && (
-								<div className={`glow-button simple-glow`} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', zIndex: 50 }}>
+								<div className={`glow-button ${isFinalButtonShrinking ? 'simple-glow stopped' : 'simple-glow'}`} style={{ position: 'absolute', bottom: '0.5rem', right: '0.5rem', zIndex: 50 }}>
 									<button
-										className={`px-3 py-1.5 bg-[#008545] hover:bg-[#00783E] text-white text-sm rounded transition-colors duration-200 select-none continue-animation`}
+										className={`px-3 py-1.5 bg-[#008545] hover:bg-[#00783E] text-white text-sm rounded transition-colors duration-200 select-none
+											${isFinalButtonShrinking ? 'shrink-animation' : 'continue-animation'}`}
 										onClick={handleFinalButton}
 										style={{
 											transformOrigin: 'center',
@@ -5026,7 +5033,7 @@ const LCM = () => {
 											borderRadius: '4px'
 										}}
 									>
-										Try Again
+										Continue
 									</button>
 								</div>
 							)}
@@ -5067,9 +5074,9 @@ const LCM = () => {
 										</div>
 									)}
 									{showFinalMessage && (
-										<div className="flexi-wave-bubble-container">
+										<div className={`flexi-wave-bubble-container ${isFinalButtonShrinking ? 'flexi-first-step-fade-out' : ''}`}>
 											<img src={FlexiThumbsUp} alt="Flexi Thumbs Up" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
-											<div className="speech-bubble speech-bubble-fade-in">
+											<div className={`speech-bubble ${isFinalButtonShrinking ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
 												Now you know how to find the LCM using prime factorization!
 											</div>
 										</div>
