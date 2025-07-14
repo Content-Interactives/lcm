@@ -65,7 +65,9 @@ const LCM = () => {
 	const [redElementsJumpIn, setRedElementsJumpIn] = useState(false);
 	const [inputValue1, setInputValue1] = useState('12');
 	const [inputValue2, setInputValue2] = useState('18');
-
+	const [lcmTextMoveDown, setLcmTextMoveDown] = useState(false);
+	const [lcmAnswerMoveDown, setLcmAnswerMoveDown] = useState(false);
+	
 	// Track screen size
 	React.useEffect(() => {
 		const checkScreenSize = () => {
@@ -316,6 +318,8 @@ const LCM = () => {
 			setIsFinalButtonShrinking(false);
 			// First: move numbers up and to the left/right
 			setIsNumbersMoving(true);
+			setLcmTextMoveDown(true);
+			setLcmAnswerMoveDown(true);
 			setTimeout(() => {
 				// Then: trigger the jump out animation for original elements
 				setFinalElementsJumpOut(true);
@@ -4372,10 +4376,6 @@ const LCM = () => {
 						animation: primeFadeOutLeft3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
 
-					.prime-fade-out-right-1 {
-						animation: primeFadeOutRight1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
 					.prime-fade-out-right-2 {
 						animation: primeFadeOutRight2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 					}
@@ -7756,6 +7756,30 @@ const LCM = () => {
 					input[type="number"] {
 						-moz-appearance: textfield;
 					}
+
+					.lcm-text-move-down {
+						animation: lcmTextMoveDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes lcmTextMoveDown {
+						0% {
+							transform: translateX(-50%) translate(-88px, -110px);
+						}
+						100% {
+							transform: translateX(-50%) translate(-88px, -60px);
+						}
+					}
+
+					.lcm-answer-move-down {
+						animation: lcmAnswerMoveDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes lcmAnswerMoveDown {
+						0% {
+							transform: translate(-7px, -60px);
+						}
+						100% {
+							transform: translate(-7px, -110px);
 				`}
 			</style>
 			<div className="p-4">
@@ -7811,7 +7835,7 @@ const LCM = () => {
 											{showRedElements && (
 												<div
 													className={`text-4xl font-bold text-red-500 number-text ${isNumbersMoving ? 'number-move-left' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-left' : ''}`}
-													style={{ position: 'absolute', top: 0, left: 0, opacity: redElementsJumpIn ? 1 : 0 }}
+													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
 														type="number"
@@ -7892,7 +7916,7 @@ const LCM = () => {
 											{showRedElements && (
 												<div
 													className={`text-4xl font-bold text-red-500 number-text right-factor-tree-18 ${isNumbersMoving ? 'number-move-right' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''} ${isSmallScreen && (isNumbersMoving || mainNumbersMoveDown) ? 'small-screen-position' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-right' : ''}`}
-													style={{ position: 'absolute', top: 0, left: 0, opacity: redElementsJumpIn ? 1 : 0 }}
+													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
 														type="number"
@@ -7975,7 +7999,7 @@ const LCM = () => {
 											{/* Red version of LCM = */}
 											{showRedElements && (
 												<div
-													className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
+													className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveDown ? 'lcm-text-move-down' : ''} ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
 													style={{ left: '135%', top: 'calc(100% + 125px)', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													LCM&nbsp;=
@@ -7987,7 +8011,7 @@ const LCM = () => {
 											{/* Red version of 36 */}
 											{showRedElements && (
 												<div
-													className="absolute text-2xl font-bold text-[#5750E3]"
+													className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
 													style={{ left: '78%', top: 'calc(100% + 75px)', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													36
