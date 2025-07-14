@@ -643,35 +643,6 @@ const LCM = () => {
 						padding: 7px;
 					}
 
-					@media (max-width: 640px) {
-						.glow-button {
-							right: 0.5rem;
-							bottom: 0.5rem;
-						}
-					}
-
-					@media (max-width: 480px) {
-						.numbers-container {
-							gap: 2rem !important;
-						}
-						.number-text {
-							font-size: 2rem !important;
-						}
-					}
-
-					@media (max-width: 360px) {
-						.numbers-container {
-							gap: 1.5rem !important;
-						}
-						.number-text {
-							font-size: 1.75rem !important;
-						}
-					}
-
-					@media (max-width: 320px) {
-						/* No specific speech bubble styles needed */
-					}
-
 					.glow-button::before {
 						content: "";
 						display: block;
@@ -1990,83 +1961,6 @@ const LCM = () => {
 						}
 					}
 
-					@media (max-width: 500px) {
-						/* Right factor tree elements - turn red on small screens */
-						.right-factor-tree-18 {
-							transform: translate(65px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-2 {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-9 {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-3-left {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-3-right {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-
-						
-						.right-factor-tree-multiplication {
-							transform: translate(35px, -60px) translateX(-100%) !important;
-						}
-					}
-
-					/* Media query for lines with skewX(-30deg) - left slanting lines */
-					@media (max-width: 500px) {
-						.right-factor-tree-lines.line-move-right,
-						.right-factor-tree-lines.line-under-9-left,
-						.right-factor-tree-lines.lines-shrink-move-right,
-						.right-factor-tree-lines.lines-shrink-under-9-left {
-							transform: translate(35px, -60px) translateX(-100%) skewX(-30deg) !important;
-						}
-					}
-
-					/* Media query for lines with skewX(30deg) - right slanting lines */
-					@media (max-width: 500px) {
-						.right-factor-tree-lines.line-move-right-right,
-						.right-factor-tree-lines.line-under-9-right,
-						.right-factor-tree-lines.lines-shrink-move-right-right,
-						.right-factor-tree-lines.lines-shrink-under-9-right {
-							transform: translate(35px, -60px) translateX(-100%) skewX(30deg) !important;
-						}
-					}
-
-					@media (max-width: 640px) {
-						.glow-button {
-							right: 0.5rem;
-							bottom: 0.5rem;
-						}
-					}
-
-					@media (max-width: 480px) {
-						.numbers-container {
-							gap: 2rem !important;
-						}
-						.number-text {
-							font-size: 2rem !important;
-						}
-					}
-
-					@media (max-width: 360px) {
-						.numbers-container {
-							gap: 1.5rem !important;
-						}
-						.number-text {
-							font-size: 1.75rem !important;
-						}
-					}
-
-					@media (max-width: 320px) {
-						/* No specific speech bubble styles needed */
-					}
-
 					.glow-button::before {
 						content: "";
 						display: block;
@@ -3383,83 +3277,6 @@ const LCM = () => {
 							opacity: 0;
 							transform: translateY(-10px);
 						}
-					}
-
-					@media (max-width: 500px) {
-						/* Right factor tree elements - turn red on small screens */
-						.right-factor-tree-18 {
-							transform: translate(65px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-2 {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-9 {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-3-left {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-						
-						.right-factor-tree-3-right {
-							transform: translate(40px, -60px) translateX(-100%) !important;
-						}
-
-						
-						.right-factor-tree-multiplication {
-							transform: translate(35px, -60px) translateX(-100%) !important;
-						}
-					}
-
-					/* Media query for lines with skewX(-30deg) - left slanting lines */
-					@media (max-width: 500px) {
-						.right-factor-tree-lines.line-move-right,
-						.right-factor-tree-lines.line-under-9-left,
-						.right-factor-tree-lines.lines-shrink-move-right,
-						.right-factor-tree-lines.lines-shrink-under-9-left {
-							transform: translate(35px, -60px) translateX(-100%) skewX(-30deg) !important;
-						}
-					}
-
-					/* Media query for lines with skewX(30deg) - right slanting lines */
-					@media (max-width: 500px) {
-						.right-factor-tree-lines.line-move-right-right,
-						.right-factor-tree-lines.line-under-9-right,
-						.right-factor-tree-lines.lines-shrink-move-right-right,
-						.right-factor-tree-lines.lines-shrink-under-9-right {
-							transform: translate(35px, -60px) translateX(-100%) skewX(30deg) !important;
-						}
-					}
-
-					@media (max-width: 640px) {
-						.glow-button {
-							right: 0.5rem;
-							bottom: 0.5rem;
-						}
-					}
-
-					@media (max-width: 480px) {
-						.numbers-container {
-							gap: 2rem !important;
-						}
-						.number-text {
-							font-size: 2rem !important;
-						}
-					}
-
-					@media (max-width: 360px) {
-						.numbers-container {
-							gap: 1.5rem !important;
-						}
-						.number-text {
-							font-size: 1.75rem !important;
-						}
-					}
-
-					@media (max-width: 320px) {
-						/* No specific speech bubble styles needed */
 					}
 
 					.glow-button::before {
