@@ -69,7 +69,10 @@ const LCM = () => {
 	const [lcmTextMoveDown, setLcmTextMoveDown] = useState(false);
 	const [lcmAnswerMoveDown, setLcmAnswerMoveDown] = useState(false);
 	const [showFinalFlexi, setShowFinalFlexi] = useState(false);
-	const [showSolveButton, setShowSolveButton] = useState(false);
+	const [solveButtonClicked, setSolveButtonClicked] = useState(false);
+	const [inputsJumpOut, setInputsJumpOut] = useState(false);
+	const [isSolveButtonShrinking, setIsSolveButtonShrinking] = useState(false);
+	const [purpleTextJumpIn, setPurpleTextJumpIn] = useState(false);
 	
 	// Track screen size
 	React.useEffect(() => {
@@ -401,6 +404,63 @@ const LCM = () => {
 		setFinalElementsJumpOut(false);
 		setShowRedElements(false);
 		setRedElementsJumpIn(false);
+	};
+
+	const solveSteps = () => {
+		// Step 1: Set the solve button as clicked and trigger shrinking animation
+		setSolveButtonClicked(true);
+		setIsSolveButtonShrinking(true);
+		
+		// Step 2: Trigger input jump-out animation
+		setInputsJumpOut(true);
+		setTimeout(() => {
+			setPurpleTextJumpIn(true);
+		}, 800);
+		// Step 3: Calculate LCM using prime factorization
+		const calculateLCM = (a, b) => {
+			// Get prime factors of both numbers
+			const getPrimeFactors = (num) => {
+				const factors = {};
+				let divisor = 2;
+				
+				while (num > 1) {
+					while (num % divisor === 0) {
+						factors[divisor] = (factors[divisor] || 0) + 1;
+						num /= divisor;
+					}
+					divisor++;
+				}
+				return factors;
+			};
+			
+			const factorsA = getPrimeFactors(a);
+			const factorsB = getPrimeFactors(b);
+			
+			// Find the highest power of each prime factor
+			const allPrimes = new Set([...Object.keys(factorsA), ...Object.keys(factorsB)]);
+			let lcm = 1;
+			
+			for (const prime of allPrimes) {
+				const powerA = factorsA[prime] || 0;
+				const powerB = factorsB[prime] || 0;
+				const highestPower = Math.max(powerA, powerB);
+				lcm *= Math.pow(parseInt(prime), highestPower);
+			}
+			
+			return lcm;
+		};
+		
+		// Step 4: Calculate the result
+		const num1 = parseInt(inputValue1);
+		const num2 = parseInt(inputValue2);
+		const result = calculateLCM(num1, num2);
+		
+		// Step 5: Update the result display (you can add more steps here)
+		
+		// TODO: Add more steps for animations, UI updates, etc.
+		// Step 6: Show result animation
+		// Step 7: Update UI elements
+		// Step 8: Trigger any additional animations
 	};
 
 	return (
@@ -4527,6 +4587,64 @@ const LCM = () => {
 							transform: translate(-23px, 55px);
 						}
 					}
+
+					.input-one-jump-out {
+						animation: inputOneJumpOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes inputOneJumpOut {
+						0% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(-70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(-70px, -60px) scale(0);
+						}
+					}
+
+					.input-two-jump-out {
+						animation: inputTwoJumpOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes inputTwoJumpOut {
+						0% {
+							opacity: 1;
+							transform: translate(70px, -60px) scale(1);
+						}
+						50% {
+							opacity: 1;
+							transform: translate(70px, -60px) scale(1.3);
+						}
+						100% {
+							opacity: 0;
+							transform: translate(70px, -60px) scale(0);
+						}
+					}
+
+					.purple-text-jump-in {
+						animation: purpleTextJumpIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+					}
+
+					@keyframes purpleTextJumpIn {
+						0% {
+							opacity: 0;
+							transform: scale(0);
+						}
+						50% {
+							opacity: 1;
+							transform: scale(1.3);
+						}
+						100% {
+							opacity: 1;
+							transform: scale(1);
+						}
+					}
+						
 				`}
 			</style>
 			<div className="p-4">
@@ -4581,7 +4699,7 @@ const LCM = () => {
 											{/* Red version of 12 */}
 											{showRedElements && (
 												<div
-													className={`text-4xl font-bold text-red-500 number-text ${isNumbersMoving ? 'number-move-left' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-left' : ''}`}
+													className={`text-4xl font-bold text-red-500 number-text ${isNumbersMoving ? 'number-move-left' : ''} ${inputsJumpOut ? 'input-one-jump-out' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-left' : ''}`}
 													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
@@ -4611,7 +4729,7 @@ const LCM = () => {
 															}
 														}}
 														max="25"
-														className="w-full h-full text-center bg-transparent border-none outline-none text-4xl font-bold text-red-500"
+														className="w-full h-full text-center bg-transparent border-none outline-none text-4xl font-bold text-black"
 														style={{
 															width: '4.5rem',
 															height: '100%',
@@ -4628,6 +4746,29 @@ const LCM = () => {
 															padding: '0.4rem'
 														}}
 													/>
+												</div>
+											)}
+											{/* Purple text for first input - moved outside input container */}
+											{solveButtonClicked && showRedElements && purpleTextJumpIn && (
+												<div
+													style={{
+														position: 'absolute',
+														top: '-50px',
+														left: '-80px',
+														fontSize: '2.25rem',
+														fontWeight: 'bold',
+														color: '#8b5cf6',
+														zIndex: 100,
+														pointerEvents: 'none',
+														width: '4.5rem',
+														height: '100%',
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center'
+													}}
+													className={`${purpleTextJumpIn ? 'purple-text-jump-in' : ''}`}
+												>
+													{inputValue1}
 												</div>
 											)}
 											{showLines && (
@@ -4684,7 +4825,7 @@ const LCM = () => {
 											{/* Red version of 18 */}
 											{showRedElements && (
 												<div
-													className={`text-4xl font-bold text-red-500 number-text right-factor-tree-18 ${isNumbersMoving ? 'number-move-right' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''} ${isSmallScreen && (isNumbersMoving || mainNumbersMoveDown) ? 'small-screen-position' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-right' : ''}`}
+													className={`text-4xl font-bold text-red-500 number-text right-factor-tree-18 ${isNumbersMoving ? 'number-move-right' : ''} ${inputsJumpOut ? 'input-two-jump-out' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''} ${isSmallScreen && (isNumbersMoving || mainNumbersMoveDown) ? 'small-screen-position' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-right' : ''}`}
 													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
@@ -4731,6 +4872,29 @@ const LCM = () => {
 															padding: '0.4rem'
 														}}
 													/>
+												</div>
+											)}
+											{/* Purple text for second input - moved outside input container */}
+											{solveButtonClicked && showRedElements && purpleTextJumpIn && (
+												<div
+													style={{
+														position: 'absolute',
+														top: '-50px',
+														left: '55px',
+														fontSize: '2.25rem',
+														fontWeight: 'bold',
+														color: '#8b5cf6',
+														zIndex: 100,
+														pointerEvents: 'none',
+														width: '4.5rem',
+														height: '100%',
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center'
+													}}
+													className={`${purpleTextJumpIn ? 'purple-text-jump-in' : ''}`}
+												>
+													{inputValue2}
 												</div>
 											)}
 											{showLines && (
@@ -4804,9 +4968,9 @@ const LCM = () => {
 													{inputsModified ? (
 														<span style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
 															?
-															<div className="glow-button simple-glow" style={{ position: 'absolute', left: '1.5rem', top: '-0.2rem', bottom: 'auto', right: 'auto' }}>
+															<div className={`glow-button ${isSolveButtonShrinking ? 'simple-glow stopped' : 'simple-glow'} ${isSolveButtonShrinking ? 'shrink-animation' : ''}`} style={{ position: 'absolute', left: '1.5rem', top: '-0.2rem', bottom: 'auto', right: 'auto' }}>
 																<button
-																	className="px-2 py-1 bg-[#008545] hover:bg-[#00783E] text-white text-xs rounded transition-colors duration-200 select-none"
+																	className={`px-2 py-1 bg-[#008545] hover:bg-[#00783E] text-white text-xs rounded transition-colors duration-200 select-none ${isSolveButtonShrinking ? 'shrink-animation' : ''}`}
 																	style={{ 
 																		fontSize: '0.75rem', 
 																		height: '1.75rem', 
@@ -4815,7 +4979,7 @@ const LCM = () => {
 																		zIndex: 50,
 																		borderRadius: '4px'
 																	}}
-																	onClick={() => {/* TODO: Implement solve logic */}}
+																	onClick={solveSteps}
 																>
 																	Solve
 																</button>
