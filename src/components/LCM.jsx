@@ -4,6 +4,7 @@ import FlexiTeacher from '../assets/All Flexi Poses/PNG/Flexi_Teacher.png';
 import FlexiTelescope from '../assets/All Flexi Poses/PNG/Flexi_Telescope.png';
 import FlexiPoint from '../assets/All Flexi Poses/PNG/Flexi_Point.png';
 import FlexiThumbsUp from '../assets/All Flexi Poses/PNG/Flexi_ThumbsUp.png';
+import './LCM.css';
 
 const LCM = () => {
 	const [isAnimating, setIsAnimating] = useState(false);
@@ -73,6 +74,15 @@ const LCM = () => {
 	const [inputsJumpOut, setInputsJumpOut] = useState(false);
 	const [isSolveButtonShrinking, setIsSolveButtonShrinking] = useState(false);
 	const [purpleTextJumpIn, setPurpleTextJumpIn] = useState(false);
+	const [isFlexiFadingOut, setIsFlexiFadingOut] = useState(false);
+	
+	// Dynamic factor tree state variables
+	const [factorTree1, setFactorTree1] = useState([]);
+	const [factorTree2, setFactorTree2] = useState([]);
+	const [showDynamicTree1, setShowDynamicTree1] = useState(false);
+	const [showDynamicTree2, setShowDynamicTree2] = useState(false);
+	const [treeAnimationStep1, setTreeAnimationStep1] = useState(0);
+	const [treeAnimationStep2, setTreeAnimationStep2] = useState(0);
 	
 	// Track screen size
 	React.useEffect(() => {
@@ -147,7 +157,20 @@ const LCM = () => {
 		setFinalElementsJumpOut(false);
 		setShowRedElements(false);
 		setRedElementsJumpIn(false);
-		// Add more state resets here as we add them
+		setInputValue1('12');
+		setInputValue2('18');
+		setInputsModified(false);
+		setSolveButtonClicked(false);
+		setInputsJumpOut(false);
+		setIsSolveButtonShrinking(false);
+		setPurpleTextJumpIn(false);
+		setLcmTextMoveDown(false);
+		setLcmAnswerMoveDown(false);
+		setShowFinalFlexi(false);
+		setIsFlexiFadingOut(false);
+		
+		// Reset dynamic trees
+		resetDynamicTrees();
 	};
 
 	const handleContinue = () => {
@@ -411,12 +434,23 @@ const LCM = () => {
 		setSolveButtonClicked(true);
 		setIsSolveButtonShrinking(true);
 		
-		// Step 2: Trigger input jump-out animation
+		setIsFlexiFadingOut(true);
+		
 		setInputsJumpOut(true);
 		setTimeout(() => {
 			setPurpleTextJumpIn(true);
 		}, 800);
-		// Step 3: Calculate LCM using prime factorization
+		
+		if (inputsModified) {
+			setTimeout(() => {
+				resetDynamicTrees();
+				animateDynamicTree1();
+				setTimeout(() => {
+					animateDynamicTree2();
+				}, 1000);
+			}, 1200);
+		}
+		
 		const calculateLCM = (a, b) => {
 			// Get prime factors of both numbers
 			const getPrimeFactors = (num) => {
@@ -450,4203 +484,185 @@ const LCM = () => {
 			return lcm;
 		};
 		
-		// Step 4: Calculate the result
 		const num1 = parseInt(inputValue1);
 		const num2 = parseInt(inputValue2);
 		const result = calculateLCM(num1, num2);
+	};
+
+	// Dynamic factor tree functions
+	const buildFactorTree = (num) => {
+		console.log('buildFactorTree called with:', num);
 		
-		// Step 5: Update the result display (you can add more steps here)
+		if (num <= 1) return [];
 		
-		// TODO: Add more steps for animations, UI updates, etc.
-		// Step 6: Show result animation
-		// Step 7: Update UI elements
-		// Step 8: Trigger any additional animations
+		const getPrimeFactors = (num) => {
+			const factors = {};
+			let divisor = 2;
+			let tempNum = num;
+			
+			while (tempNum > 1) {
+				while (tempNum % divisor === 0) {
+					factors[divisor] = (factors[divisor] || 0) + 1;
+					tempNum /= divisor;
+				}
+				divisor++;
+			}
+			return factors;
+		};
+		
+		const tree = [];
+		let nextId = 1;
+		
+		// Add root node
+		tree.push({
+			id: nextId++,
+			value: num,
+			level: 0,
+			x: 0,
+			y: 0,
+			isPrime: false
+		});
+		
+		// Queue to process nodes level by level
+		const queue = [{ value: num, level: 0, x: 0, y: 0 }];
+		
+		while (queue.length > 0) {
+			const current = queue.shift();
+			const factors = getPrimeFactors(current.value);
+			
+			// Skip if this node is prime
+			if (Object.keys(factors).length === 0 || current.value <= 1) {
+				continue;
+			}
+			
+			// Get first factor and remaining value
+			const firstFactor = Object.keys(factors)[0];
+			const firstFactorValue = parseInt(firstFactor);
+			const remainingValue = current.value / firstFactorValue;
+			
+			// Only add left child if it's not 1, not equal to current, and not a duplicate prime
+			if (firstFactorValue !== 1 && firstFactorValue !== current.value) {
+				const leftChild = {
+					id: nextId++,
+					value: firstFactorValue,
+					level: current.level + 1,
+					x: current.x - 1,
+					y: current.y + 1,
+					isPrime: true,
+					left: null,
+					right: null
+				};
+				tree.push(leftChild);
+			}
+			
+			// Add right child (remaining value)
+			if (remainingValue > 1) {
+				const rightChildFactors = getPrimeFactors(remainingValue);
+				const isRightPrime = Object.keys(rightChildFactors).length === 0;
+				
+				const rightChild = {
+					id: nextId++,
+					value: remainingValue,
+					level: current.level + 1,
+					x: current.x + 1,
+					y: current.y + 1,
+					isPrime: isRightPrime,
+					left: null,
+					right: null
+				};
+				tree.push(rightChild);
+				
+				// If right child is not prime, add it to queue for further processing
+				if (!isRightPrime) {
+					queue.push({
+						value: remainingValue,
+						level: current.level + 1,
+						x: current.x + 1,
+						y: current.y + 1
+					});
+				}
+			}
+		}
+		
+		console.log('Built tree:', tree);
+		return tree;
+	};
+
+	const animateDynamicTree1 = () => {
+		console.log('animateDynamicTree1 called with inputValue1:', inputValue1);
+		
+		try {
+			setShowDynamicTree1(true);
+			setTreeAnimationStep1(0);
+			
+			const num = parseInt(inputValue1);
+			if (isNaN(num) || num <= 0) {
+				console.error('Invalid input for tree 1:', inputValue1);
+				return;
+			}
+			
+			const tree = buildFactorTree(num);
+			console.log('Tree 1 built:', tree);
+			setFactorTree1(tree);
+			
+			// Animate each node step by step
+			tree.forEach((node, index) => {
+				setTimeout(() => {
+					console.log(`Tree 1: Animating node ${index + 1}/${tree.length}:`, node.value);
+					setTreeAnimationStep1(index + 1);
+				}, index * 500); // 500ms delay between each node
+			});
+		} catch (error) {
+			console.error('Error in animateDynamicTree1:', error);
+		}
+	};
+
+	const animateDynamicTree2 = () => {
+		console.log('animateDynamicTree2 called with inputValue2:', inputValue2);
+		console.log('Current showDynamicTree2 state:', showDynamicTree2);
+		console.log('Current treeAnimationStep2 state:', treeAnimationStep2);
+		
+		try {
+			setShowDynamicTree2(true);
+			console.log('Set showDynamicTree2 to true');
+			setTreeAnimationStep2(0);
+			console.log('Set treeAnimationStep2 to 0');
+			
+			const num = parseInt(inputValue2);
+			if (isNaN(num) || num <= 0) {
+				console.error('Invalid input for tree 2:', inputValue2);
+				return;
+			}
+			
+			const tree = buildFactorTree(num);
+			console.log('Tree 2 built:', tree);
+			setFactorTree2(tree);
+			console.log('Set factorTree2 state');
+			
+			// Animate each node step by step
+			tree.forEach((node, index) => {
+				setTimeout(() => {
+					console.log(`Tree 2: Animating node ${index + 1}/${tree.length}:`, node.value);
+					setTreeAnimationStep2(index + 1);
+				}, index * 500); // 500ms delay between each node
+			});
+		} catch (error) {
+			console.error('Error in animateDynamicTree2:', error);
+		}
+	};
+
+	const resetDynamicTrees = () => {
+		console.log('resetDynamicTrees called');
+		setShowDynamicTree1(false);
+		setShowDynamicTree2(false);
+		setTreeAnimationStep1(0);
+		setTreeAnimationStep2(0);
+		setFactorTree1([]);
+		setFactorTree2([]);
 	};
 
 	return (
 		<div className="w-full max-w-[464px] mx-auto mt-5 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] bg-white rounded-lg select-none">
-			<style>
-				{`
-					@property --r {
-						syntax: '<angle>';
-						inherits: false;
-						initial-value: 0deg;
-					}
-
-					@keyframes fadeIn {
-						from {
-							opacity: 0;
-							transform: translateY(10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-					@keyframes fadeOut {
-						from {
-							opacity: 1;
-						}
-						to {
-							opacity: 0;
-						}
-					}
-					.text-animation {
-						animation: fadeIn 0.5s ease-out forwards;
-					}
-					.text-fade-out {
-						animation: fadeIn 0.5s ease-out reverse forwards;
-					}
-					.shrink-animation {
-						animation: shrinkButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					@keyframes shrinkButton {
-						from {
-							transform: scale(1);
-							opacity: 1;
-						}
-						to {
-							transform: scale(0);
-							opacity: 0;
-						}
-					}
-					@keyframes growButton {
-						from {
-							transform: scale(0);
-							opacity: 0;
-						}
-						to {
-							transform: scale(1);
-							opacity: 1;
-						}
-					}
-					.continue-animation {
-						animation: growButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					.text-grow-animation {
-						animation: growButton 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					.fade-in {
-						opacity: 1;
-						transition: opacity 0.5s;
-					}
-					.fade-out {
-						opacity: 0;
-						transition: opacity 0.5s;
-					}
-					.zoom-in {
-						transform: scale(1.25);
-						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-						z-index: 10;
-					}
-					.zoom-in-visual {
-						transform: scale(2) translate(-10px, 30px);
-						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-						z-index: 1;
-					}
-					.zoom-out-visual {
-						transform: scale(1) translate(0, -110px);
-						transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-						z-index: 1;
-					}
-					.visual-clip {
-						overflow: hidden;
-						position: relative;
-					}
-					.equation-faded {
-						opacity: 0.25 !important;
-						transition: opacity 0.4s !important;
-					}
-					.equation-opaque {
-						opacity: 1 !important;
-						transition: opacity 0.4s !important;
-					}
-					.slide-right {
-						transform: translateX(100%);
-						transition: transform 0.5s ease-out;
-					}
-					@keyframes fadeIn {
-						from {
-							opacity: 0;
-							transform: translateX(-10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateX(0);
-						}
-					}
-					.shift-right {
-						transform: translateX(-63px);
-						transition: transform 0.5s ease-out;
-					}
-					@keyframes slideEqualSign {
-						from {
-							transform: translateX(0);
-						}
-						to {
-							transform: translateX(25px);
-						}
-					}
-					@keyframes fadeInDown {
-						from {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-					.fade-in-down {
-						animation: fadeInDown 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-					}
-					.lcm-fade-out-down {
-						animation: lcmFadeOutDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					.lcm-fade-in {
-						animation: fadeIn 0.5s ease-out 0.4s forwards;
-					}
-					@keyframes lcmFadeOutDown {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(20px);
-						}
-					}
-					.number-move-left {
-						animation: moveLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					.number-move-right {
-						animation: moveRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-					@keyframes moveLeft {
-						from {
-							transform: translate(0, 0);
-						}
-						to {
-							transform: translate(-70px, -60px);
-						}
-					}
-					@keyframes moveRight {
-						from {
-							transform: translate(0, 0);
-						}
-						to {
-							transform: translate(70px, -60px);
-						}
-					}
-
-					.line-appear {
-						animation: lineAppear 0.4s ease-out forwards;
-					}
-
-					.line-move-left {
-						animation: lineMoveLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-move-right {
-						animation: lineMoveRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-move-left-right {
-						animation: lineMoveLeftRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-move-right-right {
-						animation: lineMoveRightRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineMoveLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineMoveRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineMoveLeftRight {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineMoveRightRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineAppear {
-						from {
-							height: 0;
-							opacity: 0;
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					/* Glow Effect Styles */
-					.glow-button { 
-						position: absolute;
-						bottom: 1rem;
-						right: 1rem;
-						border-radius: 8px;
-						cursor: pointer;
-						display: flex;
-						align-items: center;
-						justify-content: center;
-						z-index: 3;
-						transition: all .3s ease;
-						padding: 7px;
-					}
-
-					.glow-button::before {
-						content: "";
-						display: block;
-						position: absolute;
-						background: #fff;
-						inset: 2px;
-						border-radius: 4px;
-						z-index: -2;
-					}
-
-					.simple-glow { 
-						background: conic-gradient(
-							from var(--r),
-							transparent 0%,
-							rgb(0, 255, 132) 2%,
-							rgb(0, 214, 111) 8%,
-							rgb(0, 174, 90) 12%,
-							rgb(0, 133, 69) 14%,
-							transparent 15%
-						);
-						animation: rotating 3s linear infinite;
-						transition: animation 0.3s ease;
-					}
-
-					.simple-glow.stopped {
-						animation: none;
-						background: none;
-					}
-
-					@keyframes rotating {
-						0% {
-							--r: 0deg;
-						}
-						100% {
-							--r: 360deg;
-						}
-					}
-
-					.explore-button {
-						background-color: #008545;
-						color: white;
-						border: none;
-						border-radius: 4px;
-						padding: 0.375rem 0.75rem;
-						font-size: 0.875rem;
-						font-weight: 600;
-						cursor: pointer;
-						transition: background-color 0.2s;
-					}
-
-					.explore-button:hover {
-						background-color: #00783E;
-					}
-
-					.prime-move-left-1 {
-						animation: primeMoveLeft1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-left-2 {
-						animation: primeMoveLeft2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-1 {
-						animation: primeMoveRight1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2 {
-						animation: primeMoveRight2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-1 {
-						animation: primeUnder6_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-2 {
-						animation: primeUnder6_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-1 {
-						animation: primeUnder9_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-2 {
-						animation: primeUnder9_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveLeft2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					.line-under-6-left {
-						animation: lineUnder6Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-6-right {
-						animation: lineUnder6Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-left {
-						animation: lineUnder8Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-right {
-						animation: lineUnder8Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder6Left {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder6Right {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.line-under-9-left {
-						animation: lineUnder9Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-9-right {
-						animation: lineUnder9Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder9Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder9Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.fade-non-primes {
-						animation: fadeNonPrimes 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes fadeNonPrimes {
-						0% {
-							opacity: 1;
-						}
-						100% {
-							opacity: 0.5;
-						}
-					}
-
-					.prime-move-left-2-no-opacity {
-						animation: primeMoveLeft2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2-no-opacity {
-						animation: primeMoveRight2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft2NoOpacity {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					@keyframes primeMoveRight2NoOpacity {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					.lines-shrink {
-						animation: linesShrinkAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-appear {
-						animation: linesShrinkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left {
-						animation: linesShrinkMoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left-right {
-						animation: linesShrinkMoveLeftRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right {
-						animation: linesShrinkMoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right-right {
-						animation: linesShrinkMoveRightRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-6-left {
-						animation: linesShrinkUnder6Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-9-right {
-						animation: linesShrinkUnder9Right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out {
-						animation: nonPrimesFadeOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-left {
-						animation: nonPrimesFadeOutLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-right {
-						animation: nonPrimesFadeOutRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down {
-						animation: firstPrimesMoveDown 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-left {
-						animation: firstPrimesMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-right {
-						animation: firstPrimesMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-left {
-						animation: secondPrimesMoveUpLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-right {
-						animation: secondPrimesMoveUpRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.primes-group-left {
-						animation: primesGroupLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.primes-group-right {
-						animation: primesGroupRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes firstPrimesMoveDownLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes firstPrimesMoveDownRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOut {
-						0% {
-							opacity: 0.5;
-						}
-						100% {
-							opacity: 0;
-						}
-					}
-
-					@keyframes nonPrimesFadeOutLeft {
-						0% {
-							opacity: 0.5;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOutRight {
-						0% {
-							opacity: 0.5;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes linesShrinkAnimation {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkAppear {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkMoveLeft {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveLeftRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRightRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					.main-numbers-move-down {
-						animation: mainNumbersMoveDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.main-numbers-move-down-left {
-						animation: mainNumbersMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.main-numbers-move-down-right {
-						animation: mainNumbersMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					@keyframes mainNumbersMoveDown {
-						from {
-							transform: translate(0, 0);
-						}
-						to {
-							transform: translate(0, 20px);
-						}
-					}
-
-					@keyframes mainNumbersMoveDownLeft {
-						from {
-							transform: translate(-70px, -60px);
-						}
-						to {
-							transform: translate(-70px, -30px);
-						}
-					}
-
-					@keyframes mainNumbersMoveDownRight {
-						from {
-							transform: translate(70px, -60px);
-						}
-						to {
-							transform: translate(70px, -30px);
-						}
-					}
-
-					.multiplication-symbols-fade-in {
-						animation: multiplicationSymbolsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.multiplication-symbols-fade-out {
-						animation: multiplicationSymbolsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes multiplicationSymbolsFadeIn {
-						from {
-							opacity: 0;
-						}
-						to {
-							opacity: 1;
-						}
-					}
-
-					@keyframes multiplicationSymbolsFadeOut {
-						from {
-							opacity: 1;
-						}
-						to {
-							opacity: 0;
-						}
-					}
-
-					.separating-lines-fade-in {
-						animation: separatingLinesFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out {
-						animation: separatingLinesFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-left {
-						animation: separatingLinesFadeInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-left {
-						animation: separatingLinesFadeOutLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right {
-						animation: separatingLinesFadeInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right {
-						animation: separatingLinesFadeOutRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right-side-left {
-						animation: separatingLinesFadeInRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right-side-left {
-						animation: separatingLinesFadeOutRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right-side-right {
-						animation: separatingLinesFadeInRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right-side-right {
-						animation: separatingLinesFadeOutRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.power-expressions-fade-in {
-						animation: powerExpressionsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.power-expressions-fade-out {
-						animation: powerExpressionsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes separatingLinesFadeIn {
-						from {
-							height: 0;
-							opacity: 0;
-						}
-						to {
-							height: 20px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes separatingLinesFadeInLeft {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translateX(-25px) skewX(30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRight {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translateX(-45px) skewX(-30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRightSideLeft {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRightSideRight {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes powerExpressionsFadeIn {
-						from {
-							opacity: 0;
-							transform: translateY(10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-
-					@keyframes powerExpressionsFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					/* Prime factor fade out animations */
-					.prime-fade-out-left-1 {
-						animation: primeFadeOutLeft1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-left-2 {
-						animation: primeFadeOutLeft2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-left-3 {
-						animation: primeFadeOutLeft3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-1 {
-						animation: primeFadeOutRight1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-2 {
-						animation: primeFadeOutRight2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-3 {
-						animation: primeFadeOutRight3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeFadeOutLeft1 {
-						0% {
-							opacity: 1;
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes primeFadeOutLeft2 {
-						0% {
-							opacity: 1;
-							transform: translate(-520%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutLeft3 {
-						0% {
-							opacity: 1;
-							transform: translate(-520%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutRight1 {
-						0% {
-							opacity: 1;
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes primeFadeOutRight2 {
-						0% {
-							opacity: 1;
-							transform: translate(400%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutRight3 {
-						0% {
-							opacity: 1;
-							transform: translate(400%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes separatingLinesFadeOut {
-						from {
-							height: 20px;
-							opacity: 1;
-						}
-						to {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes separatingLinesFadeOutLeft {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRight {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRightSideLeft {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRightSideRight {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-					}
-
-					.exponent-move-up-right {
-						animation: exponentMoveUpRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.exponent-move-up-left {
-						animation: exponentMoveUpLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.final-multiplication-fade-in {
-						animation: finalMultiplicationFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.lcm-text-fade-in {
-						animation: lcmTextFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes powerExpressionsFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					@keyframes exponentMoveUpRight {
-						from {
-							transform: translate(0px, 0px);
-						}
-						to {
-							transform: translate(140px, -60px);
-						}
-					}
-
-					@keyframes exponentMoveUpLeft {
-						from {
-							transform: translate(0px, 0px);
-						}
-						to {
-							transform: translate(-70px, -60px);
-						}
-					}
-
-					@keyframes finalMultiplicationFadeIn {
-						from {
-							opacity: 0;
-							transform: translate(-7px,-60px);
-						}
-						to {
-							opacity: 1;
-							transform: translate(-7px, -60px);
-						}
-					}
-
-					@keyframes lcmTextFadeIn {
-						from {
-							opacity: 0;
-							transform: translate(-123px, -110px);
-						}
-						to {
-							opacity: 1;
-							transform: translate(-123px, -110px);
-						}
-					}
-
-					.exponents-jump-out-left {
-						animation: exponentsJumpOutLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.exponents-jump-out-right {
-						animation: exponentsJumpOutRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes exponentsJumpOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					.replacement-numbers-jump-in-left {
-						animation: replacementNumbersJumpInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.replacement-numbers-jump-in-right {
-						animation: replacementNumbersJumpInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes replacementNumbersJumpInLeft {
-						0% {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					.replacement-numbers-fade-out-left {
-						animation: replacementNumbersFadeOutLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.replacement-numbers-fade-out-right {
-						animation: replacementNumbersFadeOutRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes replacementNumbersFadeOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(165px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersFadeOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-95px, -60px) scale(1);
-						}
-					}
-
-					.final-multiplication-fade-out {
-						animation: finalMultiplicationFadeOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalMultiplicationFadeOut {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					.final-result-jump-in {
-						animation: finalResultJumpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.lcm-text-move-right {
-						animation: lcmTextMoveRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalResultJumpIn {
-						0% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-					}
-
-					@keyframes lcmTextMoveRight {
-						0% {
-							transform: translate(-123px, -110px);
-						}
-						100% {
-							transform: translate(-88px, -110px);
-						}
-					}
-
-					/* Final elements jump out animations */
-					.final-elements-jump-out {
-						animation: finalElementsJumpOut 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-left {
-						animation: finalElementsJumpOutLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-right {
-						animation: finalElementsJumpOutRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-center {
-						animation: finalElementsJumpOutCenter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes finalElementsJumpOut {
-						0% {
-							opacity: 1;
-							transform: scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutCenter {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-					}
-
-					/* Red elements jump in animations */
-					.red-elements-jump-in {
-						animation: redElementsJumpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.red-elements-jump-in-left {
-						animation: redElementsJumpInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.red-elements-jump-in-right {
-						animation: redElementsJumpInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes redElementsJumpIn {
-						0% {
-							opacity: 0;
-							transform: scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: scale(1);
-						}
-					}
-
-					@keyframes redElementsJumpInLeft {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					@keyframes redElementsJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-					}
-
-					/* Speech Bubble Styles */
-					.flexi-wave-bottom-left {
-						position: absolute;
-						left: 0.4rem;
-						bottom: 18px;
-						width: 70px;
-						max-width: 70px;
-						min-width: 40px;
-						width: 5rem;
-						height: auto;
-						z-index: 2;
-						pointer-events: none;
-					}
-					
-					.flexi-wave-bubble-container {
-						position: absolute;
-						left: 0;
-						bottom: 0;
-						display: flex;
-						align-items: flex-end;
-						z-index: 3;
-					}
-					
-					.speech-bubble {
-						position: relative;
-						margin-left: 5rem;
-						margin-right: 1rem;
-						margin-bottom: 70px;
-						background: #fff;
-						border-radius: 18px;
-						padding: 7px 13px;
-						font-size: 0.95rem;
-						color: #222;
-						box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-						min-width: 160px;
-						max-width: 90vw;
-						word-break: break-word;
-					}
-					
-					.speech-bubble:after {
-						content: '';
-						position: absolute;
-						left: -18px;
-						bottom: 16px;
-						width: 0;
-						height: 0;
-						border-top: 12px solid transparent;
-						border-bottom: 12px solid transparent;
-						border-right: 18px solid #fff;
-						filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.08));
-					}
-					
-					.flexi-telescope-fade-in {
-						animation: flexiFadeIn 0.6s ease-in-out;
-					}
-					
-					.speech-bubble-fade-in {
-						animation: speechBubbleFadeIn 0.5s ease-in-out 0.2s both;
-					}
-					
-					@keyframes flexiFadeIn {
-						from {
-							opacity: 0;
-							transform: translateY(10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-					
-					@keyframes speechBubbleFadeIn {
-						from {
-							opacity: 0;
-							transform: translateX(-10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateX(0);
-						}
-					}
-					
-					.flexi-first-step-fade-out {
-						animation: flexiFirstStepFadeOut 0.2s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
-					}
-					
-					@keyframes flexiFirstStepFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					.glow-button::before {
-						content: "";
-						display: block;
-						position: absolute;
-						background: #fff;
-						inset: 2px;
-						border-radius: 4px;
-						z-index: -2;
-					}
-
-					.simple-glow { 
-						background: conic-gradient(
-							from var(--r),
-							transparent 0%,
-							rgb(0, 255, 132) 2%,
-							rgb(0, 214, 111) 8%,
-							rgb(0, 174, 90) 12%,
-							rgb(0, 133, 69) 14%,
-							transparent 15%
-						);
-						animation: rotating 3s linear infinite;
-						transition: animation 0.3s ease;
-					}
-
-					.simple-glow.stopped {
-						animation: none;
-						background: none;
-					}
-
-					@keyframes rotating {
-						0% {
-							--r: 0deg;
-						}
-						100% {
-							--r: 360deg;
-						}
-					}
-
-					.explore-button {
-						background-color: #008545;
-						color: white;
-						border: none;
-						border-radius: 4px;
-						padding: 0.375rem 0.75rem;
-						font-size: 0.875rem;
-						font-weight: 600;
-						cursor: pointer;
-						transition: background-color 0.2s;
-					}
-
-					.explore-button:hover {
-						background-color: #00783E;
-					}
-
-					.prime-move-left-1 {
-						animation: primeMoveLeft1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-left-2 {
-						animation: primeMoveLeft2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-1 {
-						animation: primeMoveRight1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2 {
-						animation: primeMoveRight2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-1 {
-						animation: primeUnder6_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-2 {
-						animation: primeUnder6_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-1 {
-						animation: primeUnder9_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-2 {
-						animation: primeUnder9_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveLeft2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					.line-under-6-left {
-						animation: lineUnder6Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-6-right {
-						animation: lineUnder6Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-left {
-						animation: lineUnder8Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-right {
-						animation: lineUnder8Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder6Left {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder6Right {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.line-under-9-left {
-						animation: lineUnder9Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-9-right {
-						animation: lineUnder9Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder9Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder9Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.fade-non-primes {
-						animation: fadeNonPrimes 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes fadeNonPrimes {
-						0% {
-							opacity: 1;
-						}
-						100% {
-							opacity: 0.5;
-						}
-					}
-
-					.prime-move-left-2-no-opacity {
-						animation: primeMoveLeft2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2-no-opacity {
-						animation: primeMoveRight2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft2NoOpacity {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					@keyframes primeMoveRight2NoOpacity {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					.lines-shrink {
-						animation: linesShrinkAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-appear {
-						animation: linesShrinkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left {
-						animation: linesShrinkMoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left-right {
-						animation: linesShrinkMoveLeftRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right {
-						animation: linesShrinkMoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right-right {
-						animation: linesShrinkMoveRightRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-6-left {
-						animation: linesShrinkUnder6Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-9-left {
-						animation: linesShrinkUnder9Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-9-right {
-						animation: linesShrinkUnder9Right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out {
-						animation: nonPrimesFadeOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-left {
-						animation: nonPrimesFadeOutLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-right {
-						animation: nonPrimesFadeOutRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down {
-						animation: firstPrimesMoveDown 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-left {
-						animation: firstPrimesMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-right {
-						animation: firstPrimesMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-left {
-						animation: secondPrimesMoveUpLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-right {
-						animation: secondPrimesMoveUpRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.primes-group-left {
-						animation: primesGroupLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.primes-group-right {
-						animation: primesGroupRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes firstPrimesMoveDownLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes firstPrimesMoveDownRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOut {
-						0% {
-							opacity: 0.5;
-						}
-						100% {
-							opacity: 0;
-						}
-					}
-
-					@keyframes nonPrimesFadeOutLeft {
-						0% {
-							opacity: 0.5;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOutRight {
-						0% {
-							opacity: 0.5;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes linesShrinkAnimation {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkAppear {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkMoveLeft {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveLeftRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRightRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					.main-numbers-move-down {
-						animation: mainNumbersMoveDown 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.main-numbers-move-down-left {
-						animation: mainNumbersMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.main-numbers-move-down-right {
-						animation: mainNumbersMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					@keyframes mainNumbersMoveDown {
-						from {
-							transform: translate(0, 0);
-						}
-						to {
-							transform: translate(0, 20px);
-						}
-					}
-
-					@keyframes mainNumbersMoveDownLeft {
-						from {
-							transform: translate(-70px, -60px);
-						}
-						to {
-							transform: translate(-70px, -30px);
-						}
-					}
-
-					@keyframes mainNumbersMoveDownRight {
-						from {
-							transform: translate(70px, -60px);
-						}
-						to {
-							transform: translate(70px, -30px);
-						}
-					}
-
-					.multiplication-symbols-fade-in {
-						animation: multiplicationSymbolsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.multiplication-symbols-fade-out {
-						animation: multiplicationSymbolsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes multiplicationSymbolsFadeIn {
-						from {
-							opacity: 0;
-						}
-						to {
-							opacity: 1;
-						}
-					}
-
-					@keyframes multiplicationSymbolsFadeOut {
-						from {
-							opacity: 1;
-						}
-						to {
-							opacity: 0;
-						}
-					}
-
-					.separating-lines-fade-in {
-						animation: separatingLinesFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out {
-						animation: separatingLinesFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-left {
-						animation: separatingLinesFadeInLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-left {
-						animation: separatingLinesFadeOutLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right {
-						animation: separatingLinesFadeInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right {
-						animation: separatingLinesFadeOutRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right-side-left {
-						animation: separatingLinesFadeInRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right-side-left {
-						animation: separatingLinesFadeOutRightSideLeft 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-in-right-side-right {
-						animation: separatingLinesFadeInRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.separating-lines-fade-out-right-side-right {
-						animation: separatingLinesFadeOutRightSideRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.power-expressions-fade-in {
-						animation: powerExpressionsFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.power-expressions-fade-out {
-						animation: powerExpressionsFadeOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes separatingLinesFadeIn {
-						from {
-							height: 0;
-							opacity: 0;
-						}
-						to {
-							height: 20px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes separatingLinesFadeInLeft {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translateX(-25px) skewX(30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRight {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translateX(-45px) skewX(-30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRightSideLeft {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeInRightSideRight {
-						from {
-							height: 0;
-							opacity: 0;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 38px;
-							opacity: 1;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes powerExpressionsFadeIn {
-						from {
-							opacity: 0;
-							transform: translateY(10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-
-					@keyframes powerExpressionsFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					/* Prime factor fade out animations */
-					.prime-fade-out-left-1 {
-						animation: primeFadeOutLeft1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-left-2 {
-						animation: primeFadeOutLeft2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-left-3 {
-						animation: primeFadeOutLeft3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-1 {
-						animation: primeFadeOutRight1 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-2 {
-						animation: primeFadeOutRight2 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-fade-out-right-3 {
-						animation: primeFadeOutRight3 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeFadeOutLeft1 {
-						0% {
-							opacity: 1;
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes primeFadeOutLeft2 {
-						0% {
-							opacity: 1;
-							transform: translate(-520%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutLeft3 {
-						0% {
-							opacity: 1;
-							transform: translate(-520%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutRight1 {
-						0% {
-							opacity: 1;
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes primeFadeOutRight2 {
-						0% {
-							opacity: 1;
-							transform: translate(400%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes primeFadeOutRight3 {
-						0% {
-							opacity: 1;
-							transform: translate(400%, -400%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes separatingLinesFadeOut {
-						from {
-							height: 20px;
-							opacity: 1;
-						}
-						to {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes separatingLinesFadeOutLeft {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRight {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-58px, 10px) skewX(-30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRightSideLeft {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(-11px, 10px) skewX(30deg);
-						}
-					}
-
-					@keyframes separatingLinesFadeOutRightSideRight {
-						from {
-							height: 38px;
-							opacity: 1;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-						to {
-							height: 0;
-							opacity: 0;
-							transform: translate(44px, 10px) skewX(-30deg);
-						}
-					}
-
-					.exponent-move-up-right {
-						animation: exponentMoveUpRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.exponent-move-up-left {
-						animation: exponentMoveUpLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.final-multiplication-fade-in {
-						animation: finalMultiplicationFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.lcm-text-fade-in {
-						animation: lcmTextFadeIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes powerExpressionsFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					@keyframes exponentMoveUpRight {
-						from {
-							transform: translate(0px, 0px);
-						}
-						to {
-							transform: translate(140px, -60px);
-						}
-					}
-
-					@keyframes exponentMoveUpLeft {
-						from {
-							transform: translate(0px, 0px);
-						}
-						to {
-							transform: translate(-70px, -60px);
-						}
-					}
-
-					@keyframes finalMultiplicationFadeIn {
-						from {
-							opacity: 0;
-							transform: translate(-7px,-60px);
-						}
-						to {
-							opacity: 1;
-							transform: translate(-7px, -60px);
-						}
-					}
-
-					@keyframes lcmTextFadeIn {
-						from {
-							opacity: 0;
-							transform: translate(-123px, -110px);
-						}
-						to {
-							opacity: 1;
-							transform: translate(-123px, -110px);
-						}
-					}
-
-					.exponents-jump-out-left {
-						animation: exponentsJumpOutLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.exponents-jump-out-right {
-						animation: exponentsJumpOutRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes exponentsJumpOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					.replacement-numbers-jump-in-left {
-						animation: replacementNumbersJumpInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.replacement-numbers-jump-in-right {
-						animation: replacementNumbersJumpInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes replacementNumbersJumpInLeft {
-						0% {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					.replacement-numbers-fade-out-left {
-						animation: replacementNumbersFadeOutLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.replacement-numbers-fade-out-right {
-						animation: replacementNumbersFadeOutRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes replacementNumbersFadeOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(165px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersFadeOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-95px, -60px) scale(1);
-						}
-					}
-
-					.final-multiplication-fade-out {
-						animation: finalMultiplicationFadeOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalMultiplicationFadeOut {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					.final-result-jump-in {
-						animation: finalResultJumpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.lcm-text-move-right {
-						animation: lcmTextMoveRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalResultJumpIn {
-						0% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-					}
-
-					@keyframes lcmTextMoveRight {
-						0% {
-							transform: translate(-123px, -110px);
-						}
-						100% {
-							transform: translate(-88px, -110px);
-						}
-					}
-
-					/* Final elements jump out animations */
-					.final-elements-jump-out {
-						animation: finalElementsJumpOut 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-left {
-						animation: finalElementsJumpOutLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-right {
-						animation: finalElementsJumpOutRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-center {
-						animation: finalElementsJumpOutCenter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes finalElementsJumpOut {
-						0% {
-							opacity: 1;
-							transform: scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutCenter {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-					}
-
-					/* Red elements jump in animations */
-					.red-elements-jump-in {
-						animation: redElementsJumpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.red-elements-jump-in-left {
-						animation: redElementsJumpInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.red-elements-jump-in-right {
-						animation: redElementsJumpInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes redElementsJumpIn {
-						0% {
-							opacity: 0;
-							transform: scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: scale(1);
-						}
-					}
-
-					@keyframes redElementsJumpInLeft {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					@keyframes redElementsJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-					}
-
-					/* Speech Bubble Styles */
-					.flexi-wave-bottom-left {
-						position: absolute;
-						left: 0.4rem;
-						bottom: 18px;
-						width: 70px;
-						max-width: 70px;
-						min-width: 40px;
-						width: 5rem;
-						height: auto;
-						z-index: 2;
-						pointer-events: none;
-					}
-					
-					.flexi-wave-bubble-container {
-						position: absolute;
-						left: 0;
-						bottom: 0;
-						display: flex;
-						align-items: flex-end;
-						z-index: 3;
-					}
-					
-					.speech-bubble {
-						position: relative;
-						margin-left: 5rem;
-						margin-right: 1rem;
-						margin-bottom: 70px;
-						background: #fff;
-						border-radius: 18px;
-						padding: 7px 13px;
-						font-size: 0.95rem;
-						color: #222;
-						box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-						min-width: 160px;
-						max-width: 90vw;
-						word-break: break-word;
-					}
-					
-					.speech-bubble:after {
-						content: '';
-						position: absolute;
-						left: -18px;
-						bottom: 16px;
-						width: 0;
-						height: 0;
-						border-top: 12px solid transparent;
-						border-bottom: 12px solid transparent;
-						border-right: 18px solid #fff;
-						filter: drop-shadow(-2px 2px 2px rgba(0,0,0,0.08));
-					}
-					
-					.flexi-telescope-fade-in {
-						animation: flexiFadeIn 0.6s ease-in-out;
-					}
-					
-					.speech-bubble-fade-in {
-						animation: speechBubbleFadeIn 0.5s ease-in-out 0.2s both;
-					}
-					
-					@keyframes flexiFadeIn {
-						from {
-							opacity: 0;
-							transform: translateY(10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateY(0);
-						}
-					}
-					
-					@keyframes speechBubbleFadeIn {
-						from {
-							opacity: 0;
-							transform: translateX(-10px);
-						}
-						to {
-							opacity: 1;
-							transform: translateX(0);
-						}
-					}
-					
-					.flexi-first-step-fade-out {
-						animation: flexiFirstStepFadeOut 0.2s cubic-bezier(0.4, 0.2, 0.2, 1) forwards;
-					}
-					
-					@keyframes flexiFirstStepFadeOut {
-						from {
-							opacity: 1;
-							transform: translateY(0);
-						}
-						to {
-							opacity: 0;
-							transform: translateY(-10px);
-						}
-					}
-
-					.glow-button::before {
-						content: "";
-						display: block;
-						position: absolute;
-						background: #fff;
-						inset: 2px;
-						border-radius: 4px;
-						z-index: -2;
-					}
-
-					.simple-glow { 
-						background: conic-gradient(
-							from var(--r),
-							transparent 0%,
-							rgb(0, 255, 132) 2%,
-							rgb(0, 214, 111) 8%,
-							rgb(0, 174, 90) 12%,
-							rgb(0, 133, 69) 14%,
-							transparent 15%
-						);
-						animation: rotating 3s linear infinite;
-						transition: animation 0.3s ease;
-					}
-
-					.simple-glow.stopped {
-						animation: none;
-						background: none;
-					}
-
-					@keyframes rotating {
-						0% {
-							--r: 0deg;
-						}
-						100% {
-							--r: 360deg;
-						}
-					}
-
-					.explore-button {
-						background-color: #008545;
-						color: white;
-						border: none;
-						border-radius: 4px;
-						padding: 0.375rem 0.75rem;
-						font-size: 0.875rem;
-						font-weight: 600;
-						cursor: pointer;
-						transition: background-color 0.2s;
-					}
-
-					.explore-button:hover {
-						background-color: #00783E;
-					}
-
-					.prime-move-left-1 {
-						animation: primeMoveLeft1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-left-2 {
-						animation: primeMoveLeft2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-1 {
-						animation: primeMoveRight1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2 {
-						animation: primeMoveRight2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-1 {
-						animation: primeUnder6_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-6-2 {
-						animation: primeUnder6_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-1 {
-						animation: primeUnder9_1 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-under-9-2 {
-						animation: primeUnder9_2 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveLeft2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeMoveRight2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_1 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder6_2 {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_1 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					@keyframes primeUnder9_2 {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-					}
-
-					.line-under-6-left {
-						animation: lineUnder6Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-6-right {
-						animation: lineUnder6Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-left {
-						animation: lineUnder8Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-8-right {
-						animation: lineUnder8Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder6Left {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder6Right {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder8Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.line-under-9-left {
-						animation: lineUnder9Left 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					.line-under-9-right {
-						animation: lineUnder9Right 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-						transform-origin: top center;
-					}
-
-					@keyframes lineUnder9Left {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					@keyframes lineUnder9Right {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 0;
-							opacity: 0;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-							height: 38px;
-							opacity: 1;
-						}
-					}
-
-					.fade-non-primes {
-						animation: fadeNonPrimes 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes fadeNonPrimes {
-						0% {
-							opacity: 1;
-						}
-						100% {
-							opacity: 0.5;
-						}
-					}
-
-					.prime-move-left-2-no-opacity {
-						animation: primeMoveLeft2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2-no-opacity {
-						animation: primeMoveRight2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft2NoOpacity {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					@keyframes primeMoveRight2NoOpacity {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					.lines-shrink {
-						animation: linesShrinkAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-appear {
-						animation: linesShrinkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left {
-						animation: linesShrinkMoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left-right {
-						animation: linesShrinkMoveLeftRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right {
-						animation: linesShrinkMoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right-right {
-						animation: linesShrinkMoveRightRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-6-left {
-						animation: linesShrinkUnder6Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-9-left {
-						animation: linesShrinkUnder9Left 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-under-9-right {
-						animation: linesShrinkUnder9Right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out {
-						animation: nonPrimesFadeOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-left {
-						animation: nonPrimesFadeOutLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.non-primes-fade-out-right {
-						animation: nonPrimesFadeOutRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down {
-						animation: firstPrimesMoveDown 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-left {
-						animation: firstPrimesMoveDownLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.first-primes-move-down-right {
-						animation: firstPrimesMoveDownRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-left {
-						animation: secondPrimesMoveUpLeft 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.second-primes-move-up-right {
-						animation: secondPrimesMoveUpRight 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.primes-group-left {
-						animation: primesGroupLeft 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.primes-group-right {
-						animation: primesGroupRight 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes firstPrimesMoveDownLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-90px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes firstPrimesMoveDownRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(50px, -48px) translateX(-150%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpLeft {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(-520%, -400%);
-						}
-					}
-
-					@keyframes secondPrimesMoveUpRight {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							transform: translate(400%, -400%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOut {
-						0% {
-							opacity: 0.5;
-						}
-						100% {
-							opacity: 0;
-						}
-					}
-
-					@keyframes nonPrimesFadeOutLeft {
-						0% {
-							opacity: 0.5;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes nonPrimesFadeOutRight {
-						0% {
-							opacity: 0.5;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%);
-						}
-					}
-
-					@keyframes linesShrinkAnimation {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkAppear {
-						0% {
-							height: 38px;
-							opacity: 1;
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-						}
-					}
-
-					@keyframes linesShrinkMoveLeft {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveLeftRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkMoveRightRight {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder6Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(-70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Left {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(-30deg);
-						}
-					}
-
-					@keyframes linesShrinkUnder9Right {
-						0% {
-							height: 38px;
-							opacity: 1;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-						100% {
-							height: 0;
-							opacity: 0;
-							transform: translate(70px, -60px) translateX(-50%) skewX(30deg);
-						}
-					}
-
-					.fade-non-primes {
-						animation: fadeNonPrimes 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes fadeNonPrimes {
-						0% {
-							opacity: 1;
-						}
-						100% {
-							opacity: 0.5;
-						}
-					}
-
-					.prime-move-left-2-no-opacity {
-						animation: primeMoveLeft2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.prime-move-right-2-no-opacity {
-						animation: primeMoveRight2NoOpacity 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes primeMoveLeft2NoOpacity {
-						0% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(-70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					@keyframes primeMoveRight2NoOpacity {
-						0% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0;
-						}
-						99% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 1;
-						}
-						100% {
-							transform: translate(70px, -60px) translateX(-50%);
-							opacity: 0.5;
-						}
-					}
-
-					.lines-shrink {
-						animation: linesShrinkAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-appear {
-						animation: linesShrinkAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left {
-						animation: linesShrinkMoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-left-right {
-						animation: linesShrinkMoveLeftRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right {
-						animation: linesShrinkMoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-					}
-
-					.lines-shrink-move-right-right {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes exponentsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					.replacement-numbers-jump-in-left {
-						animation: replacementNumbersJumpInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.replacement-numbers-jump-in-right {
-						animation: replacementNumbersJumpInRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes replacementNumbersJumpInLeft {
-						0% {
-							opacity: 0;
-							transform: translate(140px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersJumpInRight {
-						0% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-					}
-
-					.replacement-numbers-fade-out-left {
-						animation: replacementNumbersFadeOutLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					.replacement-numbers-fade-out-right {
-						animation: replacementNumbersFadeOutRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes replacementNumbersFadeOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(140px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(165px, -60px) scale(1);
-						}
-					}
-
-					@keyframes replacementNumbersFadeOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-95px, -60px) scale(1);
-						}
-					}
-
-					.final-multiplication-fade-out {
-						animation: finalMultiplicationFadeOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalMultiplicationFadeOut {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					.final-result-jump-in {
-						animation: finalResultJumpIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.lcm-text-move-right {
-						animation: lcmTextMoveRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes finalResultJumpIn {
-						0% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-					}
-
-					@keyframes lcmTextMoveRight {
-						0% {
-							transform: translate(-123px, -110px);
-						}
-						100% {
-							transform: translate(-88px, -110px);
-						}
-					}
-
-					/* Final elements jump out animations */
-					.final-elements-jump-out {
-						animation: finalElementsJumpOut 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-left {
-						animation: finalElementsJumpOutLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-right {
-						animation: finalElementsJumpOutRight 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					.final-elements-jump-out-center {
-						animation: finalElementsJumpOutCenter 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-					}
-
-					@keyframes finalElementsJumpOut {
-						0% {
-							opacity: 1;
-							transform: scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutCenter {
-						0% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-7px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-7px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutLeft {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					@keyframes finalElementsJumpOutRight {
-						0% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-					}
-
-					/* Small screen positioning classes */
-					.small-screen-position {
-						transform: translate(35px, -60px) translateX(-100%) !important;
-					}
-
-					.small-screen-position.number-move-right,
-					.small-screen-position.main-numbers-move-down-right {
-						transform: translate(35px, -60px) translateX(-100%) !important;
-					}
-
-					.small-screen-prime {
-						transform: translate(40px, -60px) translateX(-100%) !important;
-					}
-
-					.small-screen-multiplication {
-						transform: translate(35px, -60px) translateX(-100%) !important;
-					}
-
-					.small-screen-line-left {
-						transform: translate(35px, -60px) translateX(-100%) skewX(-30deg) !important;
-					}
-
-					.small-screen-line-right {
-						transform: translate(35px, -60px) translateX(-100%) skewX(30deg) !important;
-					}
-
-					/* Remove scroll bars from number inputs */
-					input[type="number"]::-webkit-outer-spin-button,
-					input[type="number"]::-webkit-inner-spin-button {
-						-webkit-appearance: none;
-						margin: 0;
-					}
-
-					input[type="number"] {
-						-moz-appearance: textfield;
-					}
-
-					.lcm-text-move-down {
-						animation: lcmTextMoveDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes lcmTextMoveDown {
-						0% {
-							transform: translateX(-50%) translate(-88px, -110px);
-						}
-						100% {
-							transform: translateX(-50%) translate(-88px, 5px);
-						}
-					}
-
-					.lcm-answer-move-down {
-						animation: lcmAnswerMoveDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes lcmAnswerMoveDown {
-						0% {
-							transform: translate(-23px, -60px);
-						}
-						100% {
-							transform: translate(-23px, 55px);
-						}
-					}
-
-					.input-one-jump-out {
-						animation: inputOneJumpOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes inputOneJumpOut {
-						0% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(-70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(-70px, -60px) scale(0);
-						}
-					}
-
-					.input-two-jump-out {
-						animation: inputTwoJumpOut 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes inputTwoJumpOut {
-						0% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1);
-						}
-						50% {
-							opacity: 1;
-							transform: translate(70px, -60px) scale(1.3);
-						}
-						100% {
-							opacity: 0;
-							transform: translate(70px, -60px) scale(0);
-						}
-					}
-
-					.purple-text-jump-in {
-						animation: purpleTextJumpIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-					}
-
-					@keyframes purpleTextJumpIn {
-						0% {
-							opacity: 0;
-							transform: scale(0);
-						}
-						50% {
-							opacity: 1;
-							transform: scale(1.3);
-						}
-						100% {
-							opacity: 1;
-							transform: scale(1);
-						}
-					}
-						
-				`}
-			</style>
 			<div className="p-4">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">LCM Explorer</h2>
@@ -5118,9 +1134,9 @@ const LCM = () => {
 										</div>
 									)}
 									{showFinalFlexi && (
-										<div className="flexi-wave-bubble-container">
+										<div className={`flexi-wave-bubble-container ${isFlexiFadingOut ? 'flexi-first-step-fade-out' : ''}`}>
 											<img src={FlexiWave} alt="Flexi Wave" className="flexi-wave-bottom-left flexi-telescope-fade-in" />
-											<div className="speech-bubble speech-bubble-fade-in">
+											<div className={`speech-bubble ${isFlexiFadingOut ? 'flexi-first-step-fade-out' : 'speech-bubble-fade-in'}`}>
 												Enter your own numbers and find their <b>Least Common Multiple</b>!
 											</div>
 										</div>
@@ -5128,6 +1144,264 @@ const LCM = () => {
 								</div>
 							)}
 						</div>
+						
+						{/* Dynamic Factor Trees - Now inside the main container */}
+						{(showDynamicTree1 || showDynamicTree2) && (
+							<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
+								{showDynamicTree1 && (
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
+										{/* SVG for lines and nodes for tree 1 */}
+										<svg
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												width: '100%',
+												height: '100%',
+												pointerEvents: 'none'
+											}}
+										>
+											{factorTree1.map((node, index) => {
+												const isVisible = index < treeAnimationStep1;
+												const xPos = node.x * 60 + 83;
+												const yPos = node.y * 80 + 20;
+												
+												// Only draw lines if this node has children (not prime)
+												if (node.isPrime) return null;
+												
+												// Find child nodes
+												const leftChild = factorTree1.find(n => 
+													n.level === node.level + 1 && 
+													Math.abs(n.x - (node.x - 1)) < 0.1
+												);
+												const rightChild = factorTree1.find(n => 
+													n.level === node.level + 1 && 
+													Math.abs(n.x - (node.x + 1)) < 0.1
+												);
+												
+												return (
+													<React.Fragment key={`svg-lines-1-${node.id}`}>
+														{/* Line to left child */}
+														{leftChild && (
+															<line
+																x1={xPos + 20}
+																y1={yPos + 50}
+																x2={leftChild.x * 60 + 83 + 60}
+																y2={leftChild.y * 80 + 40 - 15}
+																stroke="#5750E3"
+																strokeWidth="2"
+																opacity={isVisible ? 1 : 0}
+																style={{
+																	transition: 'opacity 0.3s ease'
+																}}
+															/>
+														)}
+														{/* Line to right child */}
+														{rightChild && (
+															<line
+																x1={xPos + 20}
+																y1={yPos + 50}
+																x2={rightChild.x * 60 + 83 - 20}
+																y2={rightChild.y * 80 + 40 - 15}
+																stroke="#5750E3"
+																strokeWidth="2"
+																opacity={isVisible ? 1 : 0}
+																style={{
+																	transition: 'opacity 0.3s ease'
+																}}
+															/>
+														)}
+													</React.Fragment>
+												);
+											})}
+										</svg>
+										
+										{/* Render all nodes */}
+										{factorTree1.map((node, index) => {
+											const isVisible = index < treeAnimationStep1;
+											let xPos = node.x * 60 + (node.level * -28) + 110;
+											const yPos = 20 + (node.level * 80);
+											
+											// Hide the first node (root node)
+											if (index === 0) {
+												return null;
+											}
+											
+											// Adjust x position for child nodes to align with skewed lines
+											if (node.level > 0) {
+												// Find parent node by coordinates
+												const parent = factorTree1.find(n => 
+													n.level === node.level - 1 && 
+													((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+													n.y === node.y - 1
+												);
+												
+												if (parent) {
+													if (parent.x > node.x) {
+														// This is a left child, offset rightward
+														xPos += 40;
+													} else {
+														// This is a right child, offset leftward
+														xPos -= 15;
+													}
+												}
+											}
+											
+											// Determine node class based on level and type
+											let nodeClass = 'tree-node';
+											if (node.level === 0) {
+												nodeClass += ' root';
+											} else if (node.isPrime) {
+												nodeClass += ' prime';
+											} else {
+												nodeClass += ' non-prime';
+											}
+											
+											return (
+												<div
+													key={`node-1-${node.id}`}
+													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+													style={{
+														left: xPos,
+														top: yPos,
+														opacity: isVisible ? 1 : 0,
+														transform: 'translateX(-50%)'
+													}}
+												>
+													{node.value}
+												</div>
+											);
+										})}
+									</div>
+								)}
+								{showDynamicTree2 && (
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '75%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
+										{/* SVG for lines and nodes for tree 2 */}
+										<svg
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												width: '100%',
+												height: '100%',
+												pointerEvents: 'none'
+											}}
+										>
+											{factorTree2.map((node, index) => {
+												const isVisible = index < treeAnimationStep2;
+												const xPos = node.x * 60 + 82;
+												const yPos = node.y * 80 + 20;
+												
+												// Only draw lines if this node has children (not prime)
+												if (node.isPrime) return null;
+												
+												// Find child nodes
+												const leftChild = factorTree2.find(n => 
+													n.level === node.level + 1 && 
+													Math.abs(n.x - (node.x - 1)) < 0.1
+												);
+												const rightChild = factorTree2.find(n => 
+													n.level === node.level + 1 && 
+													Math.abs(n.x - (node.x + 1)) < 0.1
+												);
+												
+												return (
+													<React.Fragment key={`svg-lines-2-${node.id}`}>
+														{/* Line to left child */}
+														{leftChild && (
+															<line
+																x1={xPos + 20}
+																y1={yPos + 50}
+																x2={leftChild.x * 60 + 82 + 60}
+																y2={leftChild.y * 80 + 40 - 15}
+																stroke="#5750E3"
+																strokeWidth="2"
+																opacity={isVisible ? 1 : 0}
+																style={{
+																	transition: 'opacity 0.3s ease'
+																}}
+															/>
+														)}
+														{/* Line to right child */}
+														{rightChild && (
+															<line
+																x1={xPos + 20}
+																y1={yPos + 50}
+																x2={rightChild.x * 60 + 82 - 20}
+																y2={rightChild.y * 80 + 40 - 15}
+																stroke="#5750E3"
+																strokeWidth="2"
+																opacity={isVisible ? 1 : 0}
+																style={{
+																	transition: 'opacity 0.3s ease'
+																}}
+															/>
+														)}
+													</React.Fragment>
+												);
+											})}
+										</svg>
+										
+										{/* Render all nodes */}
+										{factorTree2.map((node, index) => {
+											const isVisible = index < treeAnimationStep2;
+											let xPos = node.x * 60 + (node.level * -28) + 110;
+											const yPos = 20 + (node.level * 80);
+											
+											// Hide the first node (root node)
+											if (index === 0) {
+												return null;
+											}
+											
+											// Adjust x position for child nodes to align with skewed lines
+											if (node.level > 0) {
+												// Find parent node by coordinates
+												const parent = factorTree2.find(n => 
+													n.level === node.level - 1 && 
+													((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+													n.y === node.y - 1
+												);
+												
+												if (parent) {
+													if (parent.x > node.x) {
+														// This is a left child, offset rightward
+														xPos += 40;
+													} else {
+														// This is a right child, offset leftward
+														xPos -= 15;
+													}
+												}
+											}
+											
+											// Determine node class based on level and type
+											let nodeClass = 'tree-node';
+											if (node.level === 0) {
+												nodeClass += ' root';
+											} else if (node.isPrime) {
+												nodeClass += ' prime';
+											} else {
+												nodeClass += ' non-prime';
+											}
+											
+											return (
+												<div
+													key={`node-2-${node.id}`}
+													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+													style={{
+														left: xPos,
+														top: yPos,
+														opacity: isVisible ? 1 : 0,
+														transform: 'translateX(-50%)'
+													}}
+												>
+													{node.value}
+												</div>
+											);
+										})}
+									</div>
+								)}
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
