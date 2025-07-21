@@ -739,7 +739,7 @@ const LCM = () => {
 											{showRedElements && (
 												<div
 													className={`text-4xl font-bold text-red-500 number-text ${isNumbersMoving ? 'number-move-left' : ''} ${inputsJumpOut ? 'input-one-jump-out' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-left' : ''}`}
-													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
+													style={{ position: 'absolute', top: 0, left: '8rem', transform: 'translateX(-50%)', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
 														type="number"
@@ -911,7 +911,7 @@ const LCM = () => {
 											{showRedElements && (
 												<div
 													className={`text-4xl font-bold text-red-500 number-text right-factor-tree-18 ${isNumbersMoving ? 'number-move-right' : ''} ${inputsJumpOut ? 'input-two-jump-out' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''} ${isSmallScreen && (isNumbersMoving || mainNumbersMoveDown) ? 'small-screen-position' : ''} ${redElementsJumpIn ? 'red-elements-jump-in-right' : ''}`}
-													style={{ position: 'absolute', top: 0, left: '-1rem', opacity: redElementsJumpIn ? 1 : 0 }}
+													style={{ position: 'absolute', top: 0, left: '0rem', transform: 'translateX(-50%)', opacity: redElementsJumpIn ? 1 : 0 }}
 												>
 													<input
 														type="number"
@@ -1092,7 +1092,7 @@ const LCM = () => {
 												{showRedElements && (
 													<div
 														className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveDown ? 'lcm-text-move-down' : ''} ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
-														style={{ left: '135%', top: '-70%', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: 1 }}
+														style={{ left: '15%', top: '-70%', transform: 'translate(-88px, -110px)', opacity: 1 }}
 													>
 														LCM&nbsp;=
 													</div>
@@ -1137,7 +1137,7 @@ const LCM = () => {
 												{showRedElements && (
 													<div
 														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-														style={{ left: '78%', top: '-120%', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
+														style={{ left: '78%', top: '-120%', transform: '', opacity: redElementsJumpIn ? 1 : 0 }}
 													>
 														{inputsModified ? '?' : '36'}
 													</div>

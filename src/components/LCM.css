@@ -1530,30 +1530,30 @@
 @keyframes finalElementsJumpOutLeft {
     0% {
         opacity: 1;
-        transform: translate(-70px, -60px) scale(1);
+        transform: translate(-0px, -60px) scale(1);
     }
     50% {
         opacity: 1;
-        transform: translate(-70px, -60px) scale(1.3);
+        transform: translate(-0px, -60px) scale(1.3);
     }
     100% {
         opacity: 0;
-        transform: translate(-70px, -60px) scale(0);
+        transform: translate(-0px, -60px) scale(0);
     }
 }
 
 @keyframes finalElementsJumpOutRight {
     0% {
         opacity: 1;
-        transform: translate(70px, -60px) scale(1);
+        transform: translate(0px, -60px) scale(1);
     }
     50% {
         opacity: 1;
-        transform: translate(70px, -60px) scale(1.3);
+        transform: translate(0px, -60px) scale(1.3);
     }
     100% {
         opacity: 0;
-        transform: translate(70px, -60px) scale(0);
+        transform: translate(0px, -60px) scale(0);
     }
 }
 
@@ -1760,19 +1760,19 @@ input[type="number"] {
 
 @keyframes lcmTextMoveDown {
     0% {
-        transform: translateX(-50%) translate(-88px, -110px);
+        transform: translate(-88px, -110px);
     }
     100% {
-        transform: translateX(-50%) translate(-88px, 5px);
+        transform: translate(-88px, -20%);
     }
 }
 
 @keyframes lcmAnswerMoveDown {
     0% {
-        transform: translate(-23px, -60px);
+        transform: translate(-435%, -60px);
     }
     100% {
-        transform: translate(-23px, 55px);
+        transform: translate(-435%, 135%);
     }
 }
 
