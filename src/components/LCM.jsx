@@ -345,6 +345,16 @@ const LCM = () => {
 			setShowFinalButton(false);
 			setShowFinalMessage(false);
 			setIsFinalButtonShrinking(false);
+			
+			// Reset line-related states to prevent unwanted animations
+			setShowLines(false);
+			setShowSecondLines(false);
+			setShowSeparatingLines(false);
+			setShowSeparatingLinesRight(false);
+			setFirstLinesShrink(false);
+			setSecondLinesShrink(false);
+			setLinesShrink(false);
+			
 			// First: move numbers up and to the left/right
 			setIsNumbersMoving(true);
 			setLcmTextMoveDown(true);
