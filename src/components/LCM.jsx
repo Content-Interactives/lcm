@@ -845,7 +845,7 @@ const LCM = () => {
 												
 												{/* Replacement number (4) */}
 												{showReplacementNumbers && (
-													<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-left' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-left' : ''}`} style={{ left: '50%', top: '25px', transform: 'translate(140px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>4</div>
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-left' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-left' : ''}`} style={{ left: '50%', top: '15%', transform: 'translate(140px, -70%)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>4</div>
 												)}
 												
 												{/* Multiplication symbol in power expression */}
@@ -1071,7 +1071,7 @@ const LCM = () => {
 													
 													{/* Replacement number (9) */}
 													{showReplacementNumbers && (
-														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-right' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-right' : ''}`} style={{ left: '75%', top: '0', transform: 'translate(-70px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>9</div>
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-right' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-right' : ''}`} style={{ left: '5%', top: '-200%', transform: 'translate(-70px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>9</div>
 													)}
 												</div>
 											</div>
@@ -1080,7 +1080,7 @@ const LCM = () => {
 											<div className="final-section" style={{ position: 'absolute', left: '0', top: 'calc(100% + 200px)', width: '100%', height: '100px' }}>
 												{/* Final multiplication symbol */}
 												{showFinalMultiplication && (
-													<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication final-multiplication-fade-in ${multiplicationSymbolFadeOut ? ' final-multiplication-fade-out' : ''}`} style={{ left: '50%', top: '0', transform: 'translateX(-50%)' }}>×</div>
+													<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication final-multiplication-fade-in ${multiplicationSymbolFadeOut ? 'final-multiplication-fade-out' : ''}`} style={{ left: '10%', top: '-120%', transform: 'translateX(-50%)' }}>×</div>
 												)}
 												
 												{/* LCM text */}
@@ -1092,7 +1092,7 @@ const LCM = () => {
 												{showRedElements && (
 													<div
 														className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveDown ? 'lcm-text-move-down' : ''} ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
-														style={{ left: '135%', top: '50px', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: 1 }}
+														style={{ left: '135%', top: '-70%', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: 1 }}
 													>
 														LCM&nbsp;=
 													</div>
@@ -1102,7 +1102,7 @@ const LCM = () => {
 												{showRedElements && (
 													<div
 														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-														style={{ left: '78%', top: '0', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: 1 }}
+														style={{ left: '78%', top: '-120%', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: 1 }}
 													>
 														{inputsModified ? (
 															<span style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
@@ -1137,7 +1137,7 @@ const LCM = () => {
 												{showRedElements && (
 													<div
 														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-														style={{ left: '78%', top: '0', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
+														style={{ left: '78%', top: '-120%', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
 													>
 														{inputsModified ? '?' : '36'}
 													</div>

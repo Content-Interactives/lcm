@@ -1289,7 +1289,7 @@
         transform: translate(0px, 0px);
     }
     to {
-        transform: translate(140px, -60px);
+        transform: translate(130px, -55px);
     }
 }
 
@@ -1298,7 +1298,7 @@
         transform: translate(0px, 0px);
     }
     to {
-        transform: translate(-70px, -60px);
+        transform: translate(-90px, -58px);
     }
 }
 
@@ -1336,30 +1336,30 @@
 @keyframes exponentsJumpOutLeft {
     0% {
         opacity: 1;
-        transform: translate(140px, -60px) scale(1);
+        transform: translate(130px, -55px) scale(1);
     }
     50% {
         opacity: 1;
-        transform: translate(140px, -60px) scale(1.3);
+        transform: translate(130px, -55px) scale(1.3);
     }
     100% {
         opacity: 0;
-        transform: translate(140px, -60px) scale(0);
+        transform: translate(130px, -55px) scale(0);
     }
 }
 
 @keyframes exponentsJumpOutRight {
     0% {
         opacity: 1;
-        transform: translate(-70px, -60px) scale(1);
+        transform: translate(-90px, -58px) scale(1);
     }
     50% {
         opacity: 1;
-        transform: translate(-70px, -60px) scale(1.3);
+        transform: translate(-90px, -58px) scale(1.3);
     }
     100% {
         opacity: 0;
-        transform: translate(-70px, -60px) scale(0);
+        transform: translate(-90px, -58px) scale(0);
     }
 }
 
