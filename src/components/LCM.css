@@ -183,7 +183,7 @@
         transform: translate(0, 0);
     }
     to {
-        transform: translate(-70px, -60px);
+        transform: translate(-0px, -60px);
     }
 }
 
@@ -192,7 +192,7 @@
         transform: translate(0, 0);
     }
     to {
-        transform: translate(70px, -60px);
+        transform: translate(0px, -60px);
     }
 }
 
@@ -935,19 +935,19 @@
 
 @keyframes mainNumbersMoveDownLeft {
     from {
-        transform: translate(-70px, -60px);
+        transform: translate(0px, -60px);
     }
     to {
-        transform: translate(-70px, -30px);
+        transform: translate(0px, -30px);
     }
 }
 
 @keyframes mainNumbersMoveDownRight {
     from {
-        transform: translate(70px, -60px);
+        transform: translate(0px, -60px);
     }
     to {
-        transform: translate(70px, -30px);
+        transform: translate(0px, -30px);
     }
 }
 

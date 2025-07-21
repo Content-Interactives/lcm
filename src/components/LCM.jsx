@@ -682,7 +682,7 @@ const LCM = () => {
 	};
 
 	return (
-		<div className="w-full max-w-[464px] mx-auto mt-5 px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] bg-white rounded-lg select-none">
+		<div className="w-full max-w-[464px] mx-auto px-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.05)] bg-white rounded-lg select-none">
 			<div className="p-4">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">LCM Explorer</h2>
@@ -728,10 +728,13 @@ const LCM = () => {
 								</div>
 							)}
 							{showNumbers && (
-								<div className="flex flex-col items-center gap-4 absolute top-20 left-1/2 transform -translate-x-1/2">
-									<div className="flex items-center gap-8 text-animation numbers-container" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
-										<div className="relative">
+								<div className="flex flex-col items-center gap-4 absolute top-20 left-1/2 transform -translate-x-1/2 w-full">
+									<div className="flex items-center text-animation numbers-container w-full" style={{ opacity: 0, animation: 'fadeIn 0.5s ease-out forwards' }}>
+										{/* 12 Factor Tree */}
+										<div className="relative w-1/2 flex justify-center">
+											{/* Main number 12 */}
 											<div className={`text-4xl font-bold text-black number-text ${isNumbersMoving ? 'number-move-left' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-left' : ''} ${finalElementsJumpOut ? 'final-elements-jump-out-left' : ''}`}>12</div>
+											
 											{/* Red version of 12 */}
 											{showRedElements && (
 												<div
@@ -784,7 +787,8 @@ const LCM = () => {
 													/>
 												</div>
 											)}
-											{/* Purple text for first input - moved outside input container */}
+											
+											{/* Purple text for first input */}
 											{solveButtonClicked && showRedElements && purpleTextJumpIn && (
 												<div
 													style={{
@@ -807,57 +811,102 @@ const LCM = () => {
 													{inputValue1}
 												</div>
 											)}
+											
+											{/* Factor Tree Structure for 12 */}
+											{/* Lines from main number */}
 											{showLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
+												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left' : 'lines-shrink-appear') : ''}`} style={{ left: '86%', transform: 'translateX(-50%)' }}></div>
 											)}
 											{showLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left-right' : 'lines-shrink-appear') : ''}`} style={{ left: '50%' }}></div>
+												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-move-left-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-left-right' : 'lines-shrink-appear') : ''}`} style={{ left: '86%', transform: 'translateX(-50%)' }}></div>
 											)}
-											{showFirstPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] prime-text ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-1' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
-											)}
-											{showFirstPrimes && showMultiplicationSymbols && (
-												<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showSeparatingLines && (
-												<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-left' : 'separating-lines-fade-in-left'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 105px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${exponentsMoveTogether ? 'exponent-move-up-right' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-left' : ''} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2²</div>
-											)}
-											{showReplacementNumbers && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-left' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-left' : ''}`} style={{ left: 'calc(50% - 112px)', top: 'calc(100% + 75px)', transform: 'translate(140px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>4</div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 77px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: 'calc(50% - 43px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3</div>
-											)}
-											{showFirstPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-left' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>6</div>
-											)}
-											{showSecondLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-left' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-left' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
-											)}
-											{showSecondLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-right' : 'lines-shrink-appear') : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
-											)}
-											{showSecondPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-2' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>2</div>
-											)}
-											{showSecondPrimes && showMultiplicationSymbols && (
-												<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showSeparatingLines && (
-												<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-right' : 'separating-lines-fade-in-right'} ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: 'calc(50% - 36px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
-											)}
-											{showSecondPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-3' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
-											)}
+											
+											{/* Left side container for 12 tree */}
+											<div className="tree-left-side" style={{ position: 'absolute', left: '0', top: 'calc(100% + 50px)', width: '50%', height: '200px' }}>
+												{/* Left factor (2) */}
+												{showFirstPrimes && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] prime-text ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-1' : ''}`} style={{ left: '140%', top: '0', transform: 'translateX(-50%)' }}>2</div>
+												)}
+												
+												{/* Multiplication symbol */}
+												{showFirstPrimes && showMultiplicationSymbols && (
+													<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: '67%', top: '-47px', transform: 'translateX(-50%)' }}>×</div>
+												)}
+												
+												{/* Separating line */}
+												{showSeparatingLines && (
+													<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-left' : 'separating-lines-fade-in-left'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: '67%', top: '-25px', transform: 'translateX(-50%)' }}></div>
+												)}
+												
+												{/* Power expression (2²) */}
+												{showPowerExpressions && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${exponentsMoveTogether ? 'exponent-move-up-right' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-left' : ''} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: '58%', top: '25px', transform: 'translateX(-50%)' }}>2²</div>
+												)}
+												
+												{/* Replacement number (4) */}
+												{showReplacementNumbers && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-left' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-left' : ''}`} style={{ left: '50%', top: '25px', transform: 'translate(140px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>4</div>
+												)}
+												
+												{/* Multiplication symbol in power expression */}
+												{showPowerExpressions && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: '95%', top: '25px', transform: 'translateX(-50%) translateX(35px)' }}>×</div>
+												)}
+												
+												{/* Second factor (3) in power expression */}
+												{showPowerExpressions && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-move-left-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-left' : ''}`} style={{ left: '130%', top: '25px', transform: 'translateX(-50%) translateX(70px)' }}>3</div>
+												)}
+											</div>
+											
+											{/* Right side container for 12 tree */}
+											<div className="tree-right-side" style={{ position: 'absolute', right: '0', top: 'calc(100% + 50px)', width: '50%', height: '200px' }}>
+												{/* Right factor (6) */}
+												{showFirstPrimes && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-move-left-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-left' : ''}`} style={{ left: '105%', top: '0', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>6</div>
+												)}
+												
+												{/* Lines under 6 */}
+												{showSecondLines && (
+													<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-left' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-left' : 'lines-shrink-appear') : ''}`} style={{ left: '105%', top: '15%', transform: 'translateX(-50%)' }}></div>
+												)}
+												{showSecondLines && (
+													<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] ${isNumbersMoving ? 'line-under-6-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-6-right' : 'lines-shrink-appear') : ''}`} style={{ left: '105%', top: '15%', transform: 'translateX(-50%)' }}></div>
+												)}
+												
+												{/* Left side of 6 breakdown */}
+												<div className="sub-tree-left" style={{ position: 'absolute', left: '0', top: '80px', width: '50%', height: '100px' }}>
+													{/* Factor 2 under 6 */}
+													{showSecondPrimes && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-2' : ''}`} style={{ left: '140%', top: '0', transform: 'translateX(-50%)' }}>2</div>
+													)}
+													
+													{/* Multiplication symbol under 6 */}
+													{showSecondPrimes && showMultiplicationSymbols && (
+														<div className={`absolute text-xl font-bold text-[#5750E3] ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: '65%', top: '-127%', transform: 'translateX(-50%)' }}>×</div>
+													)}
+													
+													{/* Separating line under 6 */}
+													{showSeparatingLines && (
+														<div className={`absolute w-0.5 bg-[#5750E3] ${separatingLinesFadeOut ? 'separating-lines-fade-out-right' : 'separating-lines-fade-in-right'} ${isNumbersMoving ? 'prime-under-6-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''}`} style={{ left: '71%', top: '-105%', transform: 'translateX(-50%)' }}></div>
+													)}
+												</div>
+												
+												{/* Right side of 6 breakdown */}
+												<div className="sub-tree-right" style={{ position: 'absolute', right: '0', top: '80px', width: '50%', height: '100px' }}>
+													{/* Factor 3 under 6 */}
+													{showSecondPrimes && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] ${isNumbersMoving ? 'prime-under-6-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-left' : ''} ${fadeOutPrimes ? 'prime-fade-out-left-3' : ''}`} style={{ left: '180%', top: '0', transform: 'translateX(-50%)' }}>3</div>
+													)}
+												</div>
+											</div>
 										</div>
-										<div className="relative">
+										
+										{/* 18 Factor Tree */}
+										<div className="relative w-1/2 flex justify-center">
+											{/* Main number 18 */}
 											<div className={`text-4xl font-bold text-black number-text right-factor-tree-18 ${isNumbersMoving ? 'number-move-right' : ''} ${mainNumbersMoveDown ? 'main-numbers-move-down-right' : ''} ${isSmallScreen && (isNumbersMoving || mainNumbersMoveDown) ? 'small-screen-position' : ''} ${finalElementsJumpOut ? 'final-elements-jump-out-right' : ''}`}>18</div>
+											
 											{/* Red version of 18 */}
 											{showRedElements && (
 												<div
@@ -910,7 +959,8 @@ const LCM = () => {
 													/>
 												</div>
 											)}
-											{/* Purple text for second input - moved outside input container */}
+											
+											{/* Purple text for second input */}
 											{solveButtonClicked && showRedElements && purpleTextJumpIn && (
 												<div
 													style={{
@@ -933,109 +983,166 @@ const LCM = () => {
 													{inputValue2}
 												</div>
 											)}
+											
+											{/* Factor Tree Structure for 18 */}
+											{/* Lines from main number */}
 											{showLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-move-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-left' : ''}`} style={{ left: '50%' }}></div>
+												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-move-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-left' : ''}`} style={{ left: '16%', transform: 'translateX(-50%)' }}></div>
 											)}
 											{showLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-move-right-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-right' : ''}`} style={{ left: '50%' }}></div>
+												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-move-right-right' : 'line-appear'} ${firstLinesShrink ? (isNumbersMoving ? 'lines-shrink-move-right-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-right' : ''}`} style={{ left: '16%', transform: 'translateX(-50%)' }}></div>
 											)}
-											{showFirstPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] prime-text right-factor-tree-2 ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-1' : ''} ${isSmallScreen ? 'small-screen-prime' : ''}`} style={{ left: 'calc(50% - 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)' }}>2</div>
-											)}
-											{showFirstPrimes && showMultiplicationSymbols && (
-												<div className={`absolute text-xl font-bold text-[#5750E3] right-factor-tree-multiplication ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'} ${isSmallScreen ? 'small-screen-multiplication' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showFirstPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${isNumbersMoving ? 'prime-move-right-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-right' : ''} ${isSmallScreen ? 'small-screen-prime' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 50px)', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>9</div>
-											)}
-											{showSecondLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-under-9-left' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-left' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-left' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
-											)}
-											{showSecondLines && (
-												<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-under-9-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-right' : ''}`} style={{ left: 'calc(50% + 35px)', top: 'calc(100% + 80px)' }}></div>
-											)}
-											{showSecondPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-left ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-2' : ''}`} style={{ left: 'calc(50% + 0px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
-											)}
-											{showSecondPrimes && showMultiplicationSymbols && (
-												<div className={`absolute text-xl font-bold text-[#5750E3] right-factor-tree-multiplication ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 3px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showSeparatingLinesRight && (
-												<div className={`absolute w-0.5 bg-[#5750E3] right-factor-tree-lines ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-left' : 'separating-lines-fade-in-right-side-left'} ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 103px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
-											)}
-											{showSecondPrimes && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-right ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-3' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 130px)', transform: 'translateX(-50%)' }}>3</div>
-											)}
-											{showSeparatingLinesRight && (
-												<div className={`absolute w-0.5 bg-[#5750E3] right-factor-tree-lines ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-right' : 'separating-lines-fade-in-right-side-right'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 70px)', top: 'calc(100% + 25px)', transform: 'translateX(-50%)' }}></div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-2 ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 28px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>2</div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 62px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showPowerExpressions && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-right ${exponentsMoveTogether ? 'exponent-move-up-left' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-right' : ''} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>3²</div>
-											)}
-											{showReplacementNumbers && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-right' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-right' : ''}`} style={{ left: 'calc(50% + 97px)', top: 'calc(100% + 75px)', transform: 'translate(-70px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>9</div>
-											)}
-											{showFinalMultiplication && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication final-multiplication-fade-in ${multiplicationSymbolFadeOut ? ' final-multiplication-fade-out' : ''}`} style={{ left: '50%', top: 'calc(100% + 75px)', transform: 'translateX(-50%)' }}>×</div>
-											)}
-											{showLCMText && (
-												<div className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveRight ? 'lcm-text-move-right' : ''}`} style={{ left: '50%', top: 'calc(100% + 125px)', transform: 'translateX(-50%)' }}>LCM&nbsp;=</div>
-											)}
-											{/* Red version of LCM = */}
-											{showRedElements && (
-												<div
-													className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveDown ? 'lcm-text-move-down' : ''} ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
-													style={{ left: '135%', top: 'calc(100% + 125px)', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: 1 }}
-												>
-													LCM&nbsp;=
+											
+											{/* Left side container for 18 tree */}
+											<div className="tree-left-side" style={{ position: 'absolute', left: '0', top: 'calc(100% + 50px)', width: '50%', height: '200px' }}>
+												{/* Left factor (2) */}
+												{showFirstPrimes && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] prime-text right-factor-tree-2 ${isNumbersMoving ? 'prime-move-right-1' : ''} ${firstPrimesMoveDown ? 'first-primes-move-down-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-1' : ''} ${isSmallScreen ? 'small-screen-prime' : ''}`} style={{ left: '0%', top: '0', transform: 'translateX(-50%)' }}>2</div>
+												)}
+												
+												{/* Multiplication symbol */}
+												{showFirstPrimes && showMultiplicationSymbols && (
+													<div className={`absolute text-xl font-bold text-[#5750E3] right-factor-tree-multiplication ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'} ${isSmallScreen ? 'small-screen-multiplication' : ''}`} style={{ left: '66%', top: '-47px', transform: 'translateX(-50%)' }}>×</div>
+												)}
+											</div>
+											
+											{/* Right side container for 18 tree */}
+											<div className="tree-right-side" style={{ position: 'absolute', right: '0', top: 'calc(100% + 50px)', width: '50%', height: '200px' }}>
+												{/* Right factor (9) */}
+												{showFirstPrimes && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${isNumbersMoving ? 'prime-move-right-2-no-opacity' : ''} ${nonPrimesFadeOut ? 'non-primes-fade-out-right' : ''} ${isSmallScreen ? 'small-screen-prime' : ''}`} style={{ left: '-35%', top: '0', transform: 'translateX(-50%)', opacity: fadeNonPrimes ? 0.5 : 1 }}>9</div>
+												)}
+												
+												{/* Lines under 9 */}
+												{showSecondLines && (
+													<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-under-9-left' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-left' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-left' : ''}`} style={{ left: '-35%', top: '15%', transform: 'translateX(-50%)' }}></div>
+												)}
+												{showSecondLines && (
+													<div className={`absolute top-full mt-2 w-0.5 bg-[#5750E3] right-factor-tree-lines ${isNumbersMoving ? 'line-under-9-right' : 'line-appear'} ${secondLinesShrink ? (isNumbersMoving ? 'lines-shrink-under-9-right' : 'lines-shrink-appear') : ''} ${isSmallScreen ? 'small-screen-line-right' : ''}`} style={{ left: '-35%', top: '15%', transform: 'translateX(-50%)' }}></div>
+												)}
+												
+												{/* Left side of 9 breakdown */}
+												<div className="sub-tree-left" style={{ position: 'absolute', left: '0', top: '80px', width: '50%', height: '100px' }}>
+													{/* Factor 3 under 9 */}
+													{showSecondPrimes && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-left ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-2' : ''}`} style={{ left: '-140%', top: '0', transform: 'translateX(-50%)' }}>3</div>
+													)}
+													
+													{/* Multiplication symbol under 9 */}
+													{showSecondPrimes && showMultiplicationSymbols && (
+														<div className={`absolute text-xl font-bold text-[#5750E3] right-factor-tree-multiplication ${multiplicationSymbolsFadeOut ? 'multiplication-symbols-fade-out' : 'multiplication-symbols-fade-in'}`} style={{ left: '65%', top: '-127%', transform: 'translateX(-50%)' }}>×</div>
+													)}
+													
+													{/* Separating line under 9 */}
+													{showSeparatingLinesRight && (
+														<div className={`absolute w-0.5 bg-[#5750E3] right-factor-tree-lines ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-left' : 'separating-lines-fade-in-right-side-left'} ${isNumbersMoving ? 'prime-under-9-1' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: '66%', top: '-105%', transform: 'translateX(-50%)' }}></div>
+													)}
 												</div>
-											)}
-											{showRedElements && (
-												<div
-													className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-													style={{ left: '78%', top: 'calc(100% + 75px)', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: 1 }}
-												>
-													{inputsModified ? (
-														<span style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
-															?
-															<div className={`glow-button ${isSolveButtonShrinking ? 'simple-glow stopped' : 'simple-glow'} ${isSolveButtonShrinking ? 'shrink-animation' : ''}`} style={{ position: 'absolute', left: '1.5rem', top: '-0.2rem', bottom: 'auto', right: 'auto' }}>
-																<button
-																	className={`px-2 py-1 bg-[#008545] hover:bg-[#00783E] text-white text-xs rounded transition-colors duration-200 select-none ${isSolveButtonShrinking ? 'shrink-animation' : ''}`}
-																	style={{ 
-																		fontSize: '0.75rem', 
-																		height: '1.75rem', 
-																		lineHeight: 1, 
-																		transformOrigin: 'center',
-																		zIndex: 50,
-																		borderRadius: '4px'
-																	}}
-																	onClick={solveSteps}
-																>
-																	Solve
-																</button>
-															</div>
-														</span>
-													) : '36' }
+												
+												{/* Right side of 9 breakdown */}
+												<div className="sub-tree-right" style={{ position: 'absolute', right: '0', top: '80px', width: '50%', height: '100px' }}>
+													{/* Factor 3 under 9 */}
+													{showSecondPrimes && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-right ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''} ${fadeOutPrimes ? 'prime-fade-out-right-3' : ''}`} style={{ left: '-100%', top: '0', transform: 'translateX(-50%)' }}>3</div>
+													)}
+													
+													{/* Separating line under 9 */}
+													{showSeparatingLinesRight && (
+														<div className={`absolute w-0.5 bg-[#5750E3] right-factor-tree-lines ${separatingLinesFadeOut ? 'separating-lines-fade-out-right-side-right' : 'separating-lines-fade-in-right-side-right'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: '-100%', top: '-105%', transform: 'translateX(-50%)' }}></div>
+													)}
 												</div>
-											)}
-											{showFinalResult && (
-												<div className={`absolute text-2xl font-bold text-[#5750E3] ${finalResultJumpIn ? 'final-result-jump-in' : ''}`} style={{ left: '40%', top: 'calc(100% + 75px)', transform: 'translateX(-50%)', opacity: finalResultJumpIn ? 1 : 0 }}>{inputsModified ? '?' : '36'}</div>
-											)}
-											{/* Red version of 36 */}
-											{showRedElements && (
-												<div
-													className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-													style={{ left: '78%', top: 'calc(100% + 75px)', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
-												>
-													{inputsModified ? '?' : '36'}
+												
+												{/* Power expressions row */}
+												<div className="power-expressions-row" style={{ position: 'absolute', left: '0', top: '130px', width: '100%', height: '50px' }}>
+													{/* Factor 2 in power expression */}
+													{showPowerExpressions && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-2 ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: '-45%', top: '-205%', transform: 'translateX(-50%)' }}>2</div>
+													)}
+													
+													{/* Multiplication symbol in power expression */}
+													{showPowerExpressions && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication ${powerExpressionsFadeOut ? 'power-expressions-fade-out' : 'power-expressions-fade-in'} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: '-9%', top: '-205%', transform: 'translateX(-50%)' }}>×</div>
+													)}
+													
+													{/* Factor 3² in power expression */}
+													{showPowerExpressions && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-3-right ${exponentsMoveTogether ? 'exponent-move-up-left' : 'power-expressions-fade-in'} ${exponentsJumpOut ? 'exponents-jump-out-right' : ''} ${isNumbersMoving ? 'prime-under-9-2' : ''} ${secondPrimesMoveUp ? 'second-primes-move-up-right' : ''}`} style={{ left: '26%', top: '-205%', transform: 'translateX(-50%)' }}>3²</div>
+													)}
+													
+													{/* Replacement number (9) */}
+													{showReplacementNumbers && (
+														<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-9 ${replacementNumbersJumpIn ? 'replacement-numbers-jump-in-right' : ''} ${replacementNumbersFadeOut ? 'replacement-numbers-fade-out-right' : ''}`} style={{ left: '75%', top: '0', transform: 'translate(-70px, -60px)', opacity: replacementNumbersJumpIn ? 1 : 0 }}>9</div>
+													)}
 												</div>
-											)}
+											</div>
+											
+											{/* Final multiplication and LCM section */}
+											<div className="final-section" style={{ position: 'absolute', left: '0', top: 'calc(100% + 200px)', width: '100%', height: '100px' }}>
+												{/* Final multiplication symbol */}
+												{showFinalMultiplication && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] right-factor-tree-multiplication final-multiplication-fade-in ${multiplicationSymbolFadeOut ? ' final-multiplication-fade-out' : ''}`} style={{ left: '50%', top: '0', transform: 'translateX(-50%)' }}>×</div>
+												)}
+												
+												{/* LCM text */}
+												{showLCMText && (
+													<div className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveRight ? 'lcm-text-move-right' : ''}`} style={{ left: '15%', top: '-70%', transform: 'translateX(-50%)' }}>LCM&nbsp;=</div>
+												)}
+												
+												{/* Red version of LCM = */}
+												{showRedElements && (
+													<div
+														className={`absolute text-2xl font-bold text-gray-700 lcm-text-fade-in ${lcmTextMoveDown ? 'lcm-text-move-down' : ''} ${redElementsJumpIn ? 'red-elements-jump-in' : ''}`}
+														style={{ left: '135%', top: '50px', transform: 'translateX(-50%) translate(-88px, -110px)', opacity: 1 }}
+													>
+														LCM&nbsp;=
+													</div>
+												)}
+												
+												{/* LCM answer */}
+												{showRedElements && (
+													<div
+														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
+														style={{ left: '78%', top: '0', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: 1 }}
+													>
+														{inputsModified ? (
+															<span style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
+																?
+																<div className={`glow-button ${isSolveButtonShrinking ? 'simple-glow stopped' : 'simple-glow'} ${isSolveButtonShrinking ? 'shrink-animation' : ''}`} style={{ position: 'absolute', left: '1.5rem', top: '-0.2rem', bottom: 'auto', right: 'auto' }}>
+																	<button
+																		className={`px-2 py-1 bg-[#008545] hover:bg-[#00783E] text-white text-xs rounded transition-colors duration-200 select-none ${isSolveButtonShrinking ? 'shrink-animation' : ''}`}
+																		style={{ 
+																			fontSize: '0.75rem', 
+																			height: '1.75rem', 
+																			lineHeight: 1, 
+																			transformOrigin: 'center',
+																			zIndex: 50,
+																			borderRadius: '4px'
+																		}}
+																		onClick={solveSteps}
+																	>
+																		Solve
+																	</button>
+																</div>
+															</span>
+														) : '36' }
+													</div>
+												)}
+												
+												{/* Final result */}
+												{showFinalResult && (
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${finalResultJumpIn ? 'final-result-jump-in' : ''}`} style={{ left: '13%', top: '-120%', transform: 'translateX(-50%)', opacity: finalResultJumpIn ? 1 : 0 }}>{inputsModified ? '?' : '36'}</div>
+												)}
+												
+												{/* Red version of 36 */}
+												{showRedElements && (
+													<div
+														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
+														style={{ left: '78%', top: '0', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: redElementsJumpIn ? 1 : 0 }}
+													>
+														{inputsModified ? '?' : '36'}
+													</div>
+												)}
+											</div>
 										</div>
 									</div>
 									{!showFinalResult && !showRedElements && (
@@ -1170,278 +1277,524 @@ const LCM = () => {
 							<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
 								{showDynamicTree1 && (
 									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
-										{/* SVG for lines and nodes for tree 1 */}
-										<svg
-											style={{
-												position: 'absolute',
-												top: 0,
-												left: 0,
-												width: '100%',
-												height: '100%',
-												pointerEvents: 'none'
-											}}
-										>
+										{/* Left side container */}
+										<div className="tree-left-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'left' }}>
+											{/* SVG for left side lines */}
+											<svg
+												style={{
+													position: 'absolute',
+													top: 0,
+													left: 0,
+													width: '100%',
+													height: '100%',
+													pointerEvents: 'none'
+												}}
+											>
+												{factorTree1.map((node, index) => {
+													const isVisible = index < treeAnimationStep1;
+													
+													// Only process left side nodes (negative x coordinates)
+													if (node.x >= 0) return null;
+													
+													const xPos = (node.x + 1) * 60 + 83; // Adjust for left side
+													const yPos = node.y * 80 + 20;
+													
+													// Only draw lines if this node has children (not prime)
+													if (node.isPrime) return null;
+													
+													// Find child nodes for left side
+													const leftChild = factorTree1.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x - 1)) < 0.1
+													);
+													const rightChild = factorTree1.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x + 1)) < 0.1
+													);
+													
+													return (
+														<React.Fragment key={`svg-lines-1-left-${node.id}`}>
+															{/* Line to left child */}
+															{leftChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={leftChild.x * 60 + 83 + 60}
+																	y2={leftChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+															{/* Line to right child */}
+															{rightChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={rightChild.x * 60 + 83 - 20}
+																	y2={rightChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+														</React.Fragment>
+													);
+												})}
+											</svg>
+											
+											{/* Left side nodes */}
 											{factorTree1.map((node, index) => {
 												const isVisible = index < treeAnimationStep1;
-												const xPos = node.x * 60 + 83;
-												const yPos = node.y * 80 + 20;
 												
-												// Only draw lines if this node has children (not prime)
-												if (node.isPrime) {
-													return null;
+												// Only process left side nodes (negative x coordinates)
+												if (node.x >= 0) return null;
+												
+												let xPos = (node.x + 1) * 60 + (node.level * -28) + 110;
+												const yPos = 20 + (node.level * 80);
+												
+												// Hide the root node
+												if (index === 0) return null;
+												
+												// Adjust x position for child nodes
+												if (node.level > 0) {
+													const parent = factorTree1.find(n => 
+														n.level === node.level - 1 && 
+														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+														n.y === node.y - 1
+													);
+													
+													if (parent) {
+														if (parent.x > node.x) {
+															xPos += 40;
+														} else {
+															xPos -= 15;
+														}
+													}
 												}
 												
-												// Find child nodes
-												const leftChild = factorTree1.find(n => 
-													n.level === node.level + 1 && 
-													Math.abs(n.x - (node.x - 1)) < 0.1
-												);
-												const rightChild = factorTree1.find(n => 
-													n.level === node.level + 1 && 
-													Math.abs(n.x - (node.x + 1)) < 0.1
-												);
-												
-												// Debug logging for line drawing
-												if (node.value === 4) {
-													console.log('=== DEBUGGING NODE 4 (value: 4) ===');
-													console.log('Node 4 coordinates:', { x: node.x, y: node.y, level: node.level });
-													console.log('Looking for children at level:', node.level + 1);
-													console.log('Expected left child x:', node.x - 1);
-													console.log('Expected right child x:', node.x + 1);
-													
-													const allChildrenAtNextLevel = factorTree1.filter(n => n.level === node.level + 1);
-													console.log('All children at next level:', allChildrenAtNextLevel.map(n => ({
-														id: n.id,
-														value: n.value,
-														x: n.x,
-														y: n.y,
-														isPrime: n.isPrime
-													})));
-													
-													console.log('Left child found:', leftChild ? { id: leftChild.id, value: leftChild.value, x: leftChild.x } : null);
-													console.log('Right child found:', rightChild ? { id: rightChild.id, value: rightChild.value, x: rightChild.x } : null);
-													console.log('=====================================');
+												let nodeClass = 'tree-node';
+												if (node.level === 0) {
+													nodeClass += ' root';
+												} else if (node.isPrime) {
+													nodeClass += ' prime';
+												} else {
+													nodeClass += ' non-prime';
 												}
 												
 												return (
-													<React.Fragment key={`svg-lines-1-${node.id}`}>
-														{/* Line to left child */}
-														{leftChild && (
-															<line
-																x1={xPos + 20}
-																y1={yPos + 50}
-																x2={leftChild.x * 60 + 83 + 60}
-																y2={leftChild.y * 80 + 40 - 15}
-																stroke="#5750E3"
-																strokeWidth="2"
-																opacity={isVisible ? 1 : 0}
-																style={{
-																	transition: 'opacity 0.3s ease'
-																}}
-															/>
-														)}
-														{/* Line to right child */}
-														{rightChild && (
-															<line
-																x1={xPos + 20}
-																y1={yPos + 50}
-																x2={rightChild.x * 60 + 83 - 20}
-																y2={rightChild.y * 80 + 40 - 15}
-																stroke="#5750E3"
-																strokeWidth="2"
-																opacity={isVisible ? 1 : 0}
-																style={{
-																	transition: 'opacity 0.3s ease'
-																}}
-															/>
-														)}
-													</React.Fragment>
+													<div
+														key={`node-1-left-${node.id}`}
+														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+														style={{
+															position: 'absolute',
+															left: xPos,
+															top: yPos,
+															opacity: isVisible ? 1 : 0,
+															transform: 'translateX(-50%)'
+														}}
+													>
+														{node.value}
+													</div>
 												);
 											})}
-										</svg>
+										</div>
 										
-										{/* Render all nodes */}
-										{factorTree1.map((node, index) => {
-											const isVisible = index < treeAnimationStep1;
-											let xPos = node.x * 60 + (node.level * -28) + 110;
-											const yPos = 20 + (node.level * 80);
+										{/* Right side container */}
+										<div className="tree-right-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'right' }}>
+											{/* SVG for right side lines */}
+											<svg
+												style={{
+													position: 'absolute',
+													top: 0,
+													left: 0,
+													width: '100%',
+													height: '100%',
+													pointerEvents: 'none'
+												}}
+											>
+												{factorTree1.map((node, index) => {
+													const isVisible = index < treeAnimationStep1;
+													
+													// Only process right side nodes (positive x coordinates)
+													if (node.x < 0) return null;
+													
+													const xPos = (node.x - 1) * 60 + 83; // Adjust for right side
+													const yPos = node.y * 80 + 20;
+													
+													// Only draw lines if this node has children (not prime)
+													if (node.isPrime) return null;
+													
+													// Find child nodes for right side
+													const leftChild = factorTree1.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x - 1)) < 0.1
+													);
+													const rightChild = factorTree1.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x + 1)) < 0.1
+													);
+													
+													return (
+														<React.Fragment key={`svg-lines-1-right-${node.id}`}>
+															{/* Line to left child */}
+															{leftChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={leftChild.x * 60 + 83 + 60}
+																	y2={leftChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+															{/* Line to right child */}
+															{rightChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={rightChild.x * 60 + 83 - 20}
+																	y2={rightChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+														</React.Fragment>
+													);
+												})}
+											</svg>
 											
-											// Hide the first node (root node)
-											if (index === 0) {
-												return null;
-											}
-											
-											// Adjust x position for child nodes to align with skewed lines
-											if (node.level > 0) {
-												// Find parent node by coordinates
-												const parent = factorTree1.find(n => 
-													n.level === node.level - 1 && 
-													((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-													n.y === node.y - 1
-												);
+											{/* Right side nodes */}
+											{factorTree1.map((node, index) => {
+												const isVisible = index < treeAnimationStep1;
 												
-												if (parent) {
-													if (parent.x > node.x) {
-														// This is a left child, offset rightward
-														xPos += 40;
-													} else {
-														// This is a right child, offset leftward
-														xPos -= 15;
+												// Only process right side nodes (positive x coordinates)
+												if (node.x < 0) return null;
+												
+												let xPos = (node.x - 1) * 60 + (node.level * -28) + 110;
+												const yPos = 20 + (node.level * 80);
+												
+												// Hide the root node
+												if (index === 0) return null;
+												
+												// Adjust x position for child nodes
+												if (node.level > 0) {
+													const parent = factorTree1.find(n => 
+														n.level === node.level - 1 && 
+														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+														n.y === node.y - 1
+													);
+													
+													if (parent) {
+														if (parent.x > node.x) {
+															xPos += 40;
+														} else {
+															xPos -= 15;
+														}
 													}
 												}
-											}
-											
-											// Determine node class based on level and type
-											let nodeClass = 'tree-node';
-											if (node.level === 0) {
-												nodeClass += ' root';
-											} else if (node.isPrime) {
-												nodeClass += ' prime';
-											} else {
-												nodeClass += ' non-prime';
-											}
-											
-											return (
-												<div
-													key={`node-1-${node.id}`}
-													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-													style={{
-														left: xPos,
-														top: yPos,
-														opacity: isVisible ? 1 : 0,
-														transform: 'translateX(-50%)'
-													}}
-												>
-													{node.value}
-												</div>
-											);
-										})}
+												
+												let nodeClass = 'tree-node';
+												if (node.level === 0) {
+													nodeClass += ' root';
+												} else if (node.isPrime) {
+													nodeClass += ' prime';
+												} else {
+													nodeClass += ' non-prime';
+												}
+												
+												return (
+													<div
+														key={`node-1-right-${node.id}`}
+														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+														style={{
+															position: 'absolute',
+															left: xPos,
+															top: yPos,
+															opacity: isVisible ? 1 : 0,
+															transform: 'translateX(-50%)'
+														}}
+													>
+														{node.value}
+													</div>
+												);
+											})}
+										</div>
 									</div>
 								)}
 								{showDynamicTree2 && (
 									<div className="factor-tree-container" style={{ position: 'absolute', left: '75%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
-										{/* SVG for lines and nodes for tree 2 */}
-										<svg
-											style={{
-												position: 'absolute',
-												top: 0,
-												left: 0,
-												width: '100%',
-												height: '100%',
-												pointerEvents: 'none'
-											}}
-										>
+										{/* Left side container */}
+										<div className="tree-left-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'left' }}>
+											{/* SVG for left side lines */}
+											<svg
+												style={{
+													position: 'absolute',
+													top: 0,
+													left: 0,
+													width: '100%',
+													height: '100%',
+													pointerEvents: 'none'
+												}}
+											>
+												{factorTree2.map((node, index) => {
+													const isVisible = index < treeAnimationStep2;
+													
+													// Only process left side nodes (negative x coordinates)
+													if (node.x >= 0) return null;
+													
+													const xPos = (node.x + 1) * 60 + 82; // Adjust for left side
+													const yPos = node.y * 80 + 20;
+													
+													// Only draw lines if this node has children (not prime)
+													if (node.isPrime) return null;
+													
+													// Find child nodes for left side
+													const leftChild = factorTree2.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x - 1)) < 0.1
+													);
+													const rightChild = factorTree2.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x + 1)) < 0.1
+													);
+													
+													return (
+														<React.Fragment key={`svg-lines-2-left-${node.id}`}>
+															{/* Line to left child */}
+															{leftChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={leftChild.x * 60 + 82 + 60}
+																	y2={leftChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+															{/* Line to right child */}
+															{rightChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={rightChild.x * 60 + 82 - 20}
+																	y2={rightChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+														</React.Fragment>
+													);
+												})}
+											</svg>
+											
+											{/* Left side nodes */}
 											{factorTree2.map((node, index) => {
 												const isVisible = index < treeAnimationStep2;
-												const xPos = node.x * 60 + 82;
-												const yPos = node.y * 80 + 20;
 												
-												// Only draw lines if this node has children (not prime)
-												if (node.isPrime) return null;
+												// Only process left side nodes (negative x coordinates)
+												if (node.x >= 0) return null;
 												
-												// Find child nodes
-												const leftChild = factorTree2.find(n => 
-													n.level === node.level + 1 && 
-													Math.abs(n.x - (node.x - 1)) < 0.1
-												);
-												const rightChild = factorTree2.find(n => 
-													n.level === node.level + 1 && 
-													Math.abs(n.x - (node.x + 1)) < 0.1
-												);
+												let xPos = (node.x + 1) * 60 + (node.level * -28) + 110;
+												const yPos = 20 + (node.level * 80);
 												
-												return (
-													<React.Fragment key={`svg-lines-2-${node.id}`}>
-														{/* Line to left child */}
-														{leftChild && (
-															<line
-																x1={xPos + 20}
-																y1={yPos + 50}
-																x2={leftChild.x * 60 + 82 + 60}
-																y2={leftChild.y * 80 + 40 - 15}
-																stroke="#5750E3"
-																strokeWidth="2"
-																opacity={isVisible ? 1 : 0}
-																style={{
-																	transition: 'opacity 0.3s ease'
-																}}
-															/>
-														)}
-														{/* Line to right child */}
-														{rightChild && (
-															<line
-																x1={xPos + 20}
-																y1={yPos + 50}
-																x2={rightChild.x * 60 + 82 - 20}
-																y2={rightChild.y * 80 + 40 - 15}
-																stroke="#5750E3"
-																strokeWidth="2"
-																opacity={isVisible ? 1 : 0}
-																style={{
-																	transition: 'opacity 0.3s ease'
-																}}
-															/>
-														)}
-													</React.Fragment>
-												);
-											})}
-										</svg>
-										
-										{/* Render all nodes */}
-										{factorTree2.map((node, index) => {
-											const isVisible = index < treeAnimationStep2;
-											let xPos = node.x * 60 + (node.level * -28) + 110;
-											const yPos = 20 + (node.level * 80);
-											
-											// Hide the first node (root node)
-											if (index === 0) {
-												return null;
-											}
-											
-											// Adjust x position for child nodes to align with skewed lines
-											if (node.level > 0) {
-												// Find parent node by coordinates
-												const parent = factorTree2.find(n => 
-													n.level === node.level - 1 && 
-													((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-													n.y === node.y - 1
-												);
+												// Hide the root node
+												if (index === 0) return null;
 												
-												if (parent) {
-													if (parent.x > node.x) {
-														// This is a left child, offset rightward
-														xPos += 40;
-													} else {
-														// This is a right child, offset leftward
-														xPos -= 15;
+												// Adjust x position for child nodes
+												if (node.level > 0) {
+													const parent = factorTree2.find(n => 
+														n.level === node.level - 1 && 
+														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+														n.y === node.y - 1
+													);
+													
+													if (parent) {
+														if (parent.x > node.x) {
+															xPos += 40;
+														} else {
+															xPos -= 15;
+														}
 													}
 												}
-											}
+												
+												let nodeClass = 'tree-node';
+												if (node.level === 0) {
+													nodeClass += ' root';
+												} else if (node.isPrime) {
+													nodeClass += ' prime';
+												} else {
+													nodeClass += ' non-prime';
+												}
+												
+												return (
+													<div
+														key={`node-2-left-${node.id}`}
+														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+														style={{
+															position: 'absolute',
+															left: xPos,
+															top: yPos,
+															opacity: isVisible ? 1 : 0,
+															transform: 'translateX(-50%)'
+														}}
+													>
+														{node.value}
+													</div>
+												);
+											})}
+										</div>
+										
+										{/* Right side container */}
+										<div className="tree-right-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'right' }}>
+											{/* SVG for right side lines */}
+											<svg
+												style={{
+													position: 'absolute',
+													top: 0,
+													left: 0,
+													width: '100%',
+													height: '100%',
+													pointerEvents: 'none'
+												}}
+											>
+												{factorTree2.map((node, index) => {
+													const isVisible = index < treeAnimationStep2;
+													
+													// Only process right side nodes (positive x coordinates)
+													if (node.x < 0) return null;
+													
+													const xPos = (node.x - 1) * 60 + 82; // Adjust for right side
+													const yPos = node.y * 80 + 20;
+													
+													// Only draw lines if this node has children (not prime)
+													if (node.isPrime) return null;
+													
+													// Find child nodes for right side
+													const leftChild = factorTree2.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x - 1)) < 0.1
+													);
+													const rightChild = factorTree2.find(n => 
+														n.level === node.level + 1 && 
+														Math.abs(n.x - (node.x + 1)) < 0.1
+													);
+													
+													return (
+														<React.Fragment key={`svg-lines-2-right-${node.id}`}>
+															{/* Line to left child */}
+															{leftChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={leftChild.x * 60 + 82 + 60}
+																	y2={leftChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+															{/* Line to right child */}
+															{rightChild && (
+																<line
+																	x1={xPos + 20}
+																	y1={yPos + 50}
+																	x2={rightChild.x * 60 + 82 - 20}
+																	y2={rightChild.y * 80 + 40 - 15}
+																	stroke="#5750E3"
+																	strokeWidth="2"
+																	opacity={isVisible ? 1 : 0}
+																	style={{
+																		transition: 'opacity 0.3s ease'
+																	}}
+																/>
+															)}
+														</React.Fragment>
+													);
+												})}
+											</svg>
 											
-											// Determine node class based on level and type
-											let nodeClass = 'tree-node';
-											if (node.level === 0) {
-												nodeClass += ' root';
-											} else if (node.isPrime) {
-												nodeClass += ' prime';
-											} else {
-												nodeClass += ' non-prime';
-											}
-											
-											return (
-												<div
-													key={`node-2-${node.id}`}
-													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-													style={{
-														left: xPos,
-														top: yPos,
-														opacity: isVisible ? 1 : 0,
-														transform: 'translateX(-50%)'
-													}}
-												>
-													{node.value}
-												</div>
-											);
-										})}
+											{/* Right side nodes */}
+											{factorTree2.map((node, index) => {
+												const isVisible = index < treeAnimationStep2;
+												
+												// Only process right side nodes (positive x coordinates)
+												if (node.x < 0) return null;
+												
+												let xPos = (node.x - 1) * 60 + (node.level * -28) + 110;
+												const yPos = 20 + (node.level * 80);
+												
+												// Hide the root node
+												if (index === 0) return null;
+												
+												// Adjust x position for child nodes
+												if (node.level > 0) {
+													const parent = factorTree2.find(n => 
+														n.level === node.level - 1 && 
+														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
+														n.y === node.y - 1
+													);
+													
+													if (parent) {
+														if (parent.x > node.x) {
+															xPos += 40;
+														} else {
+															xPos -= 15;
+														}
+													}
+												}
+												
+												let nodeClass = 'tree-node';
+												if (node.level === 0) {
+													nodeClass += ' root';
+												} else if (node.isPrime) {
+													nodeClass += ' prime';
+												} else {
+													nodeClass += ' non-prime';
+												}
+												
+												return (
+													<div
+														key={`node-2-right-${node.id}`}
+														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+														style={{
+															position: 'absolute',
+															left: xPos,
+															top: yPos,
+															opacity: isVisible ? 1 : 0,
+															transform: 'translateX(-50%)'
+														}}
+													>
+														{node.value}
+													</div>
+												);
+											})}
+										</div>
 									</div>
 								)}
 							</div>
