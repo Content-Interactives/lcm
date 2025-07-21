@@ -457,6 +457,11 @@ const LCM = () => {
 				const factors = {};
 				let divisor = 2;
 				
+				// Special case: 2 is prime
+				if (num === 2) {
+					return {};
+				}
+				
 				while (num > 1) {
 					while (num % divisor === 0) {
 						factors[divisor] = (factors[divisor] || 0) + 1;
@@ -499,6 +504,11 @@ const LCM = () => {
 			const factors = {};
 			let divisor = 2;
 			let tempNum = num;
+			
+			// Special case: 2 is prime
+			if (num === 2) {
+				return {};
+			}
 			
 			while (tempNum > 1) {
 				while (tempNum % divisor === 0) {
@@ -584,7 +594,7 @@ const LCM = () => {
 			}
 		}
 		
-		console.log('Built tree:', tree);
+		console.log('Final tree structure:', tree);
 		return tree;
 	};
 
@@ -1167,7 +1177,9 @@ const LCM = () => {
 												const yPos = node.y * 80 + 20;
 												
 												// Only draw lines if this node has children (not prime)
-												if (node.isPrime) return null;
+												if (node.isPrime) {
+													return null;
+												}
 												
 												// Find child nodes
 												const leftChild = factorTree1.find(n => 
@@ -1178,6 +1190,28 @@ const LCM = () => {
 													n.level === node.level + 1 && 
 													Math.abs(n.x - (node.x + 1)) < 0.1
 												);
+												
+												// Debug logging for line drawing
+												if (node.value === 4) {
+													console.log('=== DEBUGGING NODE 4 (value: 4) ===');
+													console.log('Node 4 coordinates:', { x: node.x, y: node.y, level: node.level });
+													console.log('Looking for children at level:', node.level + 1);
+													console.log('Expected left child x:', node.x - 1);
+													console.log('Expected right child x:', node.x + 1);
+													
+													const allChildrenAtNextLevel = factorTree1.filter(n => n.level === node.level + 1);
+													console.log('All children at next level:', allChildrenAtNextLevel.map(n => ({
+														id: n.id,
+														value: n.value,
+														x: n.x,
+														y: n.y,
+														isPrime: n.isPrime
+													})));
+													
+													console.log('Left child found:', leftChild ? { id: leftChild.id, value: leftChild.value, x: leftChild.x } : null);
+													console.log('Right child found:', rightChild ? { id: rightChild.id, value: rightChild.value, x: rightChild.x } : null);
+													console.log('=====================================');
+												}
 												
 												return (
 													<React.Fragment key={`svg-lines-1-${node.id}`}>
