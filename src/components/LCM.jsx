@@ -1273,7 +1273,7 @@ const LCM = () => {
 						{(showDynamicTree1 || showDynamicTree2) && (
 							<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
 								{showDynamicTree1 && (
-									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '40%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '38%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
 										{/* SVG for all lines */}
 										<svg
 											style={{
@@ -1296,9 +1296,9 @@ const LCM = () => {
 												
 												return children.map(child => {
 													// Calculate positions
-													const parentX = 100 + (node.x * 40);
+													const parentX = 100 + (node.x * 30);
 													const parentY = 30 + (node.y * 60);
-													const childX = 100 + (child.x * 40);
+													const childX = 100 + (child.x * 30);
 													const childY = 30 + (child.y * 60);
 													
 													console.log(`Drawing line from parent ${node.value} (${parentX}, ${parentY + 20}) to child ${child.value} (${childX}, ${childY})`);
@@ -1330,7 +1330,7 @@ const LCM = () => {
 											if (index === 0) return null;
 											
 											// Calculate position
-											const xPos = 100 + (node.x * 40);
+											const xPos = 100 + (node.x * 30);
 											const yPos = 30 + (node.y * 60);
 											
 											let nodeClass = 'tree-node';
@@ -1370,7 +1370,7 @@ const LCM = () => {
 									</div>
 								)}
 								{showDynamicTree2 && (
-									<div className="factor-tree-container" style={{ position: 'absolute', left: '75%', top: '40%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '68%', top: '38%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
 										{/* SVG for all lines */}
 										<svg
 											style={{
@@ -1393,9 +1393,9 @@ const LCM = () => {
 												
 												return children.map(child => {
 													// Calculate positions
-													const parentX = 100 + (node.x * 40);
+													const parentX = 100 + (node.x * 30);
 													const parentY = 30 + (node.y * 60);
-													const childX = 100 + (child.x * 40);
+													const childX = 100 + (child.x * 30);
 													const childY = 30 + (child.y * 60);
 													
 													console.log(`Drawing line from parent ${node.value} (${parentX}, ${parentY + 20}) to child ${child.value} (${childX}, ${childY})`);
@@ -1427,7 +1427,7 @@ const LCM = () => {
 											if (index === 0) return null;
 											
 											// Calculate position
-											const xPos = 100 + (node.x * 40);
+											const xPos = 100 + (node.x * 30);
 											const yPos = 30 + (node.y * 60);
 											
 											let nodeClass = 'tree-node';
