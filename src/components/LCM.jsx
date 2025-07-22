@@ -1105,8 +1105,10 @@ const LCM = () => {
 														style={{ left: '78%', top: '-120%', transform: 'translateX(-50%) translate(-7px, -60px)', opacity: 1 }}
 													>
 														{inputsModified ? (
-															<span style={{ display: 'inline-flex', alignItems: 'center', position: 'relative' }}>
-																?
+															<span style={{ display: 'inline-flex', alignItems: 'center' }}>
+																<div style={{ paddingRight: '17px' }}>
+																	?
+																</div>
 																<div className={`glow-button ${isSolveButtonShrinking ? 'simple-glow stopped' : 'simple-glow'} ${isSolveButtonShrinking ? 'shrink-animation' : ''}`} style={{ position: 'absolute', left: '1.5rem', top: '-0.2rem', bottom: 'auto', right: 'auto' }}>
 																	<button
 																		className={`px-2 py-1 bg-[#008545] hover:bg-[#00783E] text-white text-xs rounded transition-colors duration-200 select-none ${isSolveButtonShrinking ? 'shrink-animation' : ''}`}
@@ -1130,15 +1132,7 @@ const LCM = () => {
 												
 												{/* Final result */}
 												{showFinalResult && (
-													<div className={`absolute text-2xl font-bold text-[#5750E3] ${finalResultJumpIn ? 'final-result-jump-in' : ''}`} style={{ left: '13%', top: '-120%', transform: 'translateX(-50%)', opacity: finalResultJumpIn ? 1 : 0 }}>{inputsModified ? '?' : '36'}</div>
-												)}
-												
-												{/* Red version of 36 */}
-												{showRedElements && (
-													<div
-														className={`absolute text-2xl font-bold text-[#5750E3] ${lcmAnswerMoveDown ? 'lcm-answer-move-down' : ''}`}
-														style={{ left: '78%', top: '-120%', transform: '', opacity: redElementsJumpIn ? 1 : 0 }}
-													>
+													<div className={`absolute text-2xl font-bold text-[#5750E3] ${finalResultJumpIn ? 'final-result-jump-in' : ''}`} style={{ left: '13%', top: '-120%', transform: 'translateX(-50%)', opacity: finalResultJumpIn ? 1 : 0 }}>
 														{inputsModified ? '?' : '36'}
 													</div>
 												)}
