@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+lcm/src/components/holder.jsx
+lcm/src/components/holder.css
