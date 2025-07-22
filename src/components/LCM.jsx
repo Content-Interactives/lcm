@@ -515,11 +515,6 @@ const LCM = () => {
 			let divisor = 2;
 			let tempNum = num;
 			
-			// Special case: 2 is prime
-			if (num === 2) {
-				return {};
-			}
-			
 			while (tempNum > 1) {
 				while (tempNum % divisor === 0) {
 					factors[divisor] = (factors[divisor] || 0) + 1;
@@ -528,6 +523,17 @@ const LCM = () => {
 				divisor++;
 			}
 			return factors;
+		};
+		
+		const isPrime = (num) => {
+			if (num <= 1) return false;
+			if (num <= 3) return true;
+			if (num % 2 === 0 || num % 3 === 0) return false;
+			
+			for (let i = 5; i * i <= num; i += 6) {
+				if (num % i === 0 || num % (i + 2) === 0) return false;
+			}
+			return true;
 		};
 		
 		const tree = [];
@@ -540,11 +546,12 @@ const LCM = () => {
 			level: 0,
 			x: 0,
 			y: 0,
-			isPrime: false
+			isPrime: isPrime(num),
+			parentId: null
 		});
 		
 		// Queue to process nodes level by level
-		const queue = [{ value: num, level: 0, x: 0, y: 0 }];
+		const queue = [{ value: num, level: 0, x: 0, y: 0, id: 1 }];
 		
 		while (queue.length > 0) {
 			const current = queue.shift();
@@ -560,7 +567,7 @@ const LCM = () => {
 			const firstFactorValue = parseInt(firstFactor);
 			const remainingValue = current.value / firstFactorValue;
 			
-			// Only add left child if it's not 1, not equal to current, and not a duplicate prime
+			// Add left child (first factor)
 			if (firstFactorValue !== 1 && firstFactorValue !== current.value) {
 				const leftChild = {
 					id: nextId++,
@@ -568,37 +575,33 @@ const LCM = () => {
 					level: current.level + 1,
 					x: current.x - 1,
 					y: current.y + 1,
-					isPrime: true,
-					left: null,
-					right: null
+					isPrime: isPrime(firstFactorValue),
+					parentId: current.id
 				};
 				tree.push(leftChild);
 			}
 			
 			// Add right child (remaining value)
 			if (remainingValue > 1) {
-				const rightChildFactors = getPrimeFactors(remainingValue);
-				const isRightPrime = Object.keys(rightChildFactors).length === 0;
-				
 				const rightChild = {
 					id: nextId++,
 					value: remainingValue,
 					level: current.level + 1,
 					x: current.x + 1,
 					y: current.y + 1,
-					isPrime: isRightPrime,
-					left: null,
-					right: null
+					isPrime: isPrime(remainingValue),
+					parentId: current.id
 				};
 				tree.push(rightChild);
 				
 				// If right child is not prime, add it to queue for further processing
-				if (!isRightPrime) {
+				if (!rightChild.isPrime) {
 					queue.push({
 						value: remainingValue,
 						level: current.level + 1,
 						x: current.x + 1,
-						y: current.y + 1
+						y: current.y + 1,
+						id: rightChild.id
 					});
 				}
 			}
@@ -794,7 +797,7 @@ const LCM = () => {
 													style={{
 														position: 'absolute',
 														top: '-50px',
-														left: '-80px',
+														left: '40%',
 														fontSize: '2.25rem',
 														fontWeight: 'bold',
 														color: '#8b5cf6',
@@ -966,7 +969,7 @@ const LCM = () => {
 													style={{
 														position: 'absolute',
 														top: '-50px',
-														left: '55px',
+														left: '30%',
 														fontSize: '2.25rem',
 														fontWeight: 'bold',
 														color: '#8b5cf6',
@@ -1270,525 +1273,197 @@ const LCM = () => {
 						{(showDynamicTree1 || showDynamicTree2) && (
 							<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
 								{showDynamicTree1 && (
-									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
-										{/* Left side container */}
-										<div className="tree-left-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'left' }}>
-											{/* SVG for left side lines */}
-											<svg
-												style={{
-													position: 'absolute',
-													top: 0,
-													left: 0,
-													width: '100%',
-													height: '100%',
-													pointerEvents: 'none'
-												}}
-											>
-												{factorTree1.map((node, index) => {
-													const isVisible = index < treeAnimationStep1;
-													
-													// Only process left side nodes (negative x coordinates)
-													if (node.x >= 0) return null;
-													
-													const xPos = (node.x + 1) * 60 + 83; // Adjust for left side
-													const yPos = node.y * 80 + 20;
-													
-													// Only draw lines if this node has children (not prime)
-													if (node.isPrime) return null;
-													
-													// Find child nodes for left side
-													const leftChild = factorTree1.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x - 1)) < 0.1
-													);
-													const rightChild = factorTree1.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x + 1)) < 0.1
-													);
-													
-													return (
-														<React.Fragment key={`svg-lines-1-left-${node.id}`}>
-															{/* Line to left child */}
-															{leftChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={leftChild.x * 60 + 83 + 60}
-																	y2={leftChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-															{/* Line to right child */}
-															{rightChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={rightChild.x * 60 + 83 - 20}
-																	y2={rightChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-														</React.Fragment>
-													);
-												})}
-											</svg>
-											
-											{/* Left side nodes */}
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '25%', top: '40%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
+										{/* SVG for all lines */}
+										<svg
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												width: '100%',
+												height: '100%',
+												pointerEvents: 'none'
+											}}
+										>
 											{factorTree1.map((node, index) => {
 												const isVisible = index < treeAnimationStep1;
 												
-												// Only process left side nodes (negative x coordinates)
-												if (node.x >= 0) return null;
+												// Only draw lines if this node has children (not prime)
+												if (node.isPrime) return null;
 												
-												let xPos = (node.x + 1) * 60 + (node.level * -28) + 110;
-												const yPos = 20 + (node.level * 80);
+												// Find child nodes
+												const children = factorTree1.filter(n => n.parentId === node.id);
 												
-												// Hide the root node
-												if (index === 0) return null;
-												
-												// Adjust x position for child nodes
-												if (node.level > 0) {
-													const parent = factorTree1.find(n => 
-														n.level === node.level - 1 && 
-														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-														n.y === node.y - 1
-													);
+												return children.map(child => {
+													// Calculate positions
+													const parentX = 100 + (node.x * 40);
+													const parentY = 30 + (node.y * 60);
+													const childX = 100 + (child.x * 40);
+													const childY = 30 + (child.y * 60);
 													
-													if (parent) {
-														if (parent.x > node.x) {
-															xPos += 40;
-														} else {
-															xPos -= 15;
-														}
-													}
-												}
-												
-												let nodeClass = 'tree-node';
-												if (node.level === 0) {
-													nodeClass += ' root';
-												} else if (node.isPrime) {
-													nodeClass += ' prime';
-												} else {
-													nodeClass += ' non-prime';
-												}
-												
-												return (
-													<div
-														key={`node-1-left-${node.id}`}
-														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-														style={{
-															position: 'absolute',
-															left: xPos,
-															top: yPos,
-															opacity: isVisible ? 1 : 0,
-															transform: 'translateX(-50%)'
-														}}
-													>
-														{node.value}
-													</div>
-												);
+													console.log(`Drawing line from parent ${node.value} (${parentX}, ${parentY + 20}) to child ${child.value} (${childX}, ${childY})`);
+													
+													return (
+														<line
+															key={`line-1-${node.id}-${child.id}`}
+															x1={parentX + 20} // Center of parent node
+															y1={parentY + 40} // Bottom of parent node (30 + 20 = 50)
+															x2={childX + 20} // Center of child node
+															y2={childY + 2} // Top of child node
+															stroke="#5750E3"
+															strokeWidth="2"
+															opacity={isVisible ? 1 : 0}
+															style={{
+																transition: 'opacity 0.3s ease'
+															}}
+														/>
+													);
+												});
 											})}
-										</div>
+										</svg>
 										
-										{/* Right side container */}
-										<div className="tree-right-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'right' }}>
-											{/* SVG for right side lines */}
-											<svg
-												style={{
-													position: 'absolute',
-													top: 0,
-													left: 0,
-													width: '100%',
-													height: '100%',
-													pointerEvents: 'none'
-												}}
-											>
-												{factorTree1.map((node, index) => {
-													const isVisible = index < treeAnimationStep1;
-													
-													// Only process right side nodes (positive x coordinates)
-													if (node.x < 0) return null;
-													
-													const xPos = (node.x - 1) * 60 + 83; // Adjust for right side
-													const yPos = node.y * 80 + 20;
-													
-													// Only draw lines if this node has children (not prime)
-													if (node.isPrime) return null;
-													
-													// Find child nodes for right side
-													const leftChild = factorTree1.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x - 1)) < 0.1
-													);
-													const rightChild = factorTree1.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x + 1)) < 0.1
-													);
-													
-													return (
-														<React.Fragment key={`svg-lines-1-right-${node.id}`}>
-															{/* Line to left child */}
-															{leftChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={leftChild.x * 60 + 83 + 60}
-																	y2={leftChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-															{/* Line to right child */}
-															{rightChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={rightChild.x * 60 + 83 - 20}
-																	y2={rightChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-														</React.Fragment>
-													);
-												})}
-											</svg>
+										{/* All nodes */}
+										{factorTree1.map((node, index) => {
+											const isVisible = index < treeAnimationStep1;
 											
-											{/* Right side nodes */}
-											{factorTree1.map((node, index) => {
-												const isVisible = index < treeAnimationStep1;
-												
-												// Only process right side nodes (positive x coordinates)
-												if (node.x < 0) return null;
-												
-												let xPos = (node.x - 1) * 60 + (node.level * -28) + 110;
-												const yPos = 20 + (node.level * 80);
-												
-												// Hide the root node
-												if (index === 0) return null;
-												
-												// Adjust x position for child nodes
-												if (node.level > 0) {
-													const parent = factorTree1.find(n => 
-														n.level === node.level - 1 && 
-														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-														n.y === node.y - 1
-													);
-													
-													if (parent) {
-														if (parent.x > node.x) {
-															xPos += 40;
-														} else {
-															xPos -= 15;
-														}
-													}
-												}
-												
-												let nodeClass = 'tree-node';
-												if (node.level === 0) {
-													nodeClass += ' root';
-												} else if (node.isPrime) {
-													nodeClass += ' prime';
-												} else {
-													nodeClass += ' non-prime';
-												}
-												
-												return (
-													<div
-														key={`node-1-right-${node.id}`}
-														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-														style={{
-															position: 'absolute',
-															left: xPos,
-															top: yPos,
-															opacity: isVisible ? 1 : 0,
-															transform: 'translateX(-50%)'
-														}}
-													>
-														{node.value}
-													</div>
-												);
-											})}
-										</div>
+											// Hide the root node (first node)
+											if (index === 0) return null;
+											
+											// Calculate position
+											const xPos = 100 + (node.x * 40);
+											const yPos = 30 + (node.y * 60);
+											
+											let nodeClass = 'tree-node';
+											if (node.level === 0) {
+												nodeClass += ' root';
+											} else if (node.isPrime) {
+												nodeClass += ' prime';
+											} else {
+												nodeClass += ' non-prime';
+											}
+											
+											return (
+												<div
+													key={`node-1-${node.id}`}
+													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+													style={{
+														position: 'absolute',
+														left: xPos,
+														top: yPos,
+														opacity: isVisible ? 1 : 0,
+														transform: 'translateX(-50%)',
+														width: '40px',
+														height: '40px',
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center',
+														fontSize: '1.2rem',
+														fontWeight: 'bold',
+														color: '#5750E3',
+														transition: 'opacity 0.3s ease'
+													}}
+												>
+													{node.value}
+												</div>
+											);
+										})}
 									</div>
 								)}
 								{showDynamicTree2 && (
-									<div className="factor-tree-container" style={{ position: 'absolute', left: '75%', top: '50%', transform: 'translate(-50%, -69%)', width: '200px', height: '200px', padding: 0 }}>
-										{/* Left side container */}
-										<div className="tree-left-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'left' }}>
-											{/* SVG for left side lines */}
-											<svg
-												style={{
-													position: 'absolute',
-													top: 0,
-													left: 0,
-													width: '100%',
-													height: '100%',
-													pointerEvents: 'none'
-												}}
-											>
-												{factorTree2.map((node, index) => {
-													const isVisible = index < treeAnimationStep2;
-													
-													// Only process left side nodes (negative x coordinates)
-													if (node.x >= 0) return null;
-													
-													const xPos = (node.x + 1) * 60 + 82; // Adjust for left side
-													const yPos = node.y * 80 + 20;
-													
-													// Only draw lines if this node has children (not prime)
-													if (node.isPrime) return null;
-													
-													// Find child nodes for left side
-													const leftChild = factorTree2.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x - 1)) < 0.1
-													);
-													const rightChild = factorTree2.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x + 1)) < 0.1
-													);
-													
-													return (
-														<React.Fragment key={`svg-lines-2-left-${node.id}`}>
-															{/* Line to left child */}
-															{leftChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={leftChild.x * 60 + 82 + 60}
-																	y2={leftChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-															{/* Line to right child */}
-															{rightChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={rightChild.x * 60 + 82 - 20}
-																	y2={rightChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-														</React.Fragment>
-													);
-												})}
-											</svg>
-											
-											{/* Left side nodes */}
+									<div className="factor-tree-container" style={{ position: 'absolute', left: '75%', top: '40%', transform: 'translate(-50%, -50%)', width: '200px', height: '200px' }}>
+										{/* SVG for all lines */}
+										<svg
+											style={{
+												position: 'absolute',
+												top: 0,
+												left: 0,
+												width: '100%',
+												height: '100%',
+												pointerEvents: 'none'
+											}}
+										>
 											{factorTree2.map((node, index) => {
 												const isVisible = index < treeAnimationStep2;
 												
-												// Only process left side nodes (negative x coordinates)
-												if (node.x >= 0) return null;
+												// Only draw lines if this node has children (not prime)
+												if (node.isPrime) return null;
 												
-												let xPos = (node.x + 1) * 60 + (node.level * -28) + 110;
-												const yPos = 20 + (node.level * 80);
+												// Find child nodes
+												const children = factorTree2.filter(n => n.parentId === node.id);
 												
-												// Hide the root node
-												if (index === 0) return null;
-												
-												// Adjust x position for child nodes
-												if (node.level > 0) {
-													const parent = factorTree2.find(n => 
-														n.level === node.level - 1 && 
-														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-														n.y === node.y - 1
-													);
+												return children.map(child => {
+													// Calculate positions
+													const parentX = 100 + (node.x * 40);
+													const parentY = 30 + (node.y * 60);
+													const childX = 100 + (child.x * 40);
+													const childY = 30 + (child.y * 60);
 													
-													if (parent) {
-														if (parent.x > node.x) {
-															xPos += 40;
-														} else {
-															xPos -= 15;
-														}
-													}
-												}
-												
-												let nodeClass = 'tree-node';
-												if (node.level === 0) {
-													nodeClass += ' root';
-												} else if (node.isPrime) {
-													nodeClass += ' prime';
-												} else {
-													nodeClass += ' non-prime';
-												}
-												
-												return (
-													<div
-														key={`node-2-left-${node.id}`}
-														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-														style={{
-															position: 'absolute',
-															left: xPos,
-															top: yPos,
-															opacity: isVisible ? 1 : 0,
-															transform: 'translateX(-50%)'
-														}}
-													>
-														{node.value}
-													</div>
-												);
+													console.log(`Drawing line from parent ${node.value} (${parentX}, ${parentY + 20}) to child ${child.value} (${childX}, ${childY})`);
+													
+													return (
+														<line
+															key={`line-2-${node.id}-${child.id}`}
+															x1={parentX + 20} // Center of parent node
+															y1={parentY + 40} // Bottom of parent node (30 + 20 = 50)
+															x2={childX + 20} // Center of child node
+															y2={childY + 2}  // Top of child node
+															stroke="#5750E3"
+															strokeWidth="2"
+															opacity={isVisible ? 1 : 0}
+															style={{
+																transition: 'opacity 0.3s ease'
+															}}
+														/>
+													);
+												});
 											})}
-										</div>
+										</svg>
 										
-										{/* Right side container */}
-										<div className="tree-right-side" style={{ position: 'relative', width: '50%', height: '100%', float: 'right' }}>
-											{/* SVG for right side lines */}
-											<svg
-												style={{
-													position: 'absolute',
-													top: 0,
-													left: 0,
-													width: '100%',
-													height: '100%',
-													pointerEvents: 'none'
-												}}
-											>
-												{factorTree2.map((node, index) => {
-													const isVisible = index < treeAnimationStep2;
-													
-													// Only process right side nodes (positive x coordinates)
-													if (node.x < 0) return null;
-													
-													const xPos = (node.x - 1) * 60 + 82; // Adjust for right side
-													const yPos = node.y * 80 + 20;
-													
-													// Only draw lines if this node has children (not prime)
-													if (node.isPrime) return null;
-													
-													// Find child nodes for right side
-													const leftChild = factorTree2.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x - 1)) < 0.1
-													);
-													const rightChild = factorTree2.find(n => 
-														n.level === node.level + 1 && 
-														Math.abs(n.x - (node.x + 1)) < 0.1
-													);
-													
-													return (
-														<React.Fragment key={`svg-lines-2-right-${node.id}`}>
-															{/* Line to left child */}
-															{leftChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={leftChild.x * 60 + 82 + 60}
-																	y2={leftChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-															{/* Line to right child */}
-															{rightChild && (
-																<line
-																	x1={xPos + 20}
-																	y1={yPos + 50}
-																	x2={rightChild.x * 60 + 82 - 20}
-																	y2={rightChild.y * 80 + 40 - 15}
-																	stroke="#5750E3"
-																	strokeWidth="2"
-																	opacity={isVisible ? 1 : 0}
-																	style={{
-																		transition: 'opacity 0.3s ease'
-																	}}
-																/>
-															)}
-														</React.Fragment>
-													);
-												})}
-											</svg>
+										{/* All nodes */}
+										{factorTree2.map((node, index) => {
+											const isVisible = index < treeAnimationStep2;
 											
-											{/* Right side nodes */}
-											{factorTree2.map((node, index) => {
-												const isVisible = index < treeAnimationStep2;
-												
-												// Only process right side nodes (positive x coordinates)
-												if (node.x < 0) return null;
-												
-												let xPos = (node.x - 1) * 60 + (node.level * -28) + 110;
-												const yPos = 20 + (node.level * 80);
-												
-												// Hide the root node
-												if (index === 0) return null;
-												
-												// Adjust x position for child nodes
-												if (node.level > 0) {
-													const parent = factorTree2.find(n => 
-														n.level === node.level - 1 && 
-														((n.x === node.x + 1) || (n.x === node.x - 1)) &&
-														n.y === node.y - 1
-													);
-													
-													if (parent) {
-														if (parent.x > node.x) {
-															xPos += 40;
-														} else {
-															xPos -= 15;
-														}
-													}
-												}
-												
-												let nodeClass = 'tree-node';
-												if (node.level === 0) {
-													nodeClass += ' root';
-												} else if (node.isPrime) {
-													nodeClass += ' prime';
-												} else {
-													nodeClass += ' non-prime';
-												}
-												
-												return (
-													<div
-														key={`node-2-right-${node.id}`}
-														className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-														style={{
-															position: 'absolute',
-															left: xPos,
-															top: yPos,
-															opacity: isVisible ? 1 : 0,
-															transform: 'translateX(-50%)'
-														}}
-													>
-														{node.value}
-													</div>
-												);
-											})}
-										</div>
+											// Hide the root node (first node)
+											if (index === 0) return null;
+											
+											// Calculate position
+											const xPos = 100 + (node.x * 40);
+											const yPos = 30 + (node.y * 60);
+											
+											let nodeClass = 'tree-node';
+											if (node.level === 0) {
+												nodeClass += ' root';
+											} else if (node.isPrime) {
+												nodeClass += ' prime';
+											} else {
+												nodeClass += ' non-prime';
+											}
+											
+											return (
+												<div
+													key={`node-2-${node.id}`}
+													className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
+													style={{
+														position: 'absolute',
+														left: xPos,
+														top: yPos,
+														opacity: isVisible ? 1 : 0,
+														transform: 'translateX(-50%)',
+														width: '40px',
+														height: '40px',
+														display: 'flex',
+														alignItems: 'center',
+														justifyContent: 'center',
+														fontSize: '1.2rem',
+														fontWeight: 'bold',
+														color: '#5750E3',
+														transition: 'opacity 0.3s ease'
+													}}
+												>
+													{node.value}
+												</div>
+											);
+										})}
 									</div>
 								)}
 							</div>
