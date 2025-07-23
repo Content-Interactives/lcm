@@ -1,2 +1,142 @@
 /* LCM Explorer Styles - Clean Rebuild */
 
+/* Step 1 */
+@keyframes moveStep1NumbersUp {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(-150%);
+	}
+}
+
+.move-step1-numbers-up {
+	animation: moveStep1NumbersUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes fadeInUpCenteredAnimation {
+    from {
+        opacity: 0;
+        transform: translateY(10px) translateX(-50%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+.fade-in-up-centered-animation {
+    animation: fadeInUpCenteredAnimation 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes fadeOutDownCenteredAnimation {
+    from {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(10px) translateX(-50%);
+    }
+}
+
+.fade-out-down-centered-animation {
+    animation: fadeOutDownCenteredAnimation 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Factor Tree Styles */
+.factor-tree-container {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.tree-node {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.tree-node.root {
+    font-size: 2.25rem;
+    color: black;
+}
+
+.tree-node.prime {
+    font-size: 1.5rem;
+    color: #5750E3;
+}
+
+.tree-node.non-prime {
+    font-size: 1.5rem;
+    color: #5750E3;
+}
+
+.tree-line {
+    position: absolute;
+    width: 2px;
+    background: #5750E3;
+    transform-origin: top;
+}
+
+.tree-line.left {
+    transform: rotate(-30deg);
+}
+
+.tree-line.right {
+    transform: rotate(30deg);
+}
+
+/* Static Factor Tree Lines */
+.factor-tree-line {
+    position: absolute;
+    width: 2px;
+    background: #5750E3;
+    transform-origin: top;
+}
+
+.factor-tree-line.left {
+    transform: rotate(-30deg);
+}
+
+.factor-tree-line.right {
+    transform: rotate(30deg);
+}
+
+.factor-tree-line.vertical {
+    transform: rotate(0deg);
+}
+
+/* Static Factor Tree Nodes */
+.factor-tree-node {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #5750E3;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+.factor-tree-node.root {
+    font-size: 2.25rem;
+    color: black;
+}
+
+.factor-tree-node.prime {
+    font-size: 1.5rem;
+    color: #5750E3;
+}
+
+.factor-tree-node.non-prime {
+    font-size: 1.5rem;
+    color: #5750E3;
+}
