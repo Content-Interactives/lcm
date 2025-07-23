@@ -1,12 +1,43 @@
-# React + Vite
+# Least Common Multiple (LCM) Interactive
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the code for the **Least Common Multiple (LCM) Interactive**, designed to help students understand and explore how to find the least common multiple of two or more numbers using a visual, step-by-step approach.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🔗 Live Interactive
 
-## Expanding the ESLint configuration
+Try it out here:  
+👉 [https://content-interactives.github.io/lcm/](https://content-interactives.github.io/lcm/)
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🌐 Where This Interactive Is Being Used
+
+This interactive is currently featured in the following locations:
+
+- <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/5d12571f-8e12-4441-98ab-c0bc94069a96" /> **CK-12 Intent Response**  
+  - 👉 PRODUCTION: PENDING  
+  - 👉 MASTER: [https://test.ck12.co/abc123](https://test.ck12.co/abc123) <!-- Replace with actual link when available -->
+
+- 📘 **CK-12 Flexbooks**  
+  - 👉 PENDING ADDITION
+
+---
+
+## 📚 Standards & Subjects
+
+This interactive aligns with the following topics and standards:
+
+- **📂 Subject Area**: Middle School Math (Grades 5–6)
+- **🧮 Topic**: Least Common Multiple (LCM), Multiples, Number Theory
+- **📏 Common Core**:  
+  - 6.NS.B.4 – Find the least common multiple of two whole numbers less than or equal to 12  
+  - 5.NBT.B – Use place value understanding and properties of operations to perform multi-digit arithmetic
+
+---
+
+## 🛠️ Developer Notes
+
+- Built with: HTML, CSS, JavaScript
+- Deployed via GitHub Pages
+- Core files include `index.html`, with additional logic in `js/` and styling in `css/`
