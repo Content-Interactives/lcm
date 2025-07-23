@@ -35,8 +35,20 @@ const LCM = () => {
 	const [hideStep1Elements, setHideStep1Elements] = useState(false);
 	const [moveStep1ElementsToPlace, setMoveStep1ElementsToPlace] = useState(false);
 	const [showStep2Flexi, setShowStep2Flexi] = useState(false);
-	const [showFactorTreeStaticLines, setShowFactorTreeStaticLines] = useState(false);
-	const [showFactorTreeStaticNode, setShowFactorTreeStaticNode] = useState(false);
+	const [showStaticFactorTrees, setShowStaticFactorTrees] = useState(false);
+	const [hideStep2Elements, setHideStep2Elements] = useState(false);
+	
+	// Static factor tree animation states
+	const [showStaticLines, setShowStaticLines] = useState(false);
+	const [showStaticFirstPrimes, setShowStaticFirstPrimes] = useState(false);
+	const [showStaticSecondLines, setShowStaticSecondLines] = useState(false);
+	const [showStaticSecondPrimes, setShowStaticSecondPrimes] = useState(false);
+	
+	// Removal animation states
+	const [removeStaticSecondPrimes, setRemoveStaticSecondPrimes] = useState(false);
+	const [removeStaticSecondLines, setRemoveStaticSecondLines] = useState(false);
+	const [removeStaticNonPrimeNodes, setRemoveStaticNonPrimeNodes] = useState(false);
+	const [removeStaticFirstLines, setRemoveStaticFirstLines] = useState(false);
 
 	// Step 3
 
@@ -62,12 +74,41 @@ const LCM = () => {
 		setHideStep1Elements(true);
 		setMoveStep1ElementsToPlace(true);
 		setTimeout(() => {
-			setShowFactorTreeStaticLines(true);
-			setShowFactorTreeStaticNode(true);
+			setShowStaticFactorTrees(true);
 			setTimeout(() => {
-				setShowStep2Flexi(true);
-			}, 1200);
-		}, 1200);
+				setShowStaticLines(true);
+				setTimeout(() => {
+					setShowStaticFirstPrimes(true);
+					setTimeout(() => {
+						setShowStaticSecondLines(true);
+						setTimeout(() => {
+							setShowStaticSecondPrimes(true);
+							setTimeout(() => {
+								setShowStep2Flexi(true);
+							}, 800);
+						}, 300);
+					}, 300);
+				}, 300);
+			}, 300);
+		}, 800);
+	}
+
+	const handleStep2Button = () => {
+		setHideStep2Elements(true);
+		// Start removal animations in cascading order
+		setTimeout(() => {
+			setRemoveStaticSecondPrimes(true);
+			setTimeout(() => {
+				setRemoveStaticSecondLines(true);
+				setTimeout(() => {
+					setRemoveStaticNonPrimeNodes(true);
+					setTimeout(() => {
+						setRemoveStaticFirstLines(true);
+						// Add any additional logic for the next step here
+					}, 300);
+				}, 300);
+			}, 300);
+		}, 300);
 	}
 
 	return (
@@ -82,21 +123,92 @@ const LCM = () => {
 				className={`${showExploreButton ? '' : 'fade-out-up-animation'}`}
 			>Click to Explore!</GlowButton>
 
-			{/* Step 1 */}
-			<div className="flex flex-row">
-				<div>
-					<div className={`text-4xl font-bold text-black number-text absolute top-[25%] left-[25%] 
+			{/* Steps 1 - 3 */}
+			<div className="flex flex-row relative w-[100%] h-[420px]">
+				<div className="factor-tree-container" style={{ position: 'absolute', left: '0%', top: '0%', width: '50%', height: '100%' }}>
+					<div className={`text-4xl font-bold text-black number-text absolute top-[25%] left-[50%] translate-x-[-50%]
 						${showStep1Numbers ? 'grow-in-animation' : 'no-show-animation'}
 						${moveStep1ElementsToPlace ? 'move-step1-numbers-up' : ''}
 					`}>12</div>
+					{/* Static Factor Tree for 12 */}
+					{showStaticFactorTrees && (
+						<>
+							{/* Lines from 12 to 2 and 6 */}
+							{showStaticLines && (
+								<div style={{ position: 'absolute', top: '22%', left: '60%', width: '100%' }}>
+									<div className={`factor-tree-line left ${removeStaticFirstLines ? 'static-line-remove left' : 'static-line-appear left'}`} style={{ height: '40px' }}></div>
+									<div className={`factor-tree-line right ${removeStaticFirstLines ? 'static-line-remove right' : 'static-line-appear right'}`} style={{ height: '40px' }}></div>
+								</div>
+							)}
+							{/* Lines from 6 to 2 and 3 */}
+							{showStaticSecondLines && (
+								<div style={{ position: 'absolute', top: '39%', left: '74%', width: '100%' }}>
+									<div className={`factor-tree-line left ${removeStaticSecondLines ? 'static-line-remove left' : 'static-line-appear left'}`} style={{ height: '40px' }}></div>
+									<div className={`factor-tree-line right ${removeStaticSecondLines ? 'static-line-remove right' : 'static-line-appear right'}`} style={{ height: '40px' }}></div>
+								</div>
+							)}
+							{/* Nodes */}
+							{showStaticFirstPrimes && (
+								<>
+									<div className={`factor-tree-node prime static-prime-appear`} style={{ left: '38%', top: '29%' }}>2</div>
+									{!removeStaticNonPrimeNodes && (
+										<div className={`factor-tree-node non-prime static-prime-appear ${showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '65%', top: '29%' }}>6</div>
+									)}
+								</>
+							)}
+							{showStaticSecondPrimes && (
+								<>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '52%', top: '46%' }}>2</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '79%', top: '46%' }}>3</div>
+								</>
+							)}
+						</>
+					)}
 				</div>
-				<div>
-					<div className={`text-4xl font-bold text-black number-text absolute top-[25%] right-[25%] 
+
+				<div className="factor-tree-container" style={{ position: 'absolute', right: '0%', top: '0%', width: '50%', height: '100%' }}>
+					<div className={`text-4xl font-bold text-black number-text absolute top-[25%] right-[50%] translate-x-[50%]
 						${showStep1Numbers ? 'grow-in-animation' : 'no-show-animation'}
 						${moveStep1ElementsToPlace ? 'move-step1-numbers-up' : ''}
 					`}>18</div>
+					{/* Static Factor Tree for 18 */}
+					{showStaticFactorTrees && (
+						<>
+							{/* Lines from 18 to 2 and 9 */}
+							{showStaticLines && (
+								<div style={{ position: 'absolute', left: '41%', top: '22%', width: '100%' }}>
+									<div className={`factor-tree-line left ${removeStaticFirstLines ? 'static-line-remove left' : 'static-line-appear left'}`} style={{ height: '40px' }}></div>
+									<div className={`factor-tree-line right ${removeStaticFirstLines ? 'static-line-remove right' : 'static-line-appear right'}`} style={{ height: '40px' }}></div>
+								</div>
+							)}
+							
+							{/* Lines from 9 to 3 and 3 */}
+							{showStaticSecondLines && (
+								<div style={{ position: 'absolute', left: '54%', top: '39%', width: '100%' }}>
+									<div className={`factor-tree-line left ${removeStaticSecondLines ? 'static-line-remove left' : 'static-line-appear left'}`} style={{ height: '40px' }}></div>
+									<div className={`factor-tree-line right ${removeStaticSecondLines ? 'static-line-remove right' : 'static-line-appear right'}`} style={{ height: '40px' }}></div>
+								</div>
+							)}
+							
+							{/* Nodes */}
+							{showStaticFirstPrimes && (
+								<>
+									<div className={`factor-tree-node prime static-prime-appear`} style={{ left: '20%', top: '29%' }}>2</div>
+									{!removeStaticNonPrimeNodes && (
+										<div className={`factor-tree-node non-prime static-prime-appear ${showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '45%', top: '29%' }}>9</div>
+									)}
+								</>
+							)}
+							{showStaticSecondPrimes && (
+								<>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '32%', top: '46%' }}>3</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '59%', top: '46%' }}>3</div>
+								</>
+							)}
+						</>
+					)}
 				</div>
-				<div className={`text-3xl font-bold text-gray-700 number-text absolute top-[40%] left-[50%] translate-x-[-50%] 
+				<div className={`text-3xl font-bold text-gray-700 number-text absolute top-[35%] left-[50%] translate-x-[-50%] 
 					${showStep1LCMText ? 'fade-in-up-centered-animation' : 'no-show-animation'}
 					${moveStep1ElementsToPlace ? 'fade-out-down-centered-animation' : ''}
 				`}>LCM = ?</div>
@@ -111,60 +223,14 @@ const LCM = () => {
 				>Continue
 				</GlowButton>
 			</div>
-
-			{/* Static Factor Trees */}
-			{showFactorTreeStaticLines && (
-				<>
-					{/* Static Factor Tree for 12 */}
-					<div className="factor-tree-container" style={{ position: 'absolute', left: '0%', top: '50%', width: '200px', height: '200px' }}>
-						{/* Lines from 12 to 2 and 6 */}
-						<div style={{ position: 'absolute', top: '60px', width: '100%' }}>
-							<div className="factor-tree-line left" style={{ height: '40px' }}></div>
-							<div className="factor-tree-line right" style={{ height: '40px' }}></div>
-						</div>
-
-						{/* Lines from 6 to 2 and 3 */}
-						<div style={{ position: 'absolute', left: '50%', top: '120px', width: '100%' }}>
-							<div className="factor-tree-line left" style={{ height: '40px' }}></div>
-							<div className="factor-tree-line right" style={{ height: '40px' }}></div>
-						</div>
-						
-						{/* Nodes */}
-						<div className="factor-tree-node prime" style={{ left: '25%', top: '80px' }}>2</div>
-						<div className="factor-tree-node non-prime" style={{ left: '75%', top: '80px' }}>6</div>
-						<div className="factor-tree-node prime" style={{ left: '60%', top: '140px' }}>2</div>
-						<div className="factor-tree-node prime" style={{ left: '90%', top: '140px' }}>3</div>
-					</div>
-					
-					{/* Static Factor Tree for 18 */}
-					<div className="factor-tree-container" style={{ position: 'absolute', right: '25%', top: '50%', transform: 'translate(50%, -50%)', width: '200px', height: '200px' }}>
-						{/* Lines from 18 to 2 and 9 */}
-						<div style={{ position: 'absolute', top: '60px', width: '100%' }}>
-							<div className="factor-tree-line left" style={{ height: '40px' }}></div>
-							<div className="factor-tree-line right" style={{ height: '40px' }}></div>
-						</div>
-						
-						{/* Lines from 9 to 3 and 3 */}
-						<div style={{ position: 'absolute', left: '50%', top: '120px', width: '100%' }}>
-							<div className="factor-tree-line left" style={{ height: '40px' }}></div>
-							<div className="factor-tree-line right" style={{ height: '40px' }}></div>
-						</div>
-						
-						{/* Nodes */}
-						<div className="factor-tree-node prime" style={{ left: '25%', top: '80px' }}>2</div>
-						<div className="factor-tree-node non-prime" style={{ left: '75%', top: '80px' }}>9</div>
-						<div className="factor-tree-node prime" style={{ left: '60%', top: '140px' }}>3</div>
-						<div className="factor-tree-node prime" style={{ left: '90%', top: '140px' }}>3</div>
-					</div>
-				</>
-			)}
 			
 			<FlexiText
-				className={`${showStep2Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
+				className={`${hideStep2Elements ? 'fade-out-up-animation' : showStep2Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
 				flexiImage={FlexiTelescope}
 			>Break down each number into its prime factors, then find the highest power of each.
 			</FlexiText>
 			<GlowButton
+				onClick={handleStep2Button}
 				className={`${showStep2Flexi ? 'grow-in-animation' : 'no-show-animation'}`}
 			>Continue
 			</GlowButton>

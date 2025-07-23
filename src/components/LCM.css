@@ -140,3 +140,125 @@
     font-size: 1.5rem;
     color: #5750E3;
 }
+
+/* Static Factor Tree Animation Classes */
+.static-line-appear {
+    animation: staticLineAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-line-appear.left {
+    animation: staticLineAppearLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-line-appear.right {
+    animation: staticLineAppearRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-prime-appear {
+    animation: staticPrimeAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-line-remove {
+    animation: staticLineRemove 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-line-remove.left {
+    animation: staticLineRemoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-line-remove.right {
+    animation: staticLineRemoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.static-prime-remove {
+    animation: staticPrimeRemove 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes staticLineAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes staticLineAppearLeft {
+    from {
+        opacity: 0;
+        transform: rotate(-30deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(-30deg) scale(1);
+    }
+}
+
+@keyframes staticLineAppearRight {
+    from {
+        opacity: 0;
+        transform: rotate(30deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(30deg) scale(1);
+    }
+}
+
+@keyframes staticPrimeAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes staticLineRemove {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+@keyframes staticLineRemoveLeft {
+    from {
+        opacity: 1;
+        transform: rotate(-30deg) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: rotate(-30deg) scale(0.8);
+    }
+}
+
+@keyframes staticLineRemoveRight {
+    from {
+        opacity: 1;
+        transform: rotate(30deg) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: rotate(30deg) scale(0.8);
+    }
+}
+
+@keyframes staticPrimeRemove {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Custom opacity override for non-prime nodes */
+.factor-tree-node.non-prime.opacity-50 {
+    opacity: 0.5 !important;
+}

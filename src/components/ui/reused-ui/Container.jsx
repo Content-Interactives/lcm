@@ -3,7 +3,7 @@ import React from 'react';
 export function Container({ 
 	children, 
 	className = "", 
-	maxWidth = "max-w-[464px]",
+	maxWidth = "max-w-[500px]",
 	showBorder = true,
 	selectNone = true,
 	text = "Default Text",
@@ -15,6 +15,7 @@ export function Container({
 		"w-full",
 		"min-w-[300px]",
 		"min-h-[500px]",
+		"h-[500px]",
 		maxWidth,
 		"mx-auto",
 		"px-2",
@@ -36,7 +37,7 @@ export function Container({
 
 	return (
 		<div className={containerClasses} {...props}>
-			<div className="p-4">
+			<div className="p-4 w-[100%] h-[100%]">
 				<div className="flex justify-between items-center mb-4">
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">{text}</h2>
 					{showResetButton && (
@@ -50,7 +51,7 @@ export function Container({
 					)}
 				</div>
 				<div>
-					<div className="w-full bg-white border border-[#5750E3]/30 rounded-md relative overflow-hidden" style={{ minHeight: '420px', height: 'auto' }}>
+					<div className="w-full bg-white border border-[#5750E3]/30 rounded-md relative overflow-hidden" style={{ minHeight: '420px', height: '100%', width: '100%' }}>
 						{children}
 					</div>
 				</div>
