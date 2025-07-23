@@ -17,7 +17,6 @@ export function Container({
 		"min-h-[500px]",
 		maxWidth,
 		"mx-auto",
-		"mt-5",
 		"px-2",
 		"bg-white",
 		"rounded-lg",

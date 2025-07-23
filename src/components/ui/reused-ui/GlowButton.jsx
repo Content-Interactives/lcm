@@ -60,7 +60,7 @@ export function GlowButton({
         } else if (isShrinking) {
             buttonAnimationClasses = 'shrink-animation';
         } else if (isGrowing) {
-            buttonAnimationClasses = 'continue-animation';
+            buttonAnimationClasses = 'grow-in-animation';
         }
     }
 
@@ -79,7 +79,7 @@ export function GlowButton({
     const finalAnimationClasses = isShrinkingOut ? 'shrink-out-animation' : animationClasses;
     
     // Only stop glow for shrink animations, not grow-in animations
-    const shouldStopGlow = finalAnimationClasses && !animationClasses.includes('continue-animation');
+    const shouldStopGlow = finalAnimationClasses && !animationClasses.includes('grow-in-animation');
     
     const glowClasses = showGlow ? 
         `glow-button simple-glow ${finalAnimationClasses}${shouldStopGlow ? ' stopped' : ''}` : 
