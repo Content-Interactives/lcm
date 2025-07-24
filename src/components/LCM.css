@@ -11,7 +11,7 @@
 }
 
 .move-step1-numbers-up {
-	animation: moveStep1NumbersUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+	animation: moveStep1NumbersUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 @keyframes fadeInUpCenteredAnimation {
@@ -41,7 +41,7 @@
 }
 
 .fade-out-down-centered-animation {
-    animation: fadeOutDownCenteredAnimation 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation: fadeOutDownCenteredAnimation 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 /* Factor Tree Styles */
@@ -275,7 +275,7 @@
 }
 
 .non-prime-shrink-out {
-    animation: nonPrimeShrinkOut 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation: nonPrimeShrinkOut 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     transition: none !important;
 }
 
@@ -295,7 +295,7 @@
 }
 
 .move-first-layer-twos {
-    animation: moveFirstLayerTwos 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation: moveFirstLayerTwos 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 /* Animation for moving second layer primes up */
@@ -309,7 +309,7 @@
 }
 
 .move-second-layer-primes-up {
-    animation: moveSecondLayerPrimesUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    animation: moveSecondLayerPrimesUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 @keyframes removeStep3FirstRow {

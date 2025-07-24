@@ -63,6 +63,8 @@ const LCM = () => {
 	const [removeStep3SecondRow, setRemoveStep3SecondRow] = useState(false);
 
 	// Step 4
+
+	
 	// Functions
 	// Function to handle the explore button
 	const handleExploreButton = () => {
@@ -140,9 +142,15 @@ const LCM = () => {
 		setTimeout(() => {
 			setRemoveStep3FirstRow(true);
 			setRemoveMultiplicationSymbols(true);
-			setRemoveConvergingLines(true);
-			setRemoveBetweenMultiplicationSymbols(true);
-			setRemoveStep3SecondRow(true);
+			setTimeout(() => {
+				setRemoveConvergingLines(true);
+				setTimeout(() => {
+					setRemoveBetweenMultiplicationSymbols(true);
+					setRemoveStep3SecondRow(true);
+					setTimeout(() => {
+					}, 800);
+				}, 800);
+			}, 800);
 		}, 800);
 	}
 
