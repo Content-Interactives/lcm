@@ -256,9 +256,210 @@
         opacity: 1;
         transform: scale(1);
     }
+    to {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+}
+
+/* Shrink-out animation for non-prime nodes */
+@keyframes nonPrimeShrinkOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+.non-prime-shrink-out {
+    animation: nonPrimeShrinkOut 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    transition: none !important;
 }
 
 /* Custom opacity override for non-prime nodes */
 .factor-tree-node.non-prime.opacity-50 {
     opacity: 0.5 !important;
+}
+
+/* Animation for moving first layer 2's left and down */
+@keyframes moveFirstLayerTwos {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    100% {
+        transform: translateX(-80%) translateY(-50%);
+    }
+}
+
+.move-first-layer-twos {
+    animation: moveFirstLayerTwos 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Animation for moving second layer primes up */
+@keyframes moveSecondLayerPrimesUp {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-228%);
+    }
+}
+
+.move-second-layer-primes-up {
+    animation: moveSecondLayerPrimesUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Multiplication Symbol Styles */
+.multiplication-symbol {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #5750E3;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+/* Multiplication Symbol Animation */
+@keyframes multiplicationSymbolAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.multiplication-symbol-appear {
+    animation: multiplicationSymbolAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Converging Lines Styles */
+.converging-line {
+    position: absolute;
+    width: 2px;
+    background: #5750E3;
+    transform-origin: top;
+}
+
+.converging-line.left {
+    transform: rotate(-15deg);
+}
+
+.converging-line.right {
+    transform: rotate(15deg);
+}
+
+/* Converging Lines Animation */
+@keyframes convergingLineAppear {
+    0% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes convergingLineAppearLeft {
+    0% {
+        opacity: 0;
+        transform: rotate(-30deg) scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(-30deg) scaleY(1);
+    }
+}
+
+@keyframes convergingLineAppearRight {
+    0% {
+        opacity: 0;
+        transform: rotate(30deg) scaleY(0);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(30deg) scaleY(1);
+    }
+}
+
+.converging-line-appear {
+    animation: convergingLineAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.converging-line-appear.left {
+    animation: convergingLineAppearLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.converging-line-appear.right {
+    animation: convergingLineAppearRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Superscript Expression Styles */
+.superscript-expression {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #5750E3;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+/* Superscript Expression Animation */
+@keyframes superscriptExpressionAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.superscript-expression-appear {
+    animation: superscriptExpressionAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Between Multiplication Symbol Styles */
+.between-multiplication-symbol {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #5750E3;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s ease;
+}
+
+/* Between Multiplication Symbol Animation */
+@keyframes betweenMultiplicationSymbolAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.between-multiplication-symbol-appear {
+    animation: betweenMultiplicationSymbolAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }

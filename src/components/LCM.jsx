@@ -49,8 +49,15 @@ const LCM = () => {
 	const [removeStaticSecondLines, setRemoveStaticSecondLines] = useState(false);
 	const [removeStaticNonPrimeNodes, setRemoveStaticNonPrimeNodes] = useState(false);
 	const [removeStaticFirstLines, setRemoveStaticFirstLines] = useState(false);
+	const [moveFirstLayerTwos, setMoveFirstLayerTwos] = useState(false);
+	const [moveSecondLayerPrimesUp, setMoveSecondLayerPrimesUp] = useState(false);
+	const [showMultiplicationSymbols, setShowMultiplicationSymbols] = useState(false);
+	const [showConvergingLines, setShowConvergingLines] = useState(false);
+	const [showSuperscriptExpressions, setShowSuperscriptExpressions] = useState(false);
+	const [showBetweenMultiplicationSymbols, setShowBetweenMultiplicationSymbols] = useState(false);
 
 	// Step 3
+	const [showStep3Flexi, setShowStep3Flexi] = useState(false);
 
 	// Functions
 	// Function to handle the explore button
@@ -102,11 +109,25 @@ const LCM = () => {
 				setRemoveStaticSecondLines(true);
 				setTimeout(() => {
 					setRemoveStaticNonPrimeNodes(true);
+					setRemoveStaticFirstLines(true);						
 					setTimeout(() => {
-						setRemoveStaticFirstLines(true);
-						// Add any additional logic for the next step here
-					}, 300);
-				}, 300);
+						setMoveFirstLayerTwos(true);
+						setMoveSecondLayerPrimesUp(true);
+						setTimeout(() => {
+							setShowMultiplicationSymbols(true);
+							setTimeout(() => {
+								setShowConvergingLines(true);
+								setTimeout(() => {
+									setShowSuperscriptExpressions(true);
+									setShowBetweenMultiplicationSymbols(true);
+									setTimeout(() => {
+										setShowStep3Flexi(true);
+									}, 1000);
+								}, 500);
+							}, 600);
+						}, 500);
+					}, 800);
+				}, 500);
 			}, 300);
 		}, 300);
 	}
@@ -150,7 +171,7 @@ const LCM = () => {
 							{/* Nodes */}
 							{showStaticFirstPrimes && (
 								<>
-									<div className={`factor-tree-node prime static-prime-appear`} style={{ left: '38%', top: '29%' }}>2</div>
+									<div className={`factor-tree-node prime static-prime-appear ${moveFirstLayerTwos ? 'move-first-layer-twos' : ''}`} style={{ left: '38%', top: '29%' }}>2</div>
 									{!removeStaticNonPrimeNodes && (
 										<div className={`factor-tree-node non-prime static-prime-appear ${showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '65%', top: '29%' }}>6</div>
 									)}
@@ -158,10 +179,32 @@ const LCM = () => {
 							)}
 							{showStaticSecondPrimes && (
 								<>
-									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '52%', top: '46%' }}>2</div>
-									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '79%', top: '46%' }}>3</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? '' : 'static-prime-appear'} ${moveSecondLayerPrimesUp ? 'move-second-layer-primes-up' : ''}`} style={{ left: '52%', top: '46%' }}>2</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? '' : 'static-prime-appear'} ${moveSecondLayerPrimesUp ? 'move-second-layer-primes-up' : ''}`} style={{ left: '79%', top: '46%' }}>3</div>
 								</>
 							)}
+						</>
+					)}
+					{/* Multiplication Symbols for 12 */}
+					{showMultiplicationSymbols && (
+						<>
+							<div className={`multiplication-symbol ${showMultiplicationSymbols ? 'multiplication-symbol-appear' : ''}`} style={{ left: '37.5%', top: '24%' }}>×</div>
+							<div className={`multiplication-symbol ${showMultiplicationSymbols ? 'multiplication-symbol-appear' : ''}`} style={{ left: '64.5%', top: '24%' }}>×</div>
+						</>
+					)}
+					{/* Converging Lines for 12 */}
+					{showConvergingLines && (
+						<div style={{ position: 'absolute', top: '33%', left: '37%', width: '100%' }}>
+							<div className={`converging-line left ${showConvergingLines ? 'converging-line-appear left' : ''}`} style={{ left: '0%', height: '40px' }}></div>
+							<div className={`converging-line right ${showConvergingLines ? 'converging-line-appear right' : ''}`} style={{ left: '18%', height: '40px' }}></div>
+						</div>
+					)}
+					{/* Superscript Expressions for 12 */}
+					{showSuperscriptExpressions && (
+						<>
+							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '39%', top: '41%' }}>2²</div>
+							<div className={`between-multiplication-symbol ${showBetweenMultiplicationSymbols ? 'between-multiplication-symbol-appear' : ''}`} style={{ left: '52%', top: '41%' }}>×</div>
+							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '67%', top: '41%' }}>3</div>
 						</>
 					)}
 				</div>
@@ -193,7 +236,7 @@ const LCM = () => {
 							{/* Nodes */}
 							{showStaticFirstPrimes && (
 								<>
-									<div className={`factor-tree-node prime static-prime-appear`} style={{ left: '20%', top: '29%' }}>2</div>
+									<div className={`factor-tree-node prime static-prime-appear ${moveFirstLayerTwos ? 'move-first-layer-twos' : ''}`} style={{ left: '20%', top: '29%' }}>2</div>
 									{!removeStaticNonPrimeNodes && (
 										<div className={`factor-tree-node non-prime static-prime-appear ${showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '45%', top: '29%' }}>9</div>
 									)}
@@ -201,10 +244,32 @@ const LCM = () => {
 							)}
 							{showStaticSecondPrimes && (
 								<>
-									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '32%', top: '46%' }}>3</div>
-									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? 'static-prime-remove' : 'static-prime-appear'}`} style={{ left: '59%', top: '46%' }}>3</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? '' : 'static-prime-appear'} ${moveSecondLayerPrimesUp ? 'move-second-layer-primes-up' : ''}`} style={{ left: '32%', top: '46%' }}>3</div>
+									<div className={`factor-tree-node prime ${removeStaticSecondPrimes ? '' : 'static-prime-appear'} ${moveSecondLayerPrimesUp ? 'move-second-layer-primes-up' : ''}`} style={{ left: '59%', top: '46%' }}>3</div>
 								</>
 							)}
+						</>
+					)}
+					{/* Multiplication Symbols for 18 */}
+					{showMultiplicationSymbols && (
+						<>
+							<div className={`multiplication-symbol ${showMultiplicationSymbols ? 'multiplication-symbol-appear' : ''}`} style={{ left: '19%', top: '24%' }}>×</div>
+							<div className={`multiplication-symbol ${showMultiplicationSymbols ? 'multiplication-symbol-appear' : ''}`} style={{ left: '45%', top: '24%' }}>×</div>
+						</>
+					)}
+					{/* Converging Lines for 18 */}
+					{showConvergingLines && (
+						<div style={{ position: 'absolute', top: '33%', left: '44%', width: '100%' }}>
+							<div className={`converging-line left ${showConvergingLines ? 'converging-line-appear left' : ''}`} style={{ left: '0%', height: '40px' }}></div>
+							<div className={`converging-line right ${showConvergingLines ? 'converging-line-appear right' : ''}`} style={{ left: '18%', height: '40px' }}></div>
+						</div>
+					)}
+					{/* Superscript Expressions for 18 */}
+					{showSuperscriptExpressions && (
+						<>
+							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '18%', top: '41%' }}>2</div>
+							<div className={`between-multiplication-symbol ${showBetweenMultiplicationSymbols ? 'between-multiplication-symbol-appear' : ''}`} style={{ left: '31.5%', top: '41%' }}>×</div>
+							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '47%', top: '41%' }}>3²</div>
 						</>
 					)}
 				</div>
@@ -232,6 +297,16 @@ const LCM = () => {
 			<GlowButton
 				onClick={handleStep2Button}
 				className={`${showStep2Flexi ? 'grow-in-animation' : 'no-show-animation'}`}
+			>Continue
+			</GlowButton>
+
+			<FlexiText
+				className={`${showStep3Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
+				flexiImage={FlexiTeacher}
+			>After we find the highest power of each prime factor, we can multiply them together to get the LCM.
+			</FlexiText>
+			<GlowButton
+				className={`${showStep3Flexi ? 'grow-in-animation' : 'no-show-animation'}`}
 			>Continue
 			</GlowButton>
 		</Container>
