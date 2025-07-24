@@ -98,6 +98,7 @@ export function GlowButton({
                     transformOrigin: 'center',
                     borderRadius: '4px',
                     zIndex: 50,
+                    pointerEvents: 'auto',
                     ...style
                 }}
                 {...props}

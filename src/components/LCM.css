@@ -312,6 +312,36 @@
     animation: moveSecondLayerPrimesUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
+@keyframes removeStep3FirstRow {
+    0% {
+        transform: translateY(-228%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-228%);
+        opacity: 0;
+    }
+}
+
+.remove-step3-first-row {
+    animation: removeStep3FirstRow 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes removeStep3FirstRow2 {
+    0% {
+        transform: translateX(-80%) translateY(-50%);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-80%) translateY(-50%);
+        opacity: 0;
+    }
+}
+
+.remove-step3-first-row-2 {
+    animation: removeStep3FirstRow2 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
 /* Multiplication Symbol Styles */
 .multiplication-symbol {
     position: absolute;
@@ -392,6 +422,28 @@
     }
 }
 
+@keyframes convergingLineRemoveLeft {
+    from {
+        opacity: 1;
+        transform: rotate(-30deg) scaleY(1);
+    }
+    to {
+        opacity: 0;
+        transform: rotate(-30deg) scaleY(0);
+    }
+}
+
+@keyframes convergingLineRemoveRight {
+    from {
+        opacity: 1;
+        transform: rotate(30deg) scaleY(1);
+    }
+    to {
+        opacity: 0;
+        transform: rotate(30deg) scaleY(0);
+    }
+}
+
 .converging-line-appear {
     animation: convergingLineAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
@@ -402,6 +454,14 @@
 
 .converging-line-appear.right {
     animation: convergingLineAppearRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.converging-line-remove.left {
+    animation: convergingLineRemoveLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.converging-line-remove.right {
+    animation: convergingLineRemoveRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 /* Superscript Expression Styles */
@@ -462,4 +522,17 @@
 
 .between-multiplication-symbol-appear {
     animation: betweenMultiplicationSymbolAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes remove6and9 {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.remove-6-and-9 {
+    animation: remove6and9 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
