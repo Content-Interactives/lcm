@@ -61,6 +61,12 @@ const LCM = () => {
 	const [hideStep3Elements, setHideStep3Elements] = useState(false);
 	const [removeStep3FirstRow, setRemoveStep3FirstRow] = useState(false);
 	const [removeStep3SecondRow, setRemoveStep3SecondRow] = useState(false);
+	const [movePowersUp, setMovePowersUp] = useState(false);
+	const [showLCMText, setShowLCMText] = useState(false);
+	const [showPowersMultiplication, setShowPowersMultiplication] = useState(false);
+	const [removePowers, setRemovePowers] = useState(false);
+	const [showSimplifiedPowers, setShowSimplifiedPowers] = useState(false);
+	const [showAnswer, setShowAnswer] = useState(false);
 
 	// Step 4
 
@@ -114,6 +120,7 @@ const LCM = () => {
 				setRemoveStaticSecondLines(true);
 				setTimeout(() => {
 					setRemoveStaticNonPrimeNodes(true);
+					setRemove6and9(true);
 					setRemoveStaticFirstLines(true);						
 					setTimeout(() => {
 						setMoveFirstLayerTwos(true);
@@ -148,9 +155,17 @@ const LCM = () => {
 					setRemoveBetweenMultiplicationSymbols(true);
 					setRemoveStep3SecondRow(true);
 					setTimeout(() => {
-					}, 800);
-				}, 800);
-			}, 800);
+						setMovePowersUp(true);
+						setTimeout(() => {
+							setShowLCMText(true);
+							setShowPowersMultiplication(true);
+							setTimeout(() => {
+								setRemovePowers(true);
+							}, 500);
+						}, 800);
+					}, 300);
+				}, 300);
+			}, 300);
 		}, 800);
 	}
 
@@ -218,7 +233,7 @@ const LCM = () => {
 					{/* Superscript Expressions for 12 */}
 					{showSuperscriptExpressions && (
 						<>
-							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '39%', top: '41%' }}>2²</div>
+							<div className={`superscript-expression ${removePowers ? 'remove-power-2' : movePowersUp ? 'power-2-move-up' : showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '39%', top: '41%' }}>2²</div>
 							<div className={`between-multiplication-symbol ${removeBetweenMultiplicationSymbols ? 'shrink-out-animation' : showBetweenMultiplicationSymbols ? 'grow-in-animation' : 'no-show-animation'}`} style={{ left: '52%', top: '41%' }}>×</div>
 							<div className={`superscript-expression ${removeStep3SecondRow ? 'shrink-out-animation' : showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '67%', top: '41%' }}>3</div>
 						</>
@@ -279,7 +294,7 @@ const LCM = () => {
 						<>
 							<div className={`superscript-expression ${removeStep3SecondRow ? 'shrink-out-animation' : showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '18%', top: '41%' }}>2</div>
 							<div className={`between-multiplication-symbol ${removeBetweenMultiplicationSymbols ? 'shrink-out-animation' : showBetweenMultiplicationSymbols ? 'grow-in-animation' : 'no-show-animation'}`} style={{ left: '31.5%', top: '41%' }}>×</div>
-							<div className={`superscript-expression ${showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '47%', top: '41%' }}>3²</div>
+							<div className={`superscript-expression ${removePowers ? 'remove-power-3' : movePowersUp ? 'power-3-move-up' : showSuperscriptExpressions ? 'superscript-expression-appear' : ''}`} style={{ left: '47%', top: '41%' }}>3²</div>
 						</>
 					)}
 				</div>
@@ -309,6 +324,14 @@ const LCM = () => {
 				className={`${showStep2Flexi ? 'grow-in-animation' : 'no-show-animation'}`}
 			>Continue
 			</GlowButton>
+
+			{/* Step 3.5 - LCM Text */}
+			<div className={`text-3xl font-bold text-gray-700 number-text absolute top-[40%] left-[40%] translate-x-[-50%] 
+				${showLCMText ? 'fade-in-up-centered-animation' : 'no-show-animation'}
+			`}>LCM = </div>
+			<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[40%] left-[61.5%] translate-x-[-50%] 
+				${showPowersMultiplication ? 'fade-in-up-centered-animation' : 'no-show-animation'}
+			`}>×</div>
 
 			<FlexiText
 				className={`${hideStep3Elements ? 'fade-out-up-animation' : showStep3Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}

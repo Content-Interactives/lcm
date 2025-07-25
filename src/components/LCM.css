@@ -536,3 +536,60 @@
 .remove-6-and-9 {
     animation: remove6and9 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
+
+/* Superscript Expression Move Up */
+@keyframes power2MoveUp {
+    0% {
+        transform: translate(0);
+    }
+    100% {
+        transform: translate(350%, -15%);
+    }
+}
+
+@keyframes power3MoveUp {
+    0% {
+        transform: translate(0);
+    }
+    100% {
+        transform: translate(-100%, -15%);
+    }
+}
+
+.power-2-move-up {
+    animation: power2MoveUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.power-3-move-up {
+    animation: power3MoveUp 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes removePower2 {
+    0% {
+        opacity: 1;
+        transform: translate(350%, -15%);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(350%, -15%);
+    }
+}
+
+.remove-power-2 {  
+    animation: removePower2 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes removePower3 {
+    0% {
+        opacity: 1;
+        transform: translate(-100%, -15%);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-100%, -15%);
+    }
+}
+
+.remove-power-3 {
+    animation: removePower3 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
