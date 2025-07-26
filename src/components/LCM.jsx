@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 // Assets Imports
-import FlexiWave from '../assets/All Flexi Poses/PNG/Flexi_Wave.png';
 import FlexiTeacher from '../assets/All Flexi Poses/PNG/Flexi_Teacher.png';
 import FlexiTelescope from '../assets/All Flexi Poses/PNG/Flexi_Telescope.png';
 import FlexiPoint from '../assets/All Flexi Poses/PNG/Flexi_Point.png';
@@ -12,7 +11,6 @@ import FlexiStars from '../assets/All Flexi Poses/PNG/Flexi_Stars.png';
 import { Container } from './ui/reused-ui/Container.jsx'
 import { FlexiText } from './ui/reused-ui/FlexiText.jsx'
 import { GlowButton } from './ui/reused-ui/GlowButton.jsx'
-import { Input } from './ui/reused-ui/Input.jsx'
 
 // UI Animation Imports
 import './ui/reused-animations/fade.css';
@@ -84,12 +82,14 @@ const LCM = () => {
 	const [inputValue1, setInputValue1] = useState('12');
 	const [inputValue2, setInputValue2] = useState('18');
 	const [inputsModified, setInputsModified] = useState(false);
+	const [showSolveButton, setShowSolveButton] = useState(false);
 	
 	
 	// Functions
 	// Function to handle the explore button
 	// Input handler function
 	const handleInputChange = (value, setValue, defaultValue) => {
+		setShowSolveButton(true);
 		if (value === '' || /^\d+$/.test(value)) {
 			const numValue = parseInt(value) || 0;
 			if (numValue > 25) {
@@ -244,6 +244,10 @@ const LCM = () => {
 				}, 500);
 			}, 500);
 		}, 500);
+	}
+
+	const handleSolveButton = () => {
+		
 	}
 
 	return (
@@ -492,6 +496,11 @@ const LCM = () => {
 				</GlowButton>
 
 				{/* Input Step */}
+				<GlowButton
+					onClick={handleSolveButton}
+					className={`absolute ${showSolveButton ? 'grow-in-animation' : 'no-show-animation'}`}
+				>Solve
+				</GlowButton>
 				<FlexiText
 					className={`${showInputFlexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
 					flexiImage={FlexiThumbsUp}
