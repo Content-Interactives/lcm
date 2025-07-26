@@ -593,3 +593,70 @@
 .remove-power-3 {
     animation: removePower3 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
+
+.move-lcm-text-right {
+    animation: moveLcmTextRight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes moveLcmTextRight {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(24%);
+    }
+}
+
+/* Step 4 animations */
+.move-lcm-text-down {
+    animation: moveLcmTextDown 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.move-36-text-down {
+    animation: move36TextDown 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes moveLcmTextDown {
+    0% {
+        transform: translate(24%, 0%);
+    }
+    100% {
+        transform: translate(24%, 300%);
+    }
+}
+
+@keyframes move36TextDown {
+    0% {
+        transform: translate(0%, 0%);
+    }
+    100% {
+        transform: translate(0%, 300%);
+    }
+}
+
+/* Input Section Styles */
+.input-section {
+    height: 100%;
+    text-align: center;
+    background: transparent;
+    border: 2px solid #9ca3af;
+    border-radius: 4px;
+    font-size: 2.25rem;
+    font-weight: bold;
+    color: #000000;
+}
+
+.shrink-out-12-and-18 {
+    animation: shrinkOut12And18 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes shrinkOut12And18 {
+    0% {
+        opacity: 1;
+        transform: translateY(-150%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-150%) scale(0);
+    }
+}
