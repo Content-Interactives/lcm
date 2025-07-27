@@ -13,6 +13,7 @@ export function GlowButton({
     isShrinking = false,
     isGrowing = false,
     autoShrinkOnClick = true,
+    disableShrinkOnClick = false,
     bgColor = null,
     ...props 
 }) {
@@ -21,8 +22,8 @@ export function GlowButton({
     const handleClick = (e) => {
         if (disabled) return;
         
-        // Auto-shrink on click if enabled
-        if (autoShrinkOnClick && animate) {
+        // Auto-shrink on click if enabled and not explicitly disabled
+        if (autoShrinkOnClick && !disableShrinkOnClick && animate) {
             setIsShrinkingOut(true);
         }
         

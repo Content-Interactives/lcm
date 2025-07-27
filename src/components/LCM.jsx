@@ -20,6 +20,9 @@ import './ui/reused-animations/glow.css';
 // CSS Imports
 import './LCM.css';
 
+// JSX Imports
+import { DynamicFactorTree } from './DynamicFactorTrees.jsx';
+
 const LCM = () => {
 	// State management
 	// Introduction
@@ -84,6 +87,16 @@ const LCM = () => {
 	const [inputsModified, setInputsModified] = useState(false);
 	const [showSolveButton, setShowSolveButton] = useState(false);
 	
+	// Solve Step States
+	const [hideReusableInputs, setHideReusableInputs] = useState(false);
+	const [returnReusableInputs, setReturnReusableInputs] = useState(false);
+	const [hideSolveButton, setHideSolveButton] = useState(false);
+	const [returnSolveButton, setReturnSolveButton] = useState(false);
+	const [shrinkOutAnswer, setShrinkOutAnswer] = useState(false);
+	const [growInAnswer, setGrowInAnswer] = useState(false);
+	const [currentAnswer, setCurrentAnswer] = useState(36);
+	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
+	const [hideDynamicFactorTrees, setHideDynamicFactorTrees] = useState(false);
 	
 	// Functions
 	// Function to handle the explore button
@@ -247,7 +260,13 @@ const LCM = () => {
 	}
 
 	const handleSolveButton = () => {
-		
+		setHideSolveButton(true);
+		setTimeout(() => {
+			setHideReusableInputs(true);
+			setTimeout(() => {
+				setShowDynamicFactorTrees(true);
+			}, 500);
+		}, 500);
 	}
 
 	return (
@@ -340,7 +359,7 @@ const LCM = () => {
 						onBlur={() => handleInputBlur(setInputValue1, '12')}
 						onKeyDown={handleKeyDown}
 						max="25"
-						className={`absolute ${showInputs ? 'grow-in-animation' : 'no-show-animation'} input-section text-center bg-transparent border-none outline-none text-4xl font-bold text-black no-spinner`}
+						className={`absolute ${returnReusableInputs ? 'grow-in-animation' : hideReusableInputs ? 'shrink-out-animation' : showInputs ? 'grow-in-animation' : 'no-show-animation'} input-section text-center bg-transparent border-none outline-none text-4xl font-bold text-black no-spinner`}
 						style={{
 							WebkitAppearance: 'none',
 							MozAppearance: 'textfield',
@@ -353,6 +372,14 @@ const LCM = () => {
 							lineHeight: '65px'
 						}}
 					/>
+					{showDynamicFactorTrees && (
+						<DynamicFactorTree 
+							number={inputValue1} 
+							show={showDynamicFactorTrees}
+							position={{ left: '50%', top: '50%' }}
+							treeId="input1-tree"
+						/>
+					)}
 				</div>
 
 				{/* Right Side Container */}
@@ -420,7 +447,7 @@ const LCM = () => {
 						onBlur={() => handleInputBlur(setInputValue2, '18')}
 						onKeyDown={handleKeyDown}
 						max="25"
-						className={`absolute ${showInputs ? 'grow-in-animation' : 'no-show-animation'} input-section text-center bg-transparent border-none outline-none text-4xl font-bold text-black no-spinner`}
+						className={`absolute ${returnReusableInputs ? 'grow-in-animation' : hideReusableInputs ? 'shrink-out-animation' : showInputs ? 'grow-in-animation' : 'no-show-animation'} input-section text-center bg-transparent border-none outline-none text-4xl font-bold text-black no-spinner`}
 						style={{
 							WebkitAppearance: 'none',
 							MozAppearance: 'textfield',
@@ -433,6 +460,14 @@ const LCM = () => {
 							lineHeight: '65px'
 						}}
 					/>
+					{showDynamicFactorTrees && (
+						<DynamicFactorTree 
+							number={inputValue2} 
+							show={showDynamicFactorTrees}
+							position={{ left: '50%', top: '50%' }}
+							treeId="input2-tree"
+						/>
+					)}
 				</div>
 				<div className={`text-3xl font-bold text-gray-700 number-text absolute top-[35%] left-[50%] translate-x-[-50%] 
 					${showStep1LCMText ? 'fade-in-up-centered-animation' : 'no-show-animation'}
@@ -482,8 +517,8 @@ const LCM = () => {
 				`}>×</div>
 				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[66.5%] ${removeSimplifiedPowers ? 'shrink-out-animation' : showSimplifiedPowers ? 'grow-in-animation' : 'no-show-animation'}
 				`}>9</div>
-				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[58%] ${moveStep4LCMTextDown ? 'move-36-text-down' : showAnswer ? 'grow-in-animation' : 'no-show-animation'}
-				`}>36</div>
+				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[58%] ${growInAnswer ? 'grow-in-animation' : shrinkOutAnswer ? 'shrink-out-animation' : moveStep4LCMTextDown ? 'move-36-text-down' : showAnswer ? 'grow-in-animation' : 'no-show-animation'}
+				`}>{inputsModified ? '?' : currentAnswer}</div>
 				<FlexiText
 					className={`${hideStep4Elements ? 'fade-out-up-animation' : showStep4Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
 					flexiImage={FlexiStars}
@@ -498,7 +533,8 @@ const LCM = () => {
 				{/* Input Step */}
 				<GlowButton
 					onClick={handleSolveButton}
-					className={`absolute ${showSolveButton ? 'grow-in-animation' : 'no-show-animation'}`}
+					autoShrinkOnClick={false}
+					className={`absolute ${returnSolveButton ? 'grow-in-animation' : hideSolveButton ? 'shrink-out-animation' : showSolveButton ? 'grow-in-animation' : 'no-show-animation'}`}
 				>Solve
 				</GlowButton>
 				<FlexiText
