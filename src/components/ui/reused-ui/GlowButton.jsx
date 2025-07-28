@@ -74,6 +74,7 @@ export function GlowButton({
         rounded
         text-sm font-medium select-none
         ${nonAnimationClasses}
+        z-index: 100
     `;
 
     // Apply shrink animation to glow container as well, but not grow-in animations

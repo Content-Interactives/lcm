@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Assets Imports
 import FlexiTeacher from '../assets/All Flexi Poses/PNG/Flexi_Teacher.png';
@@ -81,7 +81,11 @@ const LCM = () => {
 	const [remove12And18, setRemove12And18] = useState(false);
 	const [showInputs, setShowInputs] = useState(false);
 	const [showInputFlexi, setShowInputFlexi] = useState(false);
-	
+
+	// Solving Step States
+	const [showDynamicPowers, setShowDynamicPowers] = useState(false);
+	const [showUserInput, setShowUserInput] = useState(false);
+
 	// Input states
 	const [inputValue1, setInputValue1] = useState('12');
 	const [inputValue2, setInputValue2] = useState('18');
@@ -97,9 +101,14 @@ const LCM = () => {
 	const [growInAnswer, setGrowInAnswer] = useState(false);
 	const [currentAnswer, setCurrentAnswer] = useState(36);
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
-	const [hideDynamicFactorTrees, setHideDynamicFactorTrees] = useState(false);
-	const [showUserInput, setShowUserInput] = useState(false);
-	const [hideUserInput, setHideUserInput] = useState(false);
+	
+	// Tree animation tracking states
+	const [tree1Complete, setTree1Complete] = useState(false);
+	const [tree2Complete, setTree2Complete] = useState(false);
+	
+	// Individual tree completion states for showing lines
+	const [showTree1Result, setShowTree1Result] = useState(false);
+	const [showTree2Result, setShowTree2Result] = useState(false);
 	
 	// Functions
 	// Function to handle the explore button
@@ -137,6 +146,81 @@ const LCM = () => {
 		}
 	};
 
+	// Enhanced tree animation callback handler
+	const handleTreeAnimationComplete = (treeId, animationType) => {
+		console.log(`Tree animation complete: ${treeId}`);
+		if (treeId === 'input1-tree') {
+			setTree1Complete(true);
+			setTimeout(() => {
+				setShowTree1Result(true);
+			}, 300); // Small delay after tree completes
+		} else if (treeId === 'input2-tree') {
+			setTree2Complete(true);
+			setTimeout(() => {
+				setShowTree2Result(true);
+			}, 300); // Small delay after tree completes
+		}
+	};
+
+	const getHighestPower = (input) => {
+		const num = parseInt(input);
+		if (num <= 1) return '1';
+		
+		// Find prime factors and their powers
+		const factors = {};
+		let n = num;
+		
+		// Check for 2 first (even numbers)
+		while (n % 2 === 0) {
+			factors[2] = (factors[2] || 0) + 1;
+			n = n / 2;
+		}
+		
+		// Check for odd prime factors
+		for (let i = 3; i <= Math.sqrt(n); i += 2) {
+			while (n % i === 0) {
+				factors[i] = (factors[i] || 0) + 1;
+				n = n / i;
+			}
+		}
+		
+		// If n is greater than 2, it's a prime factor
+		if (n > 2) {
+			factors[n] = (factors[n] || 0) + 1;
+		}
+		
+		// Find the factor with the highest power
+		let highestFactor = 0;
+		let highestPower = 0;
+		
+		for (const [factor, power] of Object.entries(factors)) {
+			if (power > highestPower) {
+				highestPower = power;
+				highestFactor = parseInt(factor);
+			}
+		}
+		
+		// Return JSX with superscript
+		if (highestPower === 1) {
+			return <span>{highestFactor}</span>;
+		} else {
+			return <span>{highestFactor}<sup>{highestPower}</sup></span>;
+		}
+	}
+
+	// Effect to trigger next step when both trees have shrunk
+	useEffect(() => {
+		const bothShrunk = tree1Complete && tree2Complete;
+		console.log('Checking if both trees shrunk:', { input1: tree1Complete, input2: tree2Complete, bothShrunk });
+		if (bothShrunk && showDynamicFactorTrees) {
+			console.log('Both trees shrunk, triggering showDynamicPowers');
+			// Both trees have finished shrinking, now show the powers
+			setTimeout(() => {
+				setShowDynamicPowers(true);
+			}, 500); // Small delay after shrinking completes
+		}
+	}, [tree1Complete, tree2Complete, showDynamicFactorTrees]);
+
 	const handleExploreButton = () => {
 		setShowIntroText(false);
 		setShowExploreButton(false);
@@ -154,19 +238,15 @@ const LCM = () => {
 	}
 
 	const handleTryYourOwnButton = () => {
-		// Hide intro elements
 		setShowIntroText(false);
 		setShowExploreButton(false);
-		
-		// Show the LCM=36 text and inputs directly
 		setTimeout(() => {
-			setShowAnswer(true);
-			setMoveLcmTextRight(true);
+			setShowInputs(true);
 			setTimeout(() => {
-				setShowInputs(true);
+				setMoveStep4LCMTextDown(true);
 				setTimeout(() => {
 					setShowInputFlexi(true);
-				}, 800);
+				}, 1000);
 			}, 500);
 		}, 500);
 	}
@@ -282,13 +362,18 @@ const LCM = () => {
 
 	const handleSolveButton = () => {
 		setHideSolveButton(true);
+		// Reset tree states for new solve
+		setTree1Complete(false);
+		setTree2Complete(false);
+		setShowTree1Result(false);
+		setShowTree2Result(false);
 		setTimeout(() => {
 			setHideReusableInputs(true);
 			setTimeout(() => {
 				setShowUserInput(true);
 				setTimeout(() => {
 					setShowDynamicFactorTrees(true);
-				}, 500);
+				}, 200);
 			}, 500);
 		}, 500);
 	}
@@ -404,6 +489,7 @@ const LCM = () => {
 							show={showDynamicFactorTrees}
 							position={{ left: '50%', top: '50%' }}
 							treeId="input1-tree"
+							onAnimationComplete={handleTreeAnimationComplete}
 						/>
 					)}
 				</div>
@@ -492,6 +578,7 @@ const LCM = () => {
 							show={showDynamicFactorTrees}
 							position={{ left: '50%', top: '50%' }}
 							treeId="input2-tree"
+							onAnimationComplete={handleTreeAnimationComplete}
 						/>
 					)}
 				</div>
@@ -561,6 +648,7 @@ const LCM = () => {
 					onClick={handleSolveButton}
 					autoShrinkOnClick={false}
 					className={`absolute ${returnSolveButton ? 'grow-in-animation' : hideSolveButton ? 'shrink-out-animation' : showSolveButton ? 'grow-in-animation' : 'no-show-animation'}`}
+					style={{ zIndex: 20 }}
 				>Solve
 				</GlowButton>
 				<FlexiText
@@ -568,6 +656,17 @@ const LCM = () => {
 					flexiImage={FlexiThumbsUp}
 				>Enter your own numbers to find their LCM!
 				</FlexiText>
+
+				{/* Dynamic Solving After Dynamic Factor Trees Step */}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[38%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				>{getHighestPower(inputValue1)}
+				</div>
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[46%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				>×
+				</div>
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[55%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				>{getHighestPower(inputValue2)}
+				</div>
 			</div>
 		</Container>
 	);

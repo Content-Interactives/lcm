@@ -131,6 +131,13 @@ const DynamicFactorTree = ({
 	const [treeAnimationStep, setTreeAnimationStep] = useState(0);
 	const [isShrinking, setIsShrinking] = useState(false);
 
+	// Enhanced animation callback function
+	const triggerAnimationCallback = (animationType) => {
+		if (onAnimationComplete && animationType === 'complete') {
+			onAnimationComplete(treeId, animationType);
+		}
+	};
+
 	// Animate tree
 	const animateTree = () => {
 		
