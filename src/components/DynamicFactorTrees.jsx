@@ -1,32 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
-// CSS styles for dynamic factor trees
-const dynamicTreeStyles = `
-	/* Dynamic Factor Tree Styles */
-	.factor-tree-container {
-		position: relative;
-		min-height: 300px;
-		display: flex;
-		justify-content: center;
-		align-items: flex-start;
-	}
-
-	/* Node animation */
-	.node-animate {
-		animation: nodeAppear 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-	}
-
-	@keyframes nodeAppear {
-		from {
-			opacity: 0;
-			transform: translateX(-50%) scale(0.5);
-		}
-		to {
-			opacity: 1;
-			transform: translateX(-50%) scale(1);
-		}
-	}
-`;
+import './LCM.css';
 
 // Utility functions
 const getPrimeFactors = (num) => {
@@ -56,9 +29,20 @@ const isPrime = (num) => {
 };
 
 const buildFactorTree = (num) => {
-	console.log('buildFactorTree called with:', num);
+	if (num <= 0) return [];
 	
-	if (num <= 1) return [];
+	// Special case for 1 - show it as a single node
+	if (num === 1) {
+		return [{
+			id: 1,
+			value: 1,
+			level: 0,
+			x: 0,
+			y: 0,
+			isPrime: false, // 1 is not prime
+			parentId: null
+		}];
+	}
 	
 	const tree = [];
 	let nextId = 1;
@@ -131,7 +115,6 @@ const buildFactorTree = (num) => {
 		}
 	}
 	
-	console.log('Final tree structure:', tree);
 	return tree;
 };
 
@@ -146,13 +129,14 @@ const DynamicFactorTree = ({
 }) => {
 	const [factorTree, setFactorTree] = useState([]);
 	const [treeAnimationStep, setTreeAnimationStep] = useState(0);
+	const [isShrinking, setIsShrinking] = useState(false);
 
 	// Animate tree
 	const animateTree = () => {
-		console.log('animateTree called with number:', number);
 		
 		try {
 			setTreeAnimationStep(0);
+			setIsShrinking(false);
 			
 			const num = parseInt(number);
 			if (isNaN(num) || num <= 0) {
@@ -161,18 +145,43 @@ const DynamicFactorTree = ({
 			}
 			
 			const tree = buildFactorTree(num);
-			console.log('Tree built:', tree);
+			
 			setFactorTree(tree);
+			
+			// Handle empty tree case (for numbers <= 1)
+			if (tree.length === 0) {
+				if (onAnimationComplete) {
+					setTimeout(() => onAnimationComplete(treeId), 100);
+				}
+				return;
+			}
+			
+			// If there's only one node (prime number), show it immediately
+			if (tree.length === 1) {
+				setTreeAnimationStep(1);
+				// Start shrinking after a delay
+				setTimeout(() => {
+					setIsShrinking(true);
+					if (onAnimationComplete) {
+						setTimeout(() => onAnimationComplete(treeId), 800);
+					}
+				}, 1000);
+				return;
+			}
 			
 			// Animate each node step by step
 			tree.forEach((node, index) => {
 				setTimeout(() => {
-					console.log(`Tree: Animating node ${index + 1}/${tree.length}:`, node.value);
 					setTreeAnimationStep(index + 1);
 					
-					// Call onAnimationComplete when all nodes are animated
-					if (index === tree.length - 1 && onAnimationComplete) {
-						setTimeout(() => onAnimationComplete(treeId), 500);
+					// When all nodes are animated, start shrinking after a delay
+					if (index === tree.length - 1) {
+						setTimeout(() => {
+							setIsShrinking(true);
+							if (onAnimationComplete) {
+								setTimeout(() => onAnimationComplete(treeId), 800);
+							}
+						}, 800);
 					}
 				}, index * 500); // 500ms delay between each node
 			});
@@ -183,8 +192,8 @@ const DynamicFactorTree = ({
 
 	// Reset tree
 	const resetTree = () => {
-		console.log('resetTree called');
 		setTreeAnimationStep(0);
+		setIsShrinking(false);
 		setFactorTree([]);
 	};
 
@@ -192,100 +201,139 @@ const DynamicFactorTree = ({
 	useEffect(() => {
 		if (show && number) {
 			animateTree();
+		} else {
 		}
 	}, [show, number]);
 
 	// Render tree component
-	const renderTree = () => (
-		<div 
-			className="factor-tree-container" 
-			style={{ 
-				position: 'absolute', 
-				left: position.left, 
-				top: position.top, 
-				transform: 'translate(-50%, -50%)', 
-				width: '100%', 
-				height: '100%' 
-			}}
-		>
-			{/* CSS-styled lines instead of SVG */}
-			{factorTree.map((node, index) => {
-				const isVisible = index < treeAnimationStep;
-				
-				// Only draw lines if this node has children (not prime)
-				if (node.isPrime) return null;
-				
-				// Find child nodes
+	const renderTree = () => {
+		// Separate root and non-root elements for better control
+		const rootNode = factorTree.find(node => node.level === 0);
+		const nonRootNodes = factorTree.filter(node => node.level > 0);
+		const nonRootLines = factorTree
+			.filter(node => node.level > 0 && !node.isPrime)
+			.flatMap(node => {
 				const children = factorTree.filter(n => n.parentId === node.id);
-				
-				return children.map((child, childIndex) => {
-					// Calculate positions
-					const parentX = 100 + (node.x * 30);
-					const parentY = 50 + (node.y * 65);
+				return children.map(child => ({
+					node,
+					child,
+					key: `line-${treeId}-${node.id}-${child.id}`
+				}));
+			});
+
+		return (
+			<div 
+				className="factor-tree-container" 
+				style={{ 
+					position: 'absolute', 
+					left: position.left, 
+					top: position.top, 
+					transform: 'translate(-50%, -50%)', 
+					width: '100%', 
+					height: '100%' 
+				}}
+			>
+				{/* CSS-styled lines instead of SVG */}
+				{factorTree.map((node, index) => {
+					const isVisible = index < treeAnimationStep;
 					
-					// Determine if this is a left or right child
-					const isLeftChild = child.x < node.x;
-					const lineClass = isLeftChild ? 'left' : 'right';
+					// Only draw lines if this node has children (not prime)
+					if (node.isPrime) {
+						return null;
+					}
+					
+					// Find child nodes
+					const children = factorTree.filter(n => n.parentId === node.id);
+					
+					return children.map((child, childIndex) => {
+						// Calculate positions
+						const parentX = 100 + (node.x * 30);
+						const parentY = 50 + (node.y * 65);
+						
+						// Determine if this is a left or right child
+						const isLeftChild = child.x < node.x;
+						const lineClass = isLeftChild ? 'left' : 'right';
+						
+						// Apply shrinking animation to ALL lines when shrinking (including root lines)
+						const shouldShrink = isShrinking;
+						const shrinkLineClass = shouldShrink ? `shrink-out-line ${lineClass}` : '';
+						
+						return (
+							<div
+								key={`line-${treeId}-${node.id}-${child.id}`}
+								className={`factor-tree-line ${lineClass} ${isVisible ? `dynamic-line-appear ${lineClass}` : ''} ${shrinkLineClass}`}
+								style={{
+									position: 'absolute',
+									left: `${parentX}px`,
+									top: `${parentY + 20}px`,
+									height: '40px',
+									opacity: isVisible ? 1 : 0,
+									transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
+								}}
+							/>
+						);
+					});
+				})}
+				
+				{/* Root node (never shrinks) */}
+				{rootNode && (
+					<div
+						key={`node-${treeId}-${rootNode.id}`}
+						className={`factor-tree-node dynamic-factor-tree-node root ${rootNode.level === 0 || rootNode.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime'}`}
+						style={{
+							position: 'absolute',
+							left: 100 + (rootNode.x * 30),
+							top: 30 + (rootNode.y * 68),
+							opacity: 0 < treeAnimationStep ? 1 : 0,
+							transform: 'translateX(-50%)',
+							transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
+						}}
+					>
+						{rootNode.value}
+					</div>
+				)}
+				
+				{/* Non-root nodes (all shrink together) */}
+				{nonRootNodes.map((node, index) => {
+					const isVisible = index < treeAnimationStep;
+					
+					// Calculate position
+					const xPos = 100 + (node.x * 30);
+					const yPos = 30 + (node.y * 68);
+					
+					let nodeClass = 'factor-tree-node dynamic-factor-tree-node';
+					if (node.isPrime) {
+						nodeClass += ' prime';
+					} else {
+						nodeClass += ' non-prime';
+					}
+					
+					// Use appropriate shrinking animation based on node type
+					const shrinkClass = isShrinking ? (node.isPrime ? 'shrink-out' : 'shrink-out-non-prime') : '';
 					
 					return (
 						<div
-							key={`line-${treeId}-${node.id}-${child.id}`}
-							className={`factor-tree-line ${lineClass} ${isVisible ? 'static-line-appear' : ''}`}
+							key={`node-${treeId}-${node.id}`}
+							className={`${nodeClass} ${isVisible ? (node.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime') : ''} ${shrinkClass}`}
 							style={{
 								position: 'absolute',
-								left: `${parentX}px`,
-								top: `${parentY + 20}px`,
-								height: '40px',
+								left: xPos,
+								top: yPos,
 								opacity: isVisible ? 1 : 0,
-								transition: 'opacity 0.3s ease'
+								transform: 'translateX(-50%)',
+								transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
 							}}
-						/>
+						>
+							{node.value}
+						</div>
 					);
-				});
-			})}
-			
-			{/* All nodes */}
-			{factorTree.map((node, index) => {
-				const isVisible = index < treeAnimationStep;
-				
-				// Calculate position
-				const xPos = 100 + (node.x * 30);
-				const yPos = 30 + (node.y * 68);
-				
-				let nodeClass = 'factor-tree-node';
-				if (node.level === 0) {
-					nodeClass += ' root';
-				} else if (node.isPrime) {
-					nodeClass += ' prime';
-				} else {
-					nodeClass += ' non-prime';
-				}
-				
-				return (
-					<div
-						key={`node-${treeId}-${node.id}`}
-						className={`${nodeClass} ${isVisible ? 'node-animate' : ''}`}
-						style={{
-							position: 'absolute',
-							left: xPos,
-							top: yPos,
-							opacity: isVisible ? 1 : 0,
-							transform: 'translateX(-50%)',
-							transition: 'opacity 0.3s ease'
-						}}
-					>
-						{node.value}
-					</div>
-				);
-			})}
-		</div>
-	);
+				})}
+			</div>
+		);
+	};
 
 	return (
 		<>
-			{/* Inject CSS styles */}
-			<style>{dynamicTreeStyles}</style>
-			
 			<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none', ...containerStyle }}>
 				{show && renderTree()}
 			</div>

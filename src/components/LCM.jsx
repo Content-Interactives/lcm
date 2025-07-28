@@ -11,6 +11,7 @@ import FlexiStars from '../assets/All Flexi Poses/PNG/Flexi_Stars.png';
 import { Container } from './ui/reused-ui/Container.jsx'
 import { FlexiText } from './ui/reused-ui/FlexiText.jsx'
 import { GlowButton } from './ui/reused-ui/GlowButton.jsx'
+import { MultiGlowButton } from './ui/reused-ui/MultiGlowButton.jsx'
 
 // UI Animation Imports
 import './ui/reused-animations/fade.css';
@@ -97,6 +98,8 @@ const LCM = () => {
 	const [currentAnswer, setCurrentAnswer] = useState(36);
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
 	const [hideDynamicFactorTrees, setHideDynamicFactorTrees] = useState(false);
+	const [showUserInput, setShowUserInput] = useState(false);
+	const [hideUserInput, setHideUserInput] = useState(false);
 	
 	// Functions
 	// Function to handle the explore button
@@ -148,6 +151,24 @@ const LCM = () => {
 				}, 800); // Wait for LCM text to fade in
 			}, 800); // Wait for numbers to grow in
 		}, 500); // Small delay after Step 1 appears
+	}
+
+	const handleTryYourOwnButton = () => {
+		// Hide intro elements
+		setShowIntroText(false);
+		setShowExploreButton(false);
+		
+		// Show the LCM=36 text and inputs directly
+		setTimeout(() => {
+			setShowAnswer(true);
+			setMoveLcmTextRight(true);
+			setTimeout(() => {
+				setShowInputs(true);
+				setTimeout(() => {
+					setShowInputFlexi(true);
+				}, 800);
+			}, 500);
+		}, 500);
 	}
 
 	const handleStep1Button = () => {
@@ -264,7 +285,10 @@ const LCM = () => {
 		setTimeout(() => {
 			setHideReusableInputs(true);
 			setTimeout(() => {
-				setShowDynamicFactorTrees(true);
+				setShowUserInput(true);
+				setTimeout(() => {
+					setShowDynamicFactorTrees(true);
+				}, 500);
 			}, 500);
 		}, 500);
 	}
@@ -287,12 +311,14 @@ const LCM = () => {
 			{/* Introduction */}
 			<FlexiText 
 				className={`${showIntroText ? '' : 'fade-out-up-animation'}`}
-			>Welcome to the LCM Explorer! Click one of the buttons below to begin the lesson or try your own numbers.
+			>Welcome to the LCM Explorer! Click one of the buttons below to begin the lesson or try solving your own numbers.
 			</FlexiText>
-			<GlowButton
-				onClick={handleExploreButton}
-				className={`${showExploreButton ? '' : 'fade-out-up-animation'}`}
-			>Click to Explore!</GlowButton>
+			<MultiGlowButton
+				buttons={[
+					{ text: 'Explore Lesson!', onClick: handleExploreButton, className: `${showExploreButton ? '' : 'fade-out-up-animation'}`},
+					{ text: 'Try Your Own!', onClick: handleTryYourOwnButton, className: `${showExploreButton ? '' : 'fade-out-up-animation'}`}
+				]}
+			/>
 
 			{/* Steps 1 - 3 */}
 			<div className="flex flex-row relative w-[100%] h-[420px]">

@@ -660,3 +660,172 @@
         transform: translateY(-150%) scale(0);
     }
 }
+
+/* Dynamic Factor Tree Specific Styles */
+@keyframes dynamicNodeAppear {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+.dynamic-node-animate {
+    animation: dynamicNodeAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes dynamicNodeAppearNonPrime {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) scale(0.5);
+    }
+    to {
+        opacity: 0.7;
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+.dynamic-node-animate-non-prime {
+    animation: dynamicNodeAppearNonPrime 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes dynamicLineAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.dynamic-line-appear {
+    animation: dynamicLineAppear 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes dynamicLineAppearLeft {
+    from {
+        opacity: 0;
+        transform: rotate(-30deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(-30deg) scale(1);
+    }
+}
+
+.dynamic-line-appear.left {
+    animation: dynamicLineAppearLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes dynamicLineAppearRight {
+    from {
+        opacity: 0;
+        transform: rotate(30deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(30deg) scale(1);
+    }
+}
+
+.dynamic-line-appear.right {
+    animation: dynamicLineAppearRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Dynamic tree non-prime nodes with 50% opacity */
+.dynamic-factor-tree-node.non-prime {
+    opacity: 0.7;
+}
+
+/* Shrinking Animation */
+@keyframes shrinkOut {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+    }
+}
+
+.shrink-out {
+    animation: shrinkOut 0.8s ease forwards;
+    animation-delay: 0s !important;
+    animation-fill-mode: forwards;
+}
+
+/* Shrinking Animation for Non-Prime Elements */
+@keyframes shrinkOutNonPrime {
+    0% {
+        opacity: 0.7;
+        transform: translateX(-50%) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) scale(0);
+    }
+}
+
+.shrink-out-non-prime {
+    animation: shrinkOutNonPrime 0.8s ease forwards;
+    animation-delay: 0s !important;
+    animation-fill-mode: forwards;
+}
+
+/* Shrinking Animation for Dynamic Factor Tree Lines */
+@keyframes shrinkOutLine {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+}
+
+@keyframes shrinkOutLineLeft {
+    0% {
+        opacity: 1;
+        transform: rotate(-30deg) scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(-30deg) scaleY(0);
+    }
+}
+
+@keyframes shrinkOutLineRight {
+    0% {
+        opacity: 1;
+        transform: rotate(30deg) scaleY(1);
+    }
+    100% {
+        opacity: 0;
+        transform: rotate(30deg) scaleY(0);
+    }
+}
+
+.shrink-out-line {
+    animation: shrinkOutLine 0.5s ease forwards;
+    animation-delay: 0s !important;
+    animation-fill-mode: forwards;
+}
+
+.shrink-out-line.left {
+    animation: shrinkOutLineLeft 0.5s ease forwards;
+    animation-delay: 0s !important;
+    animation-fill-mode: forwards;
+}
+
+.shrink-out-line.right {
+    animation: shrinkOutLineRight 0.5s ease forwards;
+    animation-delay: 0s !important;
+    animation-fill-mode: forwards;
+}
