@@ -102,7 +102,9 @@ const LCM = () => {
 	const [currentAnswer, setCurrentAnswer] = useState(36);
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
 	const [hideDynamicExpression, setHideDynamicExpression] = useState(false);
-	
+	const [showExpressionAnswer, setShowExpressionAnswer] = useState(false);
+	const [hideExpressionAnswer, setHideExpressionAnswer] = useState(false);
+
 	// Tree animation tracking states
 	const [tree1Complete, setTree1Complete] = useState(false);
 	const [tree2Complete, setTree2Complete] = useState(false);
@@ -208,20 +210,95 @@ const LCM = () => {
 		}
 	}
 
-	// Effect to trigger next step when both trees have shrunk
-	useEffect(() => {
-		const bothShrunk = tree1Complete && tree2Complete;
+	// New function to get numeric value of highest power for calculation
+	const getHighestPowerValue = (input) => {
+		const num = parseInt(input);
+		if (num <= 1) return 1;
 		
-		if (bothShrunk && showDynamicFactorTrees) {
-			// Both trees have finished shrinking, now show the powers
+		// Find prime factors and their powers
+		const factors = {};
+		let n = num;
+		
+		// Check for 2 first (even numbers)
+		while (n % 2 === 0) {
+			factors[2] = (factors[2] || 0) + 1;
+			n = n / 2;
+		}
+		
+		// Check for odd prime factors
+		for (let i = 3; i <= Math.sqrt(n); i += 2) {
+			while (n % i === 0) {
+				factors[i] = (factors[i] || 0) + 1;
+				n = n / i;
+			}
+		}
+		
+		// If n is greater than 2, it's a prime factor
+		if (n > 2) {
+			factors[n] = (factors[n] || 0) + 1;
+		}
+		
+		// Find the factor with the highest power
+		let highestFactor = 0;
+		let highestPower = 0;
+		
+		for (const [factor, power] of Object.entries(factors)) {
+			if (power > highestPower) {
+				highestPower = power;
+				highestFactor = parseInt(factor);
+			}
+		}
+		
+		// Return numeric value (factor raised to power)
+		return Math.pow(highestFactor, highestPower);
+	}
+
+	// Effect to trigger next step when both trees have shrunk
+	useEffect(() => {		
+		if (tree1Complete && tree2Complete && showDynamicFactorTrees) {
 			setTimeout(() => {
 				setShowDynamicPowers(true);
-				
-				// After showing the dynamic powers, hide the expression after a delay
 				setTimeout(() => {
 					setHideDynamicExpression(true);
-				}, 800); // Show the expression for 2 seconds before hiding
-			}, 500); // Small delay after shrinking completes
+					setTimeout(() => {
+						setShowExpressionAnswer(true);
+						setTimeout(() => {
+							setHideExpressionAnswer(true);
+							setCurrentAnswer(getHighestPowerValue(inputValue1) * getHighestPowerValue(inputValue2));
+							setTimeout(() => {
+								setGrowInAnswer(true);
+								setInputsModified(false);
+								setTimeout(() => {
+									// Reset all dynamic states for next solve
+									setShowDynamicFactorTrees(false);
+									setShowDynamicPowers(false);
+									setHideDynamicExpression(false);
+									setShowExpressionAnswer(false);
+									setHideExpressionAnswer(false);
+									setGrowInAnswer(false);
+									setTree1Complete(false);
+									setTree2Complete(false);
+									setShowTree1Result(false);
+									setShowTree2Result(false);
+									
+									// Reset solve button states
+									setHideSolveButton(false);
+									setReturnSolveButton(false);
+									setShowSolveButton(true);
+									
+									// Reset input states
+									setHideReusableInputs(false);
+									setReturnReusableInputs(false);
+									setShowUserInput(false);
+									
+									// Reset inputs to default values
+									setInputsModified(false);
+								}, 1000); // Wait 1 second after showing final answer
+							}, 800);
+						}, 800);
+					}, 800);
+				}, 1000); 
+			}, 500);
 		}
 	}, [tree1Complete, tree2Complete, showDynamicFactorTrees]);
 
@@ -381,6 +458,7 @@ const LCM = () => {
 				setShowUserInput(true);
 				setTimeout(() => {
 					setShowDynamicFactorTrees(true);
+					// The rest of the animation is handled in the useEffect hook on line 261
 				}, 200);
 			}, 500);
 		}, 500);
@@ -638,7 +716,7 @@ const LCM = () => {
 				`}>×</div>
 				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[66.5%] ${removeSimplifiedPowers ? 'shrink-out-animation' : showSimplifiedPowers ? 'grow-in-animation' : 'no-show-animation'}
 				`}>9</div>
-				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[58%] ${growInAnswer ? 'grow-in-animation' : shrinkOutAnswer ? 'shrink-out-animation' : moveStep4LCMTextDown ? 'move-36-text-down' : showAnswer ? 'grow-in-animation' : 'no-show-animation'}
+				<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[58%] ${shrinkOutAnswer ? 'shrink-out-animation' : moveStep4LCMTextDown ? 'move-36-text-down' : showAnswer ? 'grow-in-animation' : 'no-show-animation'}
 				`}>{inputsModified ? '?' : currentAnswer}</div>
 				<FlexiText
 					className={`${hideStep4Elements ? 'fade-out-up-animation' : showStep4Flexi ? 'fade-in-up-animation' : 'no-show-animation'}`}
@@ -666,20 +744,19 @@ const LCM = () => {
 				</FlexiText>
 
 				{/* Dynamic Solving After Dynamic Factor Trees Step */}
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[38%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[38%] ${hideDynamicExpression ? 'shrink-out-animation' : showDynamicPowers ? 'grow-in-animation' : 'no-show-animation'}`}
 				>{getHighestPower(inputValue1)}
 				</div>
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[47%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[47%] ${hideDynamicExpression ? 'shrink-out-animation' : showDynamicPowers ? 'grow-in-animation' : 'no-show-animation'}`}
 				>×
 				</div>
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[55%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[55%] ${hideDynamicExpression ? 'shrink-out-animation' : showDynamicPowers ? 'grow-in-animation' : 'no-show-animation'}`}
 				>{getHighestPower(inputValue2)}
 				</div>
 
-				{/* <div
-				>{`${getHighestPower(inputValue1)} × ${getHighestPower(inputValue2)}`}					
-				</div> */}
-				{/* the above div is supposed to actually show the answer and appear after the 3 divs above it shrink out. */}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[50%] ${hideExpressionAnswer ? 'move-dynamic-answer-down' : showExpressionAnswer ? 'grow-in-animation' : 'no-show-animation'}`}
+				>{`${getHighestPowerValue(inputValue1) * getHighestPowerValue(inputValue2)}`}					
+				</div>
 			</div>
 		</Container>
 	);
