@@ -101,6 +101,7 @@ const LCM = () => {
 	const [growInAnswer, setGrowInAnswer] = useState(false);
 	const [currentAnswer, setCurrentAnswer] = useState(36);
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
+	const [hideDynamicExpression, setHideDynamicExpression] = useState(false);
 	
 	// Tree animation tracking states
 	const [tree1Complete, setTree1Complete] = useState(false);
@@ -148,7 +149,6 @@ const LCM = () => {
 
 	// Enhanced tree animation callback handler
 	const handleTreeAnimationComplete = (treeId, animationType) => {
-		console.log(`Tree animation complete: ${treeId}`);
 		if (treeId === 'input1-tree') {
 			setTree1Complete(true);
 			setTimeout(() => {
@@ -211,12 +211,16 @@ const LCM = () => {
 	// Effect to trigger next step when both trees have shrunk
 	useEffect(() => {
 		const bothShrunk = tree1Complete && tree2Complete;
-		console.log('Checking if both trees shrunk:', { input1: tree1Complete, input2: tree2Complete, bothShrunk });
+		
 		if (bothShrunk && showDynamicFactorTrees) {
-			console.log('Both trees shrunk, triggering showDynamicPowers');
 			// Both trees have finished shrinking, now show the powers
 			setTimeout(() => {
 				setShowDynamicPowers(true);
+				
+				// After showing the dynamic powers, hide the expression after a delay
+				setTimeout(() => {
+					setHideDynamicExpression(true);
+				}, 800); // Show the expression for 2 seconds before hiding
 			}, 500); // Small delay after shrinking completes
 		}
 	}, [tree1Complete, tree2Complete, showDynamicFactorTrees]);
@@ -362,11 +366,15 @@ const LCM = () => {
 
 	const handleSolveButton = () => {
 		setHideSolveButton(true);
+		
 		// Reset tree states for new solve
 		setTree1Complete(false);
 		setTree2Complete(false);
 		setShowTree1Result(false);
 		setShowTree2Result(false);
+		setShowDynamicPowers(false);
+		setHideDynamicExpression(false);
+		
 		setTimeout(() => {
 			setHideReusableInputs(true);
 			setTimeout(() => {
@@ -658,15 +666,20 @@ const LCM = () => {
 				</FlexiText>
 
 				{/* Dynamic Solving After Dynamic Factor Trees Step */}
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[38%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[38%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
 				>{getHighestPower(inputValue1)}
 				</div>
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[46%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[47%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
 				>×
 				</div>
-				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[55%] ${showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
+				<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[35%] left-[55%] ${hideDynamicExpression ? 'shrink-out-animation' : showTree1Result && showTree2Result ? 'grow-in-animation' : 'no-show-animation'}`}
 				>{getHighestPower(inputValue2)}
 				</div>
+
+				{/* <div
+				>{`${getHighestPower(inputValue1)} × ${getHighestPower(inputValue2)}`}					
+				</div> */}
+				{/* the above div is supposed to actually show the answer and appear after the 3 divs above it shrink out. */}
 			</div>
 		</Container>
 	);

@@ -130,20 +130,22 @@ const DynamicFactorTree = ({
 	const [factorTree, setFactorTree] = useState([]);
 	const [treeAnimationStep, setTreeAnimationStep] = useState(0);
 	const [isShrinking, setIsShrinking] = useState(false);
+	const [animationComplete, setAnimationComplete] = useState(false);
 
 	// Enhanced animation callback function
 	const triggerAnimationCallback = (animationType) => {
-		if (onAnimationComplete && animationType === 'complete') {
+		if (onAnimationComplete && !animationComplete) {
+			setAnimationComplete(true);
 			onAnimationComplete(treeId, animationType);
 		}
 	};
 
 	// Animate tree
-	const animateTree = () => {
-		
+	const animateTree = () => {		
 		try {
 			setTreeAnimationStep(0);
 			setIsShrinking(false);
+			setAnimationComplete(false);
 			
 			const num = parseInt(number);
 			if (isNaN(num) || num <= 0) {
@@ -158,7 +160,7 @@ const DynamicFactorTree = ({
 			// Handle empty tree case (for numbers <= 1)
 			if (tree.length === 0) {
 				if (onAnimationComplete) {
-					setTimeout(() => onAnimationComplete(treeId), 100);
+					setTimeout(() => triggerAnimationCallback('complete'), 100);
 				}
 				return;
 			}
@@ -170,7 +172,7 @@ const DynamicFactorTree = ({
 				setTimeout(() => {
 					setIsShrinking(true);
 					if (onAnimationComplete) {
-						setTimeout(() => onAnimationComplete(treeId), 800);
+						setTimeout(() => triggerAnimationCallback('complete'), 800);
 					}
 				}, 1000);
 				return;
@@ -186,7 +188,7 @@ const DynamicFactorTree = ({
 						setTimeout(() => {
 							setIsShrinking(true);
 							if (onAnimationComplete) {
-								setTimeout(() => onAnimationComplete(treeId), 800);
+								setTimeout(() => triggerAnimationCallback('complete'), 800);
 							}
 						}, 800);
 					}
@@ -202,6 +204,7 @@ const DynamicFactorTree = ({
 		setTreeAnimationStep(0);
 		setIsShrinking(false);
 		setFactorTree([]);
+		setAnimationComplete(false);
 	};
 
 	// Auto-animate when show changes
@@ -209,6 +212,7 @@ const DynamicFactorTree = ({
 		if (show && number) {
 			animateTree();
 		} else {
+			resetTree();
 		}
 	}, [show, number]);
 
@@ -253,8 +257,8 @@ const DynamicFactorTree = ({
 					const children = factorTree.filter(n => n.parentId === node.id);
 					
 					return children.map((child, childIndex) => {
-						// Calculate positions
-						const parentX = 100 + (node.x * 30);
+						// Calculate positions relative to container width
+						const parentX = (50 + (node.x * 15)) + '%'; // Convert to percentage
 						const parentY = 50 + (node.y * 65);
 						
 						// Determine if this is a left or right child
@@ -271,7 +275,7 @@ const DynamicFactorTree = ({
 								className={`factor-tree-line ${lineClass} ${isVisible ? `dynamic-line-appear ${lineClass}` : ''} ${shrinkLineClass}`}
 								style={{
 									position: 'absolute',
-									left: `${parentX}px`,
+									left: parentX,
 									top: `${parentY + 20}px`,
 									height: '40px',
 									opacity: isVisible ? 1 : 0,
@@ -289,7 +293,7 @@ const DynamicFactorTree = ({
 						className={`factor-tree-node dynamic-factor-tree-node root ${rootNode.level === 0 || rootNode.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime'}`}
 						style={{
 							position: 'absolute',
-							left: 100 + (rootNode.x * 30),
+							left: (50 + (rootNode.x * 15)) + '%',
 							top: 30 + (rootNode.y * 68),
 							opacity: 0 < treeAnimationStep ? 1 : 0,
 							transform: 'translateX(-50%)',
@@ -304,8 +308,8 @@ const DynamicFactorTree = ({
 				{nonRootNodes.map((node, index) => {
 					const isVisible = index < treeAnimationStep;
 					
-					// Calculate position
-					const xPos = 100 + (node.x * 30);
+					// Calculate position relative to container width
+					const xPos = (50 + (node.x * 15)) + '%';
 					const yPos = 30 + (node.y * 68);
 					
 					let nodeClass = 'factor-tree-node dynamic-factor-tree-node';
