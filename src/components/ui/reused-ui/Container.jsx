@@ -8,6 +8,7 @@ export function Container({
 	selectNone = true,
 	text = "Default Text",
 	showResetButton = false,
+	disableResetButton = false,
 	onReset,
 	...props 
 }) {
@@ -42,8 +43,13 @@ export function Container({
 					<h2 className="text-[#5750E3] text-sm font-medium select-none">{text}</h2>
 					{showResetButton && (
 						<button 
-							className="text-sm px-3 py-1 rounded border transition-colors text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400"
+							className={`text-sm px-3 py-1 rounded border transition-colors ${
+								disableResetButton 
+									? 'text-gray-300 border-gray-200' 
+									: 'text-gray-500 hover:text-gray-700 border-gray-300 hover:border-gray-400'
+							}`}
 							onClick={onReset}
+							disabled={disableResetButton}
 							title="Reset interactive"
 						>
 							Reset
