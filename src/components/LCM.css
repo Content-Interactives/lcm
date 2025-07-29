@@ -285,17 +285,32 @@
 }
 
 /* Animation for moving first layer 2's left and down */
-@keyframes moveFirstLayerTwos {
+@keyframes moveFirstLayerTwosLeft {
     0% {
         transform: translateX(0) translateY(0);
     }
     100% {
-        transform: translateX(-80%) translateY(-50%);
+        transform: translateY(-50%);
+        left: 22%;
     }
 }
 
-.move-first-layer-twos {
-    animation: moveFirstLayerTwos 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+@keyframes moveFirstLayerTwosRight {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    100% {
+        transform: translateY(-50%);
+        left: 5%;
+    }
+}
+
+.move-first-layer-twos-left {
+    animation: moveFirstLayerTwosLeft 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.move-first-layer-twos-right {
+    animation: moveFirstLayerTwosRight 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
 }
 
 /* Animation for moving second layer primes up */

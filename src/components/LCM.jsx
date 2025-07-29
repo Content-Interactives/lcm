@@ -596,7 +596,7 @@ const LCM = () => {
 								{/* Nodes */}
 								{showStaticFirstPrimes && (
 									<>
-										<div className={`factor-tree-node prime static-prime-appear ${removeStep3FirstRow ? 'remove-step3-first-row-2' : moveFirstLayerTwos ? 'move-first-layer-twos' : ''}`} style={{ left: '38%', top: '29%' }}>2</div>
+										<div className={`factor-tree-node prime static-prime-appear ${removeStep3FirstRow ? 'remove-step3-first-row-2' : moveFirstLayerTwos ? 'move-first-layer-twos-left' : ''}`} style={{ left: '38%', top: '29%' }}>2</div>
 										{!removeStaticNonPrimeNodes && (
 											<div className={`factor-tree-node non-prime static-prime-appear ${remove6and9 ? 'remove-6-and-9' : showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '65%', top: '29%' }}>6</div>
 										)}
@@ -615,8 +615,8 @@ const LCM = () => {
 							</>
 						{/* Converging Lines for 12 */}
 							<div style={{ position: 'absolute', top: '33%', left: '37%', width: '100%' }}>
-								<div className={`converging-line left ${removeConvergingLines ? 'converging-line-remove left' : showConvergingLines ? 'converging-line-appear left' : 'no-show-animation'}`} style={{ left: '0%', height: '40px' }}></div>
-								<div className={`converging-line right ${removeConvergingLines ? 'converging-line-remove right' : showConvergingLines ? 'converging-line-appear right' : 'no-show-animation'}`} style={{ left: '18%', height: '40px' }}></div>
+								<div className={`converging-line left ${removeConvergingLines ? 'converging-line-remove left' : showConvergingLines ? 'converging-line-appear left' : 'no-show-animation'}`} style={{ left: '0px', height: '40px' }}></div>
+								<div className={`converging-line right ${removeConvergingLines ? 'converging-line-remove right' : showConvergingLines ? 'converging-line-appear right' : 'no-show-animation'}`} style={{ left: '40px', height: '40px' }}></div>
 							</div>
 						{/* Superscript Expressions for 12 */}
 						{showSuperscriptExpressions && (
@@ -685,7 +685,7 @@ const LCM = () => {
 								{/* Nodes */}
 								{showStaticFirstPrimes && (
 									<>
-										<div className={`factor-tree-node prime static-prime-appear ${removeStep3FirstRow ? 'remove-step3-first-row-2' : moveFirstLayerTwos ? 'move-first-layer-twos' : ''}`} style={{ left: '20%', top: '29%' }}>2</div>
+										<div className={`factor-tree-node prime static-prime-appear ${removeStep3FirstRow ? 'remove-step3-first-row-2' : moveFirstLayerTwos ? 'move-first-layer-twos-right' : ''}`} style={{ left: '20%', top: '29%' }}>2</div>
 										{!removeStaticNonPrimeNodes && (
 											<div className={`factor-tree-node non-prime static-prime-appear ${showStaticSecondLines ? 'opacity-50' : ''}`} style={{ left: '45%', top: '29%' }}>9</div>
 										)}
@@ -704,8 +704,8 @@ const LCM = () => {
 							</>
 						{/* Converging Lines for 18 */}
 							<div style={{ position: 'absolute', top: '33%', left: '44%', width: '100%' }}>
-								<div className={`converging-line left ${removeConvergingLines ? 'converging-line-remove left' : showConvergingLines ? 'converging-line-appear left' : 'no-show-animation'}`} style={{ left: '0%', height: '40px' }}></div>
-								<div className={`converging-line right ${removeConvergingLines ? 'converging-line-remove right' : showConvergingLines ? 'converging-line-appear right' : 'no-show-animation'}`} style={{ left: '18%', height: '40px' }}></div>
+								<div className={`converging-line left ${removeConvergingLines ? 'converging-line-remove left' : showConvergingLines ? 'converging-line-appear left' : 'no-show-animation'}`} style={{ left: '0px', height: '40px' }}></div>
+								<div className={`converging-line right ${removeConvergingLines ? 'converging-line-remove right' : showConvergingLines ? 'converging-line-appear right' : 'no-show-animation'}`} style={{ left: '40px', height: '40px' }}></div>
 							</div>
 						{/* Superscript Expressions for 18 */}
 						{showSuperscriptExpressions && (
