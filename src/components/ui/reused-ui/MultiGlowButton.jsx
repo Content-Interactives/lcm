@@ -15,6 +15,9 @@ export function MultiGlowButton({
     bgColor = null,
     layout = 'horizontal', // 'horizontal' or 'vertical'
     spacing = 'gap-2', // Tailwind spacing class
+    responsive = true, // Enable responsive behavior
+    minFontSize = 'text-xs', // Font size for small screens (320px-400px)
+    maxFontSize = 'text-sm', // Font size for larger screens
     ...props 
 }) {
     const [isShrinkingOut, setIsShrinkingOut] = useState(false);
@@ -73,6 +76,7 @@ export function MultiGlowButton({
         ${layout === 'horizontal' ? 'flex flex-row' : 'flex flex-col'}
         ${spacing}
         items-center justify-center
+        w-fit max-w-full
     `;
 
     // Apply shrink animation to glow container as well, but not grow-in animations
@@ -91,16 +95,40 @@ export function MultiGlowButton({
     const getButtonClasses = (button, index) => {
         const buttonBaseClasses = `
             bg-[#008545] hover:bg-[#00783E] text-white
-            px-3 py-1.5 text-sm
+            px-3 py-1.5
+            ${maxFontSize}
             rounded
-            text-sm font-medium select-none
+            font-medium select-none
             transition-colors duration-200
             ${button.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
             ${button.className || ''}
+            whitespace-nowrap
+            responsive-button
         `;
 
         return buttonBaseClasses;
     };
+
+    // Add CSS for media query if responsive is enabled
+    React.useEffect(() => {
+        if (responsive) {
+            const styleId = 'multi-glow-button-responsive';
+            if (!document.getElementById(styleId)) {
+                const style = document.createElement('style');
+                style.id = styleId;
+                style.textContent = `
+                    @media (max-width: 365px) {
+                        .responsive-button {
+                            font-size: 0.75rem !important;
+                            line-height: 1rem !important;
+                            padding: 0.25rem 0.5rem !important;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        }
+    }, [responsive]);
 
     return (
         <div className={glowClasses} style={{ ...glowStyle, ...style }}>
