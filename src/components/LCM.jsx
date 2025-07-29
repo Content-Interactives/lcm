@@ -789,10 +789,10 @@ const LCM = () => {
 					`}>LCM = </div>
 					<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[53%] ${removeSimplifiedPowers ? 'shrink-out-animation' : showSimplifiedPowers ? 'grow-in-animation' : 'no-show-animation'}
 					`}>4</div>
-					<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[40%] left-[59.5%]
+					<div className={`text-3xl font-bold text-[#5750E3] number-text absolute top-[40%] left-[58.5%]
 						${removeSimplifiedPowers ? 'shrink-out-animation' : showPowersMultiplication ? 'fade-in-in-place-animation' : 'no-show-animation'}
 					`}>×</div>
-					<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[66.5%] ${removeSimplifiedPowers ? 'shrink-out-animation' : showSimplifiedPowers ? 'grow-in-animation' : 'no-show-animation'}
+					<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[64%] ${removeSimplifiedPowers ? 'shrink-out-animation' : showSimplifiedPowers ? 'grow-in-animation' : 'no-show-animation'}
 					`}>9</div>
 					<div className={`text-3xl font-bold text-[#5750E3] absolute top-[40%] left-[58%] ${moveStep4LCMTextDown ? 'move-36-text-down' : showAnswer ? 'grow-in-animation' : 'no-show-animation'}
 					`}>{inputsModified ? '?' : currentAnswer}</div>

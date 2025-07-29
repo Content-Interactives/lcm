@@ -555,19 +555,23 @@
 /* Superscript Expression Move Up */
 @keyframes power2MoveUp {
     0% {
-        transform: translate(0);
+        left: 39%;
+        top: 41%;
     }
     100% {
-        transform: translate(350%, -15%);
+        left: 100%;
+        top: 40%;
     }
 }
 
 @keyframes power3MoveUp {
     0% {
-        transform: translate(0);
+        left: 47%;
+        top: 41%;
     }
     100% {
-        transform: translate(-100%, -15%);
+        left: 26%;
+        top: 40%;
     }
 }
 
@@ -582,11 +586,13 @@
 @keyframes removePower2 {
     0% {
         opacity: 1;
-        transform: translate(350%, -15%);
+        left: 100%;
+        top: 40%;
     }
     100% {
         opacity: 0;
-        transform: translate(350%, -15%);
+        left: 100%;
+        top: 40%;
     }
 }
 
@@ -597,11 +603,13 @@
 @keyframes removePower3 {
     0% {
         opacity: 1;
-        transform: translate(-100%, -15%);
+        left: 26%;
+        top: 40%;
     }
     100% {
         opacity: 0;
-        transform: translate(-100%, -15%);
+        left: 26%;
+        top: 40%;
     }
 }
 
@@ -615,10 +623,10 @@
 
 @keyframes moveLcmTextRight {
     0% {
-        transform: translateX(0);
+        left: 30%;
     }
     100% {
-        transform: translateX(24%);
+        left: 36%;
     }
 }
 
@@ -633,19 +641,23 @@
 
 @keyframes moveLcmTextDown {
     0% {
-        transform: translate(24%, 0%);
+        left: 36%;
+        top: 40%;
     }
     100% {
-        transform: translate(24%, 300%);
+        left: 36%;
+        top: 65%;
     }
 }
 
 @keyframes move36TextDown {
     0% {
-        transform: translate(0%, 0%);
+        left: 58%;
+        top: 40%;
     }
     100% {
-        transform: translate(0%, 300%);
+        left: 58%;
+        top: 65%;
     }
 }
 
