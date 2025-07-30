@@ -25,6 +25,10 @@
 	animation: fadeOutDownTrAnimation 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
+.shrink-out-tr-animation {
+	animation: shrinkOutTrAnimation 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 @keyframes fadeInUpTrAnimation {
 	from {
         opacity: 0;
@@ -44,6 +48,20 @@
 	to {
 		opacity: 0;
 		transform: translate(-50%, 10px);
+	}
+}
+
+@keyframes shrinkOutTrAnimation {
+	from {
+		opacity: 1;
+		transform: scale(1) translateX(-50%);
+        left: 50%;
+	}
+	to {
+		opacity: 0;
+		transform: scale(0) translateX(-50%);
+        left: 0%;
+        top: 0%;
 	}
 }
 

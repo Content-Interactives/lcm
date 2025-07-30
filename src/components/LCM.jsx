@@ -48,7 +48,8 @@ const LCM = () => {
 	// Step 2 -> Step 3
 	const [removeStep2, setRemoveStep2] = useState(true);
 	const [showStep2LCMText, setShowStep2LCMText] = useState(false);
-	
+	const [hideStaticTrees, setHideStaticTrees] = useState(false);
+	const [removeStaticTrees, setRemoveStaticTrees] = useState(false);
 
 
 
@@ -83,7 +84,7 @@ const LCM = () => {
 	}
 
 	// Step 1 -> Step 2
-	const handleContinueButtonClick = () => {
+	const handleContinueButton1Click = () => {
 		setShowStep1Flexi(false);
 		setShowStep1Button(false);
 		setTimeout(() => {
@@ -113,6 +114,18 @@ const LCM = () => {
 		}, 800);
 	}
 
+	// Step 2 -> Step 3
+	const handleContinueButton2Click = () => {
+		setShowStep2Flexi(false);
+		setShowStep2Button(false);
+		setTimeout(() => {
+			setHideStaticTrees(true);
+			setTimeout(() => {
+				setRemoveStaticTrees(true);
+			}, 1000);
+		}, 800);
+	}
+
 	return (
 		<Container text="LCM Explorer" showResetButton={true}>
 			{/* Elements on Left Container */}
@@ -125,7 +138,8 @@ const LCM = () => {
 				}
 				
 				{/* Static Factor Tree for 12 */}
-				<div className="absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px]">
+				<div className={`absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px] 
+					${hideStaticTrees ? 'shrink-out-tr-animation' : ''}`}>
 					{/* Lines from main number 12 */}
 					{showFirstLayerStaticTreeLines && (
 						<div className="absolute top-[20%] left-[50%] translate-x-[-50%]">
@@ -167,7 +181,8 @@ const LCM = () => {
 				}
 				
 				{/* Static Factor Tree for 18 */}
-				<div className="absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px]">
+				<div className={`absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px] 
+					${hideStaticTrees ? 'shrink-out-tr-animation' : ''}`}>
 					{/* Lines from main number 18 */}
 				{showFirstLayerStaticTreeLines && (
 					<div className="absolute top-[20%] left-[50%] translate-x-[-50%]">
@@ -235,7 +250,7 @@ const LCM = () => {
 					</FlexiText>
 					<GlowButton
 						className={`${showStep1Button ? 'grow-in-animation' : 'no-show-animation'}`}
-						onClick={() => {handleContinueButtonClick()}}
+						onClick={() => {handleContinueButton1Click()}}
 					>Continue
 					</GlowButton>
 				</>
@@ -252,7 +267,7 @@ const LCM = () => {
 					</FlexiText>
 					<GlowButton
 						className={`${showStep2Button ? 'grow-in-animation' : 'no-show-animation'}`}
-						onClick={() => {handleContinueButtonClick()}}
+						onClick={() => {handleContinueButton2Click()}}
 					>Continue
 					</GlowButton>
 				</>
