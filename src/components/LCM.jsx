@@ -32,19 +32,27 @@ const LCM = () => {
 	const [showStep1Button, setShowStep1Button] = useState(false);
 	
 	// Step 1 -> Step 2
+	const [removeInitial12And18, setRemoveInitial12And18] = useState(true);
+	const [removeInitialLCMText, setRemoveInitialLCMText] = useState(true);
+	
+	const [removeStep1, setRemoveStep1] = useState(true);
+	const [move12And18Up, setMove12And18Up] = useState(false);
+	const [showFirstLayerStaticTreeLines, setShowFirstLayerStaticTreeLines] = useState(false);
+	const [showFirstLayerStaticTreeNodes, setShowFirstLayerStaticTreeNodes] = useState(false);
+	const [hideStaticTreeNonPrimes, setHideStaticTreeNonPrimes] = useState(false);
+	const [showSecondLayerStaticTreeLines, setShowSecondLayerStaticTreeLines] = useState(false);
+	const [showSecondLayerStaticTreeNodes, setShowSecondLayerStaticTreeNodes] = useState(false);
+	const [showStep2Flexi, setShowStep2Flexi] = useState(false);
+	const [showStep2Button, setShowStep2Button] = useState(false);
+	
+	// Step 2 -> Step 3
+	const [removeStep2, setRemoveStep2] = useState(true);
+	const [showStep2LCMText, setShowStep2LCMText] = useState(false);
 	
 
 
-	// Step Progression Animation Functions
-	// Introduction -> Step 1
-	const handleBeginLessonButtonClick = () => {
-		setShowIntroduction(false);
-		setTimeout(() => {
-			setRemoveIntroduction(true);
-			setShowInitial12And18(true);
-		}, 800);
-	}
 
+	// Step Progression Animation Functions
 	// Introduction -> Try Your Own
 	const handleTryYourOwnButtonClick = () => {
 		setShowIntroduction(false);
@@ -53,8 +61,156 @@ const LCM = () => {
 		}, 1000);
 	}
 
+	// Introduction -> Step 1
+	const handleBeginLessonButtonClick = () => {
+		setShowIntroduction(false);
+		setTimeout(() => {
+			setRemoveIntroduction(true);
+			setRemoveInitial12And18(false);
+			setShowInitial12And18(true);
+			setTimeout(() => {
+				setRemoveInitialLCMText(false);
+				setShowInitialLCMText(true);
+				setTimeout(() => {
+					setRemoveStep1(false);
+					setShowStep1Flexi(true);
+					setTimeout(() => {
+						setShowStep1Button(true);
+					}, 600);
+				}, 800);
+			}, 400);
+		}, 800);
+	}
+
+	// Step 1 -> Step 2
+	const handleContinueButtonClick = () => {
+		setShowStep1Flexi(false);
+		setShowStep1Button(false);
+		setTimeout(() => {
+			setRemoveStep1(true);
+			setShowInitialLCMText(false);
+			setTimeout(() => {
+				setMove12And18Up(true);
+				setTimeout(() => {
+					setShowFirstLayerStaticTreeLines(true);
+					setTimeout(() => {
+						setShowFirstLayerStaticTreeNodes(true);
+						setTimeout(() => {
+							setHideStaticTreeNonPrimes(true);
+							setShowSecondLayerStaticTreeLines(true);
+							setTimeout(() => {
+								setShowSecondLayerStaticTreeNodes(true);
+								setTimeout(() => {
+									setRemoveStep2(false);
+									setShowStep2Flexi(true);
+									setShowStep2Button(true);
+								}, 300);
+							}, 300);
+						}, 300);
+					}, 300);
+				}, 500);
+			}, 500);
+		}, 800);
+	}
+
 	return (
 		<Container text="LCM Explorer" showResetButton={true}>
+			{/* Elements on Left Container */}
+			<div className="left-container">
+				{!removeInitial12And18 &&
+						<div className={`text-4xl font-bold text-black absolute top-[20%] left-[50%] translate-x-[-50%]
+						${move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
+						`}
+						>12</div>
+				}
+				
+				{/* Static Factor Tree for 12 */}
+				<div className="absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px]">
+					{/* Lines from main number 12 */}
+					{showFirstLayerStaticTreeLines && (
+						<div className="absolute top-[20%] left-[50%] translate-x-[-50%]">
+							<div className={`factor-tree-line static-tree-line left-line`}></div>
+							<div className={`factor-tree-line static-tree-line right-line`}></div>
+						</div>
+					)}
+					{/* First layer nodes (2 and 6) */}
+					{showFirstLayerStaticTreeNodes && (
+						<div className="absolute top-[28%] left-[50%] translate-x-[-50%] w-[150px] h-[100px]">
+							<div className={`absolute left-[26%] text-2xl font-bold text-[#5750E3] static-tree-node`}>2</div>
+							<div className={`absolute left-[61%] text-2xl font-bold text-[#5750E3] static-tree-node ${hideStaticTreeNonPrimes ? 'non-prime-fade' : ''}`}>6</div>
+						</div>
+					)}
+					{/* Lines under 6 */}
+					{showSecondLayerStaticTreeLines && (
+						<div className="absolute top-[36%] left-[62%] translate-x-[-50%]">
+							<div className={`factor-tree-line static-tree-line left-line`}></div>
+							<div className={`factor-tree-line static-tree-line right-line`}></div>
+						</div>
+					)}
+					{/* Second layer nodes under 6 (2 and 3) */}
+					{showSecondLayerStaticTreeNodes && (
+						<div className="absolute top-[44%] left-[63%] translate-x-[-50%] w-[150px] h-[100px]">
+							<div className={`absolute left-[26%] text-2xl font-bold text-[#5750E3] static-tree-node`}>2</div>
+							<div className={`absolute left-[61%] text-2xl font-bold text-[#5750E3] static-tree-node`}>3</div>
+						</div>
+					)}
+				</div>
+			</div>
+
+			{/* Elements on Right Container */}
+			<div className="right-container">
+				{!removeInitial12And18 &&
+						<div className={`text-4xl font-bold text-black absolute top-[20%] left-[50%] translate-x-[-50%]
+						${move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
+						`}
+						>18</div>
+				}
+				
+				{/* Static Factor Tree for 18 */}
+				<div className="absolute top-[0%] left-[50%] translate-x-[-50%] h-[100%] w-[200px]">
+					{/* Lines from main number 18 */}
+				{showFirstLayerStaticTreeLines && (
+					<div className="absolute top-[20%] left-[50%] translate-x-[-50%]">
+						<div className={`factor-tree-line static-tree-line left-line`}></div>
+						<div className={`factor-tree-line static-tree-line right-line`}></div>
+					</div>
+				)}
+				
+				{/* First layer nodes (2 and 9) */}
+				{showFirstLayerStaticTreeNodes && (
+					<div className="absolute top-[28%] left-[50%] translate-x-[-50%] w-[150px] h-[100px]">
+						<div className={`absolute left-[26%] text-2xl font-bold text-[#5750E3] static-tree-node`}>2</div>
+						<div className={`absolute left-[61%] text-2xl font-bold text-[#5750E3] static-tree-node ${hideStaticTreeNonPrimes ? 'non-prime-fade' : ''}`}>9</div>
+					</div>
+				)}
+				
+				{/* Lines under 9 */}
+				{showSecondLayerStaticTreeLines && (
+					<div className="absolute top-[36%] left-[63%] translate-x-[-50%]">
+						<div className={`factor-tree-line static-tree-line left-line`}></div>
+						<div className={`factor-tree-line static-tree-line right-line`}></div>
+					</div>
+				)}
+				
+				{/* Second layer nodes under 9 (3 and 3) */}
+				{showSecondLayerStaticTreeNodes && (
+					<div className="absolute top-[44%] left-[63%] translate-x-[-50%] w-[150px] h-[100px]">
+						<div className={`absolute left-[26%] text-2xl font-bold text-[#5750E3] static-tree-node`}>3</div>
+						<div className={`absolute left-[61%] text-2xl font-bold text-[#5750E3] static-tree-node`}>3</div>
+					</div>
+					)}
+				</div>
+			</div>
+
+			{/* Elements Positioned Absolutely */}
+			{!removeInitialLCMText &&
+				<div className={`text-3xl font-bold text-gray-600 absolute top-[40%] left-[50%] translate-x-[-50%]
+				${showInitialLCMText ? 'fade-in-up-tr-animation' : 'fade-out-down-tr-animation'}
+				`}
+				>LCM = ?</div>
+			}
+
+
 			{/* Introduction Step */}
 			{!removeIntroduction &&
 				<>
@@ -69,19 +225,37 @@ const LCM = () => {
 					/>
 				</>
 			}
-
 			{/* Step 1 */}
-			{showInitial12And18 &&
+			{!removeStep1 &&
 				<>
-					<div>12</div>
-					<div>18</div>
+					<FlexiText
+						className={`${showStep1Flexi ? 'fade-in-up-animation' : 'fade-out-up-animation'}`}
+						flexiImage={FlexiPoint}
+					>To find the Least Common Multiple of two numbers, we first need to use prime factorization.
+					</FlexiText>
+					<GlowButton
+						className={`${showStep1Button ? 'grow-in-animation' : 'no-show-animation'}`}
+						onClick={() => {handleContinueButtonClick()}}
+					>Continue
+					</GlowButton>
 				</>
 			}
-			{showStep1Button &&
-				<GlowButton
-					text="Show Solution"
-					onClick={() => {}}
-				/>
+
+			{/* Step 2 */}
+			{!removeStep2 &&
+				<>
+					<FlexiText
+						className={`${showStep2Flexi ? 'fade-in-up-animation' : 'fade-out-up-animation'}`}
+						flexiImage={FlexiTelescope}
+					>
+						Once we break down the numbers into their prime factors, we can find the LCM by taking the highest power of each prime factor.
+					</FlexiText>
+					<GlowButton
+						className={`${showStep2Button ? 'grow-in-animation' : 'no-show-animation'}`}
+						onClick={() => {handleContinueButtonClick()}}
+					>Continue
+					</GlowButton>
+				</>
 			}
 		</Container>
 	);
