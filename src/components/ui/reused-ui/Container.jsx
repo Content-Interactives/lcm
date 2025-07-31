@@ -3,7 +3,7 @@ import React from 'react';
 export function Container({ 
 	children, 
 	className = "", 
-	maxWidth = "max-w-[500px]",
+	maxWidth = "max-w-[424px]",
 	showBorder = true,
 	selectNone = true,
 	text = "Default Text",
