@@ -72,9 +72,12 @@ const LCM = () => {
 	const [showSolvingStep2, setShowSolvingStep2] = useState(false);
 	const [showSolvingStep3, setShowSolvingStep3] = useState(false);
 	const [removeSolvingSteps, setRemoveSolvingSteps] = useState(true);
-
+	const [highlightAnswer, setHighlightAnswer] = useState(false);
 	const [showStep4Flexi, setShowStep4Flexi] = useState(false);
 	const [showStep4Button, setShowStep4Button] = useState(false);
+
+	// Step 4 -> Solve Your Own
+	const [removeStep4, setRemoveStep4] = useState(true);
 
 	// Step Progression Animation Functions
 	// Introduction -> Try Your Own
@@ -194,12 +197,21 @@ const LCM = () => {
 							setShowSolvingStep2(true);
 							setTimeout(() => {
 								setShowSolvingStep3(true);
-
-								setShowFirstLayerStaticTreeLines(false);
-								setShowFirstLayerStaticTreeNodes(false);
-								setShowSecondLayerStaticTreeLines(false);
-								setShowSecondLayerStaticTreeNodes(false);
-								setShowConvergingLines(false);
+								setTimeout(() => {
+									setHighlightAnswer(true);
+									setTimeout(() => {
+										setRemoveStep4(false);
+										setShowStep4Flexi(true);
+										setTimeout(() => {
+											setShowStep4Button(true);
+											setShowFirstLayerStaticTreeLines(false);
+											setShowFirstLayerStaticTreeNodes(false);
+											setShowSecondLayerStaticTreeLines(false);
+											setShowSecondLayerStaticTreeNodes(false);
+											setShowConvergingLines(false);
+										}, 600);
+									}, 500);
+								}, 500);
 							}, 500);
 						}, 500);
 					}, 500);
@@ -207,6 +219,16 @@ const LCM = () => {
 			}, 500);
 		}, 400);
 	}
+
+	// Step 4 -> Solve Your Own
+	const handleContinueButton4Click = () => {
+		setShowStep4Flexi(false);
+		setShowStep4Button(false);
+		setTimeout(() => {
+			setRemoveStep4(true);
+		}, 400);
+	}
+
 	return (
 		<Container text="LCM Explorer" showResetButton={true}>
 			{/* Elements on Left Container */}
@@ -337,21 +359,23 @@ const LCM = () => {
 				>LCM = ?</div>
 			}
 			{!removeSolvingSteps && (
-				<div className={`absolute top-[40%] left-[50%] translate-x-[-50%] w-[100%]`}>
+				<div className={`absolute top-[0%] left-[50%] translate-x-[-50%] w-[100%] h-[100%]`}>
 					{showSolvingStep1 && (
-						<div className={`text-3xl font-bold text-gray-600 absolute top-[40%] left-[50%] translate-x-[-50%]
+						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[32%] left-[50%] translate-x-[-50%]
 						${showSolvingStep1 ? 'fade-in-up-tr-animation' : ''}
 						`}>LCM = 2² × 3²</div>
 					)}
 					{showSolvingStep2 && (
-						<div className={`text-3xl font-bold text-gray-600 absolute top-[50%] left-[50%] translate-x-[-50%]
+						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[42%] left-[50%] translate-x-[-50%]
 						${showSolvingStep2 ? 'fade-in-up-tr-animation' : ''}
 						`}>LCM = 4 × 9</div>
 					)}
 					{showSolvingStep3 && (
-						<div className={`text-3xl font-bold text-gray-600 absolute top-[60%] left-[50%] translate-x-[-50%]
+						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%]
 						${showSolvingStep3 ? 'fade-in-up-tr-animation' : ''}
-						`}>LCM = 36</div>
+						`}>LCM = 
+							<span className={`${highlightAnswer ? 'text-[#008545]' : 'text-gray-600'}`}> 36</span>
+						</div>
 					)}
 				</div>
 			)}
@@ -417,6 +441,23 @@ const LCM = () => {
 					<GlowButton
 						className={`${showStep3Button ? 'grow-in-animation' : 'no-show-animation'}`}
 						onClick={() => {handleContinueButton3Click()}}
+					>Continue
+					</GlowButton>
+				</>
+			}
+
+			{/* Step 4 */}
+			{!removeStep4 &&
+				<>
+					<FlexiText
+						className={`${showStep4Flexi ? 'fade-in-up-animation' : 'fade-out-up-animation'}`}
+						flexiImage={FlexiStars}
+					>
+						Now we can take those highest powers and multiply them together to get the LCM!
+					</FlexiText>
+					<GlowButton
+						className={`${showStep4Button ? 'grow-in-animation' : 'no-show-animation'}`}
+						onClick={() => {handleContinueButton4Click()}}
 					>Continue
 					</GlowButton>
 				</>

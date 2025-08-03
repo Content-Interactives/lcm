@@ -286,3 +286,15 @@
         transform: translate(0, -250%);
     }
 }
+
+@media (max-width: 370px) {
+    #powers-expression-font-size {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 310px) {
+    #powers-expression-font-size {
+        font-size: 1rem;
+    }
+}
