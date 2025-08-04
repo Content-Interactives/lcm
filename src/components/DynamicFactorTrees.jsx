@@ -129,7 +129,6 @@ const DynamicFactorTree = ({
 }) => {
 	const [factorTree, setFactorTree] = useState([]);
 	const [treeAnimationStep, setTreeAnimationStep] = useState(0);
-	const [isShrinking, setIsShrinking] = useState(false);
 	const [animationComplete, setAnimationComplete] = useState(false);
 
 	// Enhanced animation callback function
@@ -144,7 +143,6 @@ const DynamicFactorTree = ({
 	const animateTree = () => {		
 		try {
 			setTreeAnimationStep(0);
-			setIsShrinking(false);
 			setAnimationComplete(false);
 			
 			const num = parseInt(number);
@@ -168,13 +166,10 @@ const DynamicFactorTree = ({
 			// If there's only one node (prime number), show it immediately
 			if (tree.length === 1) {
 				setTreeAnimationStep(1);
-				// Start shrinking after a delay
-				setTimeout(() => {
-					setIsShrinking(true);
-					if (onAnimationComplete) {
-						setTimeout(() => triggerAnimationCallback('complete'), 800);
-					}
-				}, 1000);
+				// Trigger completion immediately after showing
+				if (onAnimationComplete) {
+					setTimeout(() => triggerAnimationCallback('complete'), 1000);
+				}
 				return;
 			}
 			
@@ -183,14 +178,11 @@ const DynamicFactorTree = ({
 				setTimeout(() => {
 					setTreeAnimationStep(index + 1);
 					
-					// When all nodes are animated, start shrinking after a delay
+					// When all nodes are animated, trigger completion
 					if (index === tree.length - 1) {
-						setTimeout(() => {
-							setIsShrinking(true);
-							if (onAnimationComplete) {
-								setTimeout(() => triggerAnimationCallback('complete'), 800);
-							}
-						}, 800);
+						if (onAnimationComplete) {
+							setTimeout(() => triggerAnimationCallback('complete'), 800);
+						}
 					}
 				}, index * 500); // 500ms delay between each node
 			});
@@ -202,7 +194,6 @@ const DynamicFactorTree = ({
 	// Reset tree
 	const resetTree = () => {
 		setTreeAnimationStep(0);
-		setIsShrinking(false);
 		setFactorTree([]);
 		setAnimationComplete(false);
 	};
@@ -259,25 +250,23 @@ const DynamicFactorTree = ({
 					return children.map((child, childIndex) => {
 						// Calculate positions relative to container width
 						const parentX = (50 + (node.x * 15)) + '%'; // Convert to percentage
-						const parentY = 50 + (node.y * 65);
+						const parentY = 60 + (node.y * 60);
 						
 						// Determine if this is a left or right child
 						const isLeftChild = child.x < node.x;
-						const lineClass = isLeftChild ? 'left' : 'right';
-						
-						// Apply shrinking animation to ALL lines when shrinking (including root lines)
-						const shouldShrink = isShrinking;
-						const shrinkLineClass = shouldShrink ? `shrink-out-line ${lineClass}` : '';
+						const lineClass = isLeftChild ? 'left-line' : 'right-line';
 						
 						return (
 							<div
 								key={`line-${treeId}-${node.id}-${child.id}`}
-								className={`factor-tree-line ${lineClass} ${isVisible ? `dynamic-line-appear ${lineClass}` : ''} ${shrinkLineClass}`}
+								className={`factor-tree-line ${lineClass} ${isVisible ? 'dynamic-line-appear' : ''}`}
 								style={{
 									position: 'absolute',
 									left: parentX,
 									top: `${parentY + 20}px`,
 									height: '40px',
+									width: '2px',
+									backgroundColor: '#5750E3',
 									opacity: isVisible ? 1 : 0,
 									transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
 								}}
@@ -297,7 +286,10 @@ const DynamicFactorTree = ({
 							top: 30 + (rootNode.y * 68),
 							opacity: 0 < treeAnimationStep ? 1 : 0,
 							transform: 'translateX(-50%)',
-							transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
+							transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease',
+							fontSize: '2.25rem',
+							fontWeight: 'bold',
+							color: 'black'
 						}}
 					>
 						{rootNode.value}
@@ -310,7 +302,7 @@ const DynamicFactorTree = ({
 					
 					// Calculate position relative to container width
 					const xPos = (50 + (node.x * 15)) + '%';
-					const yPos = 30 + (node.y * 68);
+					const yPos = 50 + (node.y * 60);
 					
 					let nodeClass = 'factor-tree-node dynamic-factor-tree-node';
 					if (node.isPrime) {
@@ -319,20 +311,20 @@ const DynamicFactorTree = ({
 						nodeClass += ' non-prime';
 					}
 					
-					// Use appropriate shrinking animation based on node type
-					const shrinkClass = isShrinking ? (node.isPrime ? 'shrink-out' : 'shrink-out-non-prime') : '';
-					
 					return (
 						<div
 							key={`node-${treeId}-${node.id}`}
-							className={`${nodeClass} ${isVisible ? (node.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime') : ''} ${shrinkClass}`}
+							className={`${nodeClass} ${isVisible ? (node.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime') : ''}`}
 							style={{
 								position: 'absolute',
 								left: xPos,
 								top: yPos,
 								opacity: isVisible ? 1 : 0,
 								transform: 'translateX(-50%)',
-								transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease'
+								transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease',
+								fontSize: '1.5rem',
+								fontWeight: 'bold',
+								color: '#5750E3'
 							}}
 						>
 							{node.value}

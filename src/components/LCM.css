@@ -15,7 +15,6 @@
     -moz-appearance: textfield;
 }
 
-
 .left-container,
 .right-container {
   position: absolute;
@@ -113,6 +112,37 @@
     background-color: #5750E3;
     transform-origin: top center;
     height: 40px;
+}
+
+/* Dynamic tree line animations */
+.dynamic-line-appear {
+    animation: dynamicLineAppear 0.3s ease-out forwards;
+}
+
+@keyframes dynamicLineAppear {
+    from {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+.shrink-out-line {
+    animation: shrinkOutLine 0.8s ease-out forwards;
+}
+
+@keyframes shrinkOutLine {
+    from {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    to {
+        opacity: 0;
+        transform: scaleY(0);
+    }
 }
 
 #non-prime-fade {
@@ -348,4 +378,3 @@
         top: 10%;
     }
 }
-

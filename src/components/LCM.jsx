@@ -22,6 +22,9 @@ import './ui/reused-animations/glow.css';
 // CSS Imports
 import './LCM.css';
 
+// Function Imports
+import { DynamicFactorTree, buildFactorTree, getPrimeFactors, isPrime } from './DynamicFactorTrees.jsx'
+
 const LCM = () => {
 	// State Management	
 	const [isAnimating, setIsAnimating] = useState(false);
@@ -98,6 +101,13 @@ const LCM = () => {
 	const [hideInputs, setHideInputs] = useState(true);
 	const [removeSolveStep, setRemoveSolveStep] = useState(true);
 
+	// Dynamic Tree States
+	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
+	const [tree1Complete, setTree1Complete] = useState(false);
+	const [tree2Complete, setTree2Complete] = useState(false);
+	const [showTree1Result, setShowTree1Result] = useState(false);
+	const [showTree2Result, setShowTree2Result] = useState(false);
+
 	// Use Effect For Inputs
 	useEffect(() => {
 		if (inputValue1.length > 0 || inputValue2.length > 0) {
@@ -106,6 +116,32 @@ const LCM = () => {
 			setHideInputs(true);
 		}
 	}, [inputValue1, inputValue2]);
+
+	// Tree animation callback handler
+	const handleTreeAnimationComplete = (treeId, animationType) => {
+		if (treeId === 'input1-tree') {
+			setTree1Complete(true);
+			setTimeout(() => {
+				setShowTree1Result(true);
+			}, 300); // Small delay after tree completes
+		} else if (treeId === 'input2-tree') {
+			setTree2Complete(true);
+			setTimeout(() => {
+				setShowTree2Result(true);
+			}, 300); // Small delay after tree completes
+		}
+	};
+
+	// Effect to trigger next step when both trees have shrunk
+	useEffect(() => {
+		const bothShrunk = tree1Complete && tree2Complete;
+		
+		if (bothShrunk && showDynamicFactorTrees) {
+			// Both trees have finished shrinking
+			console.log('Both trees have completed animation');
+			// You can add any additional functionality here if needed
+		}
+	}, [tree1Complete, tree2Complete, showDynamicFactorTrees]);
 
 	// Step Progression Animation Functions
 	// Introduction -> Try Your Own
@@ -270,26 +306,44 @@ const LCM = () => {
 					setRemoveSolvingStep1(true);
 					setTimeout(() => {
 						setShowSolvingStep1(false);
+						setRemoveSolvingStep2(true);
 						setTimeout(() => {
-							setRemoveSolvingStep2(true);
+							setShowSolvingStep2(false);
 							setTimeout(() => {
-								setShowSolvingStep2(false);
 								setHideInitial12And18(true);
 								setTimeout(() => {
 									setRemoveInitial12And18(true);
 									setRemoveInputs(false);
 									setShowInputs(true);
 									setTimeout(() => {
+										setRemoveStaticTrees(true);
 										setRemoveSolveStep(false)
 										setShowSolveFlexi(true);
 									}, 400);
 								}, 400);
-							}, 400);
+							}, 100);
 						}, 400);
 					}, 400);
 				}, 400);
 			}, 400);
 		}, 400);
+	}
+
+	// Solve Button Click
+	const handleSolveButtonClick = () => {
+		// Reset tree states for new solve
+		setTree1Complete(false);
+		setTree2Complete(false);
+		setShowTree1Result(false);
+		setShowTree2Result(false);
+		// setShowDynamicPowers(false); // This line is removed
+		// setHideDynamicExpression(false); // This line is removed
+		
+		// Hide inputs and show trees
+		setHideInputs(true);
+		setTimeout(() => {
+			setShowDynamicFactorTrees(true);
+		}, 500);
 	}
 
 	return (
@@ -388,6 +442,17 @@ const LCM = () => {
 						min="1"
 					/>
 				)}
+
+				{/* Dynamic Factor Tree for Left Container */}
+				{showDynamicFactorTrees && (
+					<DynamicFactorTree 
+						number={inputValue1} 
+						show={showDynamicFactorTrees}
+						position={{ left: '50%', top: '52%' }}
+						treeId="input1-tree"
+						onAnimationComplete={handleTreeAnimationComplete}
+					/>
+				)}
 			</div>
 
 			{/* Elements on Right Container */}
@@ -483,6 +548,17 @@ const LCM = () => {
 						min="1"
 					/>
 				)}
+
+				{/* Dynamic Factor Tree for Right Container */}
+				{showDynamicFactorTrees && (
+					<DynamicFactorTree 
+						number={inputValue2} 
+						show={showDynamicFactorTrees}
+						position={{ left: '50%', top: '52%' }}
+						treeId="input2-tree"
+						onAnimationComplete={handleTreeAnimationComplete}
+					/>
+				)}
 			</div>
 
 			{/* Elements Positioned Absolutely */}
@@ -513,8 +589,9 @@ const LCM = () => {
 					)}
 				</div>
 			)}
-			
 
+			{/* Dynamic Expression Display */}
+			{/* This section is removed as per the edit hint */}
 
 			{/* Introduction Step */}
 			{!removeIntroduction &&
@@ -625,8 +702,7 @@ const LCM = () => {
 				<GlowButton
 					className={`${inputsModified ? 'grow-in-animation' : 'no-show-animation'}`}
 					onClick={() => {
-						// Handle solve button click
-						console.log('Solving for:', inputValue1, 'and', inputValue2);
+						handleSolveButtonClick();
 					}}
 					autoShrinkOnClick={false}
 				>
