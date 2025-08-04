@@ -78,6 +78,34 @@ const LCM = () => {
 
 	// Step 4 -> Solve Your Own
 	const [removeStep4, setRemoveStep4] = useState(true);
+	const [showSolveFlexi, setShowSolveFlexi] = useState(false);
+	const [removeSolvingStep1, setRemoveSolvingStep1] = useState(false);
+	const [removeSolvingStep2, setRemoveSolvingStep2] = useState(false);
+	const [removeSecondLayerExpressionElements, setRemoveSecondLayerExpressionElements] = useState(true);
+	const [showInputs, setShowInputs] = useState(false);
+	const [removeInputs, setRemoveInputs] = useState(true);
+	const [showSkipFlexi, setShowSkipFlexi] = useState(false);
+	const [removeSkipFlexi, setRemoveSkipFlexi] = useState(true);
+
+	// Input value related states
+	const [inputValue1, setInputValue1] = useState('12');
+	const [inputValue2, setInputValue2] = useState('18');
+	const [inputsModified, setInputsModified] = useState(false);
+	const [showSolveButton, setShowSolveButton] = useState(false);
+	const [removeSolveButton, setRemoveSolveButton] = useState(true);
+	const [hideInitial12And18, setHideInitial12And18] = useState(false);
+	
+	const [hideInputs, setHideInputs] = useState(true);
+	const [removeSolveStep, setRemoveSolveStep] = useState(true);
+
+	// Use Effect For Inputs
+	useEffect(() => {
+		if (inputValue1.length > 0 || inputValue2.length > 0) {
+			setHideInputs(false);
+		} else {
+			setHideInputs(true);
+		}
+	}, [inputValue1, inputValue2]);
 
 	// Step Progression Animation Functions
 	// Introduction -> Try Your Own
@@ -85,7 +113,15 @@ const LCM = () => {
 		setShowIntroduction(false);
 		setTimeout(() => {
 			setRemoveIntroduction(true);
-		}, 1000);
+			setTimeout(() => {
+				setRemoveInputs(false);
+				setShowInputs(true);
+				setTimeout(() => {
+					setRemoveSkipFlexi(false);
+					setShowSkipFlexi(true);
+				}, 500);
+			}, 500);
+		}, 500);
 	}
 
 	// Introduction -> Step 1
@@ -162,6 +198,7 @@ const LCM = () => {
 							setTimeout(() => {
 								setShowConvergingLines(true);
 								setTimeout(() => {
+									setRemoveSecondLayerExpressionElements(false);
 									setShowSecondLayerExpressionElements(true);
 									setTimeout(() => {
 										setRemoveStep3(false);
@@ -226,6 +263,32 @@ const LCM = () => {
 		setShowStep4Button(false);
 		setTimeout(() => {
 			setRemoveStep4(true);
+			setTimeout(() => {
+				setShowSecondLayerExpressionElements(false);
+				setTimeout(() => {
+					setRemoveSecondLayerExpressionElements(true);
+					setRemoveSolvingStep1(true);
+					setTimeout(() => {
+						setShowSolvingStep1(false);
+						setTimeout(() => {
+							setRemoveSolvingStep2(true);
+							setTimeout(() => {
+								setShowSolvingStep2(false);
+								setHideInitial12And18(true);
+								setTimeout(() => {
+									setRemoveInitial12And18(true);
+									setRemoveInputs(false);
+									setShowInputs(true);
+									setTimeout(() => {
+										setRemoveSolveStep(false)
+										setShowSolveFlexi(true);
+									}, 400);
+								}, 400);
+							}, 400);
+						}, 400);
+					}, 400);
+				}, 400);
+			}, 400);
 		}, 400);
 	}
 
@@ -235,9 +298,9 @@ const LCM = () => {
 			<div className="left-container">
 				{!removeInitial12And18 &&
 						<div className={`text-4xl font-bold text-black absolute top-[20%] left-[50%] translate-x-[-50%]
-						${move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
+						${hideInitial12And18 ? 'shrink-out-initial-12-and-18' : move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
 						`}
-						>12</div>
+						>{inputValue1}</div>
 				}
 				{/* Static Factor Tree for 12 */}
 				{!removeStaticTrees &&
@@ -280,8 +343,8 @@ const LCM = () => {
 						</div>	
 						)}
 						{/* Second layer Expression Elements */}
-						{showSecondLayerExpressionElements && (
-							<div className={`absolute top-[40%] left-[33%] flex w-[70px] justify-between items-center ${movePowersExpression ? 'move-powers-expression' : ''}`}>
+						{!removeSecondLayerExpressionElements && (
+							<div className={`absolute top-[40%] left-[33%] flex w-[70px] justify-between items-center ${!showSecondLayerExpressionElements ? 'fade-out-power-expression-elements' : movePowersExpression ? 'move-powers-expression' : ''}`}>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">2²</div>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">×</div>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">3</div>
@@ -289,15 +352,51 @@ const LCM = () => {
 						)}
 					</div>
 				}
+
+				{/* Input */}
+				{!removeInputs && (
+					<input 
+						type="number" 
+						className={`inputs absolute top-[8.5%] left-[35.5%] text-2xl font-bold text-[#5750E3] static-tree-node text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
+							${showInputs ? 'grow-in-animation' : hideInputs ? 'shrink-out-animation' : ''}`}
+						value={inputValue1}
+						onChange={(e) => {
+							const value = e.target.value;
+							if (value === '' || /^\d+$/.test(value)) {
+								const numValue = parseInt(value) || 0;
+								if (numValue > 25) {
+									setInputValue1('25');
+									if (value !== '12') setInputsModified(true);
+								} else if (numValue >= 0 || value === '') {
+									setInputValue1(value);
+									if (value !== '12') setInputsModified(true);
+								}
+							}
+						}}
+						onBlur={(e) => {
+							if (e.target.value === '') {
+								setInputValue1('1');
+								setInputsModified(true);
+							}
+						}}
+						onKeyDown={(e) => {
+							if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '.') {
+								e.preventDefault();
+							}
+						}}
+						max="25"
+						min="1"
+					/>
+				)}
 			</div>
 
 			{/* Elements on Right Container */}
 			<div className="right-container">
 				{!removeInitial12And18 &&
 						<div className={`text-4xl font-bold text-black absolute top-[20%] left-[50%] translate-x-[-50%]
-						${move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
+						${hideInitial12And18 ? 'shrink-out-initial-12-and-18' : move12And18Up ? 'move-12-and-18-animation' : showInitial12And18 ? 'fade-in-up-tr-animation' : ''}
 						`}
-						>18</div>
+						>{inputValue2}</div>
 				}
 				{/* Static Factor Tree for 18 */}
 				{!removeStaticTrees &&
@@ -340,8 +439,8 @@ const LCM = () => {
 						</div>
 					)}
 					{/* Second layer Expression Elements */}
-					{showSecondLayerExpressionElements && (
-							<div className={`absolute top-[40%] left-[33%] flex w-[70px] justify-between items-center ${movePowersExpression ? 'move-powers-expression' : ''}`}>
+					{!removeSecondLayerExpressionElements && (
+							<div className={`absolute top-[40%] left-[33%] flex w-[70px] justify-between items-center ${!showSecondLayerExpressionElements ? 'fade-out-power-expression-elements' : movePowersExpression ? 'move-powers-expression' : ''}`}>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">2</div>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">×</div>
 								<div className="text-2xl font-bold text-[#5750E3] static-tree-node">3²</div>
@@ -349,6 +448,41 @@ const LCM = () => {
 						)}
 					</div>
 				}		
+				{/* Input */}
+				{!removeInputs && (
+					<input 
+						type="number" 
+						className={`inputs absolute top-[8.5%] right-[35%] text-2xl font-bold text-[#5750E3] static-tree-node text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
+							${showInputs ? 'grow-in-animation' : hideInputs ? 'shrink-out-animation' : ''}`}
+						value={inputValue2}
+						onChange={(e) => {
+							const value = e.target.value;
+							if (value === '' || /^\d+$/.test(value)) {
+								const numValue = parseInt(value) || 0;
+								if (numValue > 25) {
+									setInputValue2('25');
+									if (value !== '18') setInputsModified(true);
+								} else if (numValue >= 0 || value === '') {
+									setInputValue2(value);
+									if (value !== '18') setInputsModified(true);
+								}
+							}
+						}}
+						onBlur={(e) => {
+							if (e.target.value === '') {
+								setInputValue2('1');
+								setInputsModified(true);
+							}
+						}}
+						onKeyDown={(e) => {
+							if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '.') {
+								e.preventDefault();
+							}
+						}}
+						max="25"
+						min="1"
+					/>
+				)}
 			</div>
 
 			{/* Elements Positioned Absolutely */}
@@ -361,19 +495,19 @@ const LCM = () => {
 			{!removeSolvingSteps && (
 				<div className={`absolute top-[0%] left-[50%] translate-x-[-50%] w-[100%] h-[100%]`}>
 					{showSolvingStep1 && (
-						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[32%] left-[50%] translate-x-[-50%]
-						${showSolvingStep1 ? 'fade-in-up-tr-animation' : ''}
-						`}>LCM = 2² × 3²</div>
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[32%] left-[50%] translate-x-[-50%]
+							${removeSolvingStep1 ? 'fade-out-down-tr-animation' : 'fade-in-up-tr-animation'}
+							`}>LCM = 2² × 3²</div>
 					)}
 					{showSolvingStep2 && (
-						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[42%] left-[50%] translate-x-[-50%]
-						${showSolvingStep2 ? 'fade-in-up-tr-animation' : ''}
-						`}>LCM = 4 × 9</div>
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[42%] left-[50%] translate-x-[-50%]
+							${removeSolvingStep2 ? 'fade-out-down-tr-animation' : 'fade-in-up-tr-animation'}
+							`}>LCM = 4 × 9</div>
 					)}
 					{showSolvingStep3 && (
-						<div id='powers-expression-font-size' className={`text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%]
-						${showSolvingStep3 ? 'fade-in-up-tr-animation' : ''}
-						`}>LCM = 
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%]
+							${showSolvingStep3 ? 'fade-in-up-tr-animation' : 'fade-out-down-tr-animation'}
+							`}>LCM = 
 							<span className={`${highlightAnswer ? 'text-[#008545]' : 'text-gray-600'}`}> 36</span>
 						</div>
 					)}
@@ -462,6 +596,43 @@ const LCM = () => {
 					</GlowButton>
 				</>
 			}
+
+			{/* Step 5 */}
+			{!removeSolveStep &&
+				<>
+					<FlexiText
+						className={`${showSolveFlexi ? 'fade-in-up-animation' : 'fade-out-up-animation'}`}
+						flexiImage={FlexiThumbsUp}
+					>
+						Now that you know how to find the LCM of two numbers, try solving your own!
+					</FlexiText>
+				</>
+			}
+
+			{/* Solve Your Own */}
+			{!removeSkipFlexi &&
+				<>
+					<FlexiText
+						className={`${showSkipFlexi ? 'fade-in-up-animation' : 'fade-out-up-animation'}`}
+						flexiImage={FlexiThumbsUp}
+					>
+						Enter your own numbers to find their LCM!
+					</FlexiText>
+				</>
+			}
+			
+			{inputsModified && (
+				<GlowButton
+					className={`${inputsModified ? 'grow-in-animation' : 'no-show-animation'}`}
+					onClick={() => {
+						// Handle solve button click
+						console.log('Solving for:', inputValue1, 'and', inputValue2);
+					}}
+					autoShrinkOnClick={false}
+				>
+					Solve
+				</GlowButton>
+			)}
 		</Container>
 	);
 };

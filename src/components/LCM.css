@@ -1,4 +1,21 @@
 /* Non Animation Styles */
+.inputs {
+    width: 3.5rem;
+    height: 3.5rem;
+    text-align: center;
+    background: transparent;
+    border: 2px solid #9ca3af;
+    border-radius: 4px;
+    outline: none;
+    font-size: 2.25rem;
+    font-weight: bold;
+    color: #5750E3;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+}
+
+
 .left-container,
 .right-container {
   position: absolute;
@@ -288,13 +305,47 @@
 }
 
 @media (max-width: 370px) {
-    #powers-expression-font-size {
+    .powers-expression-font-size {
         font-size: 1.2rem;
     }
 }
 
 @media (max-width: 310px) {
-    #powers-expression-font-size {
+    .powers-expression-font-size {
         font-size: 1rem;
     }
 }
+
+/* Step 4 -> Solving Step Animations */
+.fade-out-power-expression-elements {
+    animation: fadeOutPowerExpressionElements 0.3s forwards;
+}
+
+@keyframes fadeOutPowerExpressionElements {
+    from {
+        opacity: 1;
+        transform: translate(0, -250%);
+    }
+    to {
+        opacity: 0;
+        transform: translate(0, -230%);
+    }
+}
+
+.shrink-out-initial-12-and-18 {
+    animation: shrinkOutInitial12And18Animation 0.3s ease-out forwards;
+}
+
+@keyframes shrinkOutInitial12And18Animation {
+    from {
+        opacity: 1;
+        transform: scale(1) translateX(-50%);
+        top: 10%;
+    }
+    to {
+        opacity: 0;
+        transform: scale(0) translateX(-50%);
+        top: 10%;
+    }
+}
+
