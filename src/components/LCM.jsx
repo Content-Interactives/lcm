@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // Assets Imports
 import FlexiTeacher from '../assets/All Flexi Poses/PNG/Flexi_Teacher.png';
@@ -102,23 +102,37 @@ const LCM = () => {
 	// Dynamic Tree States
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
 	const [showDynamicFactorTreeHeads, setShowDynamicFactorTreeHeads] = useState(false);
+	const [hideDynamicFactorTrees, setHideDynamicFactorTrees] = useState(false);
 	const [tree1Complete, setTree1Complete] = useState(false);
 	const [tree2Complete, setTree2Complete] = useState(false);
 	const [showTree1Result, setShowTree1Result] = useState(false);
 	const [showTree2Result, setShowTree2Result] = useState(false);
 
+	// Ref to track tree completion
+	const treeCompletionRef = useRef({ tree1: false, tree2: false });
+
 	// Tree animation callback handler
 	const handleTreeAnimationComplete = (treeId, animationType) => {
 		if (treeId === 'input1-tree') {
 			setTree1Complete(true);
+			treeCompletionRef.current.tree1 = true;
 			setTimeout(() => {
 				setShowTree1Result(true);
 			}, 300); // Small delay after tree completes
 		} else if (treeId === 'input2-tree') {
 			setTree2Complete(true);
+			treeCompletionRef.current.tree2 = true;
 			setTimeout(() => {
 				setShowTree2Result(true);
 			}, 300); // Small delay after tree completes
+		}
+
+		// Check if both trees are complete and trigger the next step
+		if (treeCompletionRef.current.tree1 && treeCompletionRef.current.tree2) {
+			// Both trees are now complete, trigger the next step
+			setTimeout(() => {
+				handleSolveButtonClickPt2();
+			}, 1000); // Delay to allow users to see the results
 		}
 	};
 
@@ -309,12 +323,15 @@ const LCM = () => {
 	}
 
 	// Solve Button Click
-	const handleSolveButtonClick = () => {
+	const handleSolveButtonClickPt1 = () => {
 		// Reset tree states for new solve
 		setTree1Complete(false);
 		setTree2Complete(false);
 		setShowTree1Result(false);
 		setShowTree2Result(false);
+		
+		// Reset the completion ref
+		treeCompletionRef.current = { tree1: false, tree2: false };
 
 		setHideSolveButton(true);
 		setTimeout(() => {
@@ -326,6 +343,10 @@ const LCM = () => {
 				}, 800);
 			}, 500);
 		}, 500);
+	}
+
+	const handleSolveButtonClickPt2 = () => {
+		setHideDynamicFactorTrees(true);
 	}
 
 	return (
@@ -433,13 +454,15 @@ const LCM = () => {
 				)}
 				{/* Dynamic Factor Tree for Left Container */}
 				{showDynamicFactorTrees && (
-					<DynamicFactorTree 
-						number={inputValue1} 
-						show={showDynamicFactorTrees}
-						position={{ left: '50%', top: '52%' }}
-						treeId="input1-tree"
-						onAnimationComplete={handleTreeAnimationComplete}
-					/>
+					<div className={`${hideDynamicFactorTrees ? 'fade-out-in-place-animation' : ''}`}>
+						<DynamicFactorTree 
+							number={inputValue1} 
+							show={showDynamicFactorTrees}
+							position={{ left: '50%', top: '52%' }}
+							treeId="input1-tree"
+							onAnimationComplete={handleTreeAnimationComplete}
+						/>
+					</div>
 				)}
 			</div>
 
@@ -545,13 +568,15 @@ const LCM = () => {
 				)}
 				{/* Dynamic Factor Tree for Right Container */}
 				{showDynamicFactorTrees && (
-					<DynamicFactorTree 
-						number={inputValue2} 
-						show={showDynamicFactorTrees}
-						position={{ left: '50%', top: '52%' }}
-						treeId="input2-tree"
-						onAnimationComplete={handleTreeAnimationComplete}
-					/>
+					<div className={`${hideDynamicFactorTrees ? 'fade-out-in-place-animation' : ''}`}>
+						<DynamicFactorTree 
+							number={inputValue2} 
+							show={showDynamicFactorTrees}
+							position={{ left: '50%', top: '52%' }}
+							treeId="input2-tree"
+							onAnimationComplete={handleTreeAnimationComplete}
+						/>
+					</div>
 				)}
 			</div>
 
@@ -694,7 +719,7 @@ const LCM = () => {
 				<GlowButton
 					className={`${hideSolveButton ? 'shrink-out-animation' : inputsModified ? 'grow-in-animation' : 'no-show-animation'}`}
 					onClick={() => {
-						handleSolveButtonClick();
+						handleSolveButtonClickPt1();
 					}}
 					autoShrinkOnClick={false}
 				>
