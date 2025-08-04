@@ -250,7 +250,7 @@ const DynamicFactorTree = ({
 					return children.map((child, childIndex) => {
 						// Calculate positions relative to container width
 						const parentX = (50 + (node.x * 15)) + '%'; // Convert to percentage
-						const parentY = 60 + (node.y * 60);
+						const parentY = 60 + (node.y * 63.5);
 						
 						// Determine if this is a left or right child
 						const isLeftChild = child.x < node.x;
@@ -275,34 +275,13 @@ const DynamicFactorTree = ({
 					});
 				})}
 				
-				{/* Root node (never shrinks) */}
-				{rootNode && (
-					<div
-						key={`node-${treeId}-${rootNode.id}`}
-						className={`factor-tree-node dynamic-factor-tree-node root ${rootNode.level === 0 || rootNode.isPrime ? 'dynamic-node-animate' : 'dynamic-node-animate-non-prime'}`}
-						style={{
-							position: 'absolute',
-							left: (50 + (rootNode.x * 15)) + '%',
-							top: 30 + (rootNode.y * 68),
-							opacity: 0 < treeAnimationStep ? 1 : 0,
-							transform: 'translateX(-50%)',
-							transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease',
-							fontSize: '2.25rem',
-							fontWeight: 'bold',
-							color: 'black'
-						}}
-					>
-						{rootNode.value}
-					</div>
-				)}
-				
 				{/* Non-root nodes (all shrink together) */}
 				{nonRootNodes.map((node, index) => {
 					const isVisible = index < treeAnimationStep;
 					
 					// Calculate position relative to container width
 					const xPos = (50 + (node.x * 15)) + '%';
-					const yPos = 50 + (node.y * 60);
+					const yPos = 50 + (node.y * 62);
 					
 					let nodeClass = 'factor-tree-node dynamic-factor-tree-node';
 					if (node.isPrime) {
@@ -319,7 +298,7 @@ const DynamicFactorTree = ({
 								position: 'absolute',
 								left: xPos,
 								top: yPos,
-								opacity: isVisible ? 1 : 0,
+								opacity: isVisible ? (node.isPrime ? 1 : 0.5) : 0,
 								transform: 'translateX(-50%)',
 								transition: 'opacity 0.3s ease, transform 0.8s ease, scale 0.8s ease',
 								fontSize: '1.5rem',

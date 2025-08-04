@@ -23,7 +23,7 @@ import './ui/reused-animations/glow.css';
 import './LCM.css';
 
 // Function Imports
-import { DynamicFactorTree, buildFactorTree, getPrimeFactors, isPrime } from './DynamicFactorTrees.jsx'
+import { DynamicFactorTree } from './DynamicFactorTrees.jsx'
 
 const LCM = () => {
 	// State Management	
@@ -94,28 +94,18 @@ const LCM = () => {
 	const [inputValue1, setInputValue1] = useState('12');
 	const [inputValue2, setInputValue2] = useState('18');
 	const [inputsModified, setInputsModified] = useState(false);
-	const [showSolveButton, setShowSolveButton] = useState(false);
-	const [removeSolveButton, setRemoveSolveButton] = useState(true);
+	const [hideSolveButton, setHideSolveButton] = useState(false);
 	const [hideInitial12And18, setHideInitial12And18] = useState(false);
 	
-	const [hideInputs, setHideInputs] = useState(true);
 	const [removeSolveStep, setRemoveSolveStep] = useState(true);
 
 	// Dynamic Tree States
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
+	const [showDynamicFactorTreeHeads, setShowDynamicFactorTreeHeads] = useState(false);
 	const [tree1Complete, setTree1Complete] = useState(false);
 	const [tree2Complete, setTree2Complete] = useState(false);
 	const [showTree1Result, setShowTree1Result] = useState(false);
 	const [showTree2Result, setShowTree2Result] = useState(false);
-
-	// Use Effect For Inputs
-	useEffect(() => {
-		if (inputValue1.length > 0 || inputValue2.length > 0) {
-			setHideInputs(false);
-		} else {
-			setHideInputs(true);
-		}
-	}, [inputValue1, inputValue2]);
 
 	// Tree animation callback handler
 	const handleTreeAnimationComplete = (treeId, animationType) => {
@@ -131,17 +121,6 @@ const LCM = () => {
 			}, 300); // Small delay after tree completes
 		}
 	};
-
-	// Effect to trigger next step when both trees have shrunk
-	useEffect(() => {
-		const bothShrunk = tree1Complete && tree2Complete;
-		
-		if (bothShrunk && showDynamicFactorTrees) {
-			// Both trees have finished shrinking
-			console.log('Both trees have completed animation');
-			// You can add any additional functionality here if needed
-		}
-	}, [tree1Complete, tree2Complete, showDynamicFactorTrees]);
 
 	// Step Progression Animation Functions
 	// Introduction -> Try Your Own
@@ -336,13 +315,16 @@ const LCM = () => {
 		setTree2Complete(false);
 		setShowTree1Result(false);
 		setShowTree2Result(false);
-		// setShowDynamicPowers(false); // This line is removed
-		// setHideDynamicExpression(false); // This line is removed
-		
-		// Hide inputs and show trees
-		setHideInputs(true);
+
+		setHideSolveButton(true);
 		setTimeout(() => {
-			setShowDynamicFactorTrees(true);
+			setShowInputs(false);
+			setTimeout(() => {
+				setShowDynamicFactorTreeHeads(true);
+				setTimeout(() => {
+					setShowDynamicFactorTrees(true);
+				}, 800);
+			}, 500);
 		}, 500);
 	}
 
@@ -411,8 +393,8 @@ const LCM = () => {
 				{!removeInputs && (
 					<input 
 						type="number" 
-						className={`inputs absolute top-[8.5%] left-[35.5%] text-2xl font-bold text-[#5750E3] static-tree-node text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
-							${showInputs ? 'grow-in-animation' : hideInputs ? 'shrink-out-animation' : ''}`}
+						className={`inputs absolute top-[8.5%] left-[35.5%] text-2xl font-bold text-[#5750E3] text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
+							${showInputs ? "grow-in-animation" : "shrink-out-animation"}`}
 						value={inputValue1}
 						onChange={(e) => {
 							const value = e.target.value;
@@ -443,6 +425,12 @@ const LCM = () => {
 					/>
 				)}
 
+				{/* Head of Dynamic Factor Tree for Left Container */}
+				{showDynamicFactorTreeHeads && (
+					<div className="absolute top-[11%] left-[50%] translate-x-[-50%]">
+						<div className="text-4xl font-bold static-tree-node">{inputValue1}</div>
+					</div>
+				)}
 				{/* Dynamic Factor Tree for Left Container */}
 				{showDynamicFactorTrees && (
 					<DynamicFactorTree 
@@ -517,8 +505,8 @@ const LCM = () => {
 				{!removeInputs && (
 					<input 
 						type="number" 
-						className={`inputs absolute top-[8.5%] right-[35%] text-2xl font-bold text-[#5750E3] static-tree-node text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
-							${showInputs ? 'grow-in-animation' : hideInputs ? 'shrink-out-animation' : ''}`}
+						className={`inputs absolute top-[8.5%] right-[35%] text-2xl font-bold text-[#5750E3] text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none z-50
+							${showInputs ? 'grow-in-animation' : 'shrink-out-animation'}`}
 						value={inputValue2}
 						onChange={(e) => {
 							const value = e.target.value;
@@ -549,6 +537,12 @@ const LCM = () => {
 					/>
 				)}
 
+				{/* Head of Dynamic Factor Tree for Right Container */}
+				{showDynamicFactorTreeHeads && (
+					<div className="absolute top-[11%] left-[50%] translate-x-[-50%]">
+						<div className="text-4xl font-bold static-tree-node">{inputValue2}</div>
+					</div>
+				)}
 				{/* Dynamic Factor Tree for Right Container */}
 				{showDynamicFactorTrees && (
 					<DynamicFactorTree 
@@ -589,9 +583,6 @@ const LCM = () => {
 					)}
 				</div>
 			)}
-
-			{/* Dynamic Expression Display */}
-			{/* This section is removed as per the edit hint */}
 
 			{/* Introduction Step */}
 			{!removeIntroduction &&
@@ -686,7 +677,7 @@ const LCM = () => {
 				</>
 			}
 
-			{/* Solve Your Own */}
+			{/* Solve Your Own Text */}
 			{!removeSkipFlexi &&
 				<>
 					<FlexiText
@@ -698,9 +689,10 @@ const LCM = () => {
 				</>
 			}
 			
+			{/* Solve Button Button */}
 			{inputsModified && (
 				<GlowButton
-					className={`${inputsModified ? 'grow-in-animation' : 'no-show-animation'}`}
+					className={`${hideSolveButton ? 'shrink-out-animation' : inputsModified ? 'grow-in-animation' : 'no-show-animation'}`}
 					onClick={() => {
 						handleSolveButtonClick();
 					}}
