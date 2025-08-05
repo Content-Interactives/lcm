@@ -107,11 +107,14 @@ const LCM = () => {
 	const [lcmStep1, setLcmStep1] = useState('2² × 3²');
 	const [lcmStep2, setLcmStep2] = useState('4 × 9');
 	const [lcm, setLcm] = useState(36);
+	const [didSkip, setDidSkip] = useState(false);
 
 	// Ref to track tree completion
 	const treeCompletionRef = useRef({ tree1: false, tree2: false });
 	// Ref to track powers expression completion
 	const powersCompletionRef = useRef({ powers1: false, powers2: false });
+	// Ref to track all timeouts from solve completion process
+	const solveTimeoutsRef = useRef([]);
 
 	// Tree animation callback handler
 	const handleTreeAnimationComplete = (treeId, animationType) => {
@@ -148,8 +151,101 @@ const LCM = () => {
 	};
 
 	// Step Progression Animation Functions
+	// Reset Button Click
+	const handleResetButtonClick = () => {
+		// Clear any running timeouts
+		solveTimeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+		solveTimeoutsRef.current = [];
+		
+		// Reset completion refs
+		treeCompletionRef.current = { tree1: false, tree2: false };
+		powersCompletionRef.current = { powers1: false, powers2: false };
+		
+		// Reset to initial state - Introduction
+		setIsAnimating(false);
+		setShowIntroduction(true);
+		setRemoveIntroduction(false);
+		
+		// Reset Step 1
+		setShowInitial12And18(false);
+		setShowInitialLCMText(false);
+		setShowStep1Flexi(false);
+		setShowStep1Button(false);
+		setRemoveInitial12And18(true);
+		setRemoveInitialLCMText(true);
+		setRemoveStep1(true);
+		setMove12And18Up(false);
+		
+		// Reset Step 2
+		setShowFirstLayerStaticTreeLines(false);
+		setShowFirstLayerStaticTreeNodes(false);
+		setHideStaticTreeNonPrimes(false);
+		setShowSecondLayerStaticTreeLines(false);
+		setShowSecondLayerStaticTreeNodes(false);
+		setShowStep2Flexi(false);
+		setShowStep2Button(false);
+		setRemoveStep2(true);
+		setHideFirstLayerStaticTreeLines(false);
+		setHideFirstLayerStaticTreeNodes(false);
+		setHideSecondLayerStaticTreeLines(false);
+		setMoveStaticPrimes(false);
+		setRemoveStaticTrees(false);
+		
+		// Reset Step 3
+		setShowFirstLayerExpressionElements(false);
+		setShowConvergingLines(false);
+		setShowSecondLayerExpressionElements(false);
+		setShowStep3Flexi(false);
+		setShowStep3Button(false);
+		setRemoveStep3(true);
+		setHideFirstLayerExpressionElements(false);
+		setHideConvergingLines(false);
+		setMovePowersExpression(false);
+		setRemoveSecondLayerExpressionElements(true);
+		
+		// Reset Step 4 and solving
+		setShowSolvingStep1(false);
+		setShowSolvingStep2(false);
+		setShowSolvingStep3(false);
+		setRemoveSolvingSteps(true);
+		setRemoveSolvingStep1(false);
+		setRemoveSolvingStep2(false);
+		setHighlightAnswer(false);
+		setShowStep4Flexi(false);
+		setShowStep4Button(false);
+		setRemoveStep4(true);
+		
+		// Reset Solve Your Own
+		setShowSolveFlexi(false);
+		setRemoveSolveStep(true);
+		setShowSkipFlexi(false);
+		setRemoveSkipFlexi(true);
+		
+		// Reset inputs and values
+		setInputValue1('12');
+		setInputValue2('18');
+		setInputsModified(false);
+		setShowInputs(false);
+		setRemoveInputs(true);
+		setHideSolveButton(false);
+		setHideInitial12And18(false);
+		
+		// Reset dynamic trees and expressions
+		setShowDynamicFactorTrees(false);
+		setShowDynamicFactorTreeHeads(false);
+		setHideDynamicFactorTrees(false);
+		setShowDynamicPowersExpression(false);
+		
+		// Reset LCM values to defaults
+		setLcmStep1('2² × 3²');
+		setLcmStep2('4 × 9');
+		setLcm(36);
+	}
+
 	// Introduction -> Try Your Own
 	const handleTryYourOwnButtonClick = () => {
+		setDidSkip(true);
+		setIsAnimating(true);
 		setShowIntroduction(false);
 		setTimeout(() => {
 			setRemoveIntroduction(true);
@@ -159,6 +255,7 @@ const LCM = () => {
 				setTimeout(() => {
 					setRemoveSkipFlexi(false);
 					setShowSkipFlexi(true);
+					setIsAnimating(false);
 				}, 500);
 			}, 500);
 		}, 500);
@@ -166,6 +263,7 @@ const LCM = () => {
 
 	// Introduction -> Step 1
 	const handleBeginLessonButtonClick = () => {
+		setIsAnimating(true);
 		setShowIntroduction(false);
 		setTimeout(() => {
 			setRemoveIntroduction(true);
@@ -179,6 +277,7 @@ const LCM = () => {
 					setShowStep1Flexi(true);
 					setTimeout(() => {
 						setShowStep1Button(true);
+						setIsAnimating(false);
 					}, 600);
 				}, 800);
 			}, 400);
@@ -187,6 +286,7 @@ const LCM = () => {
 
 	// Step 1 -> Step 2
 	const handleContinueButton1Click = () => {
+		setIsAnimating(true);
 		setShowStep1Flexi(false);
 		setShowStep1Button(false);
 		setTimeout(() => {
@@ -210,6 +310,7 @@ const LCM = () => {
 										setShowStep2Flexi(true);
 										setTimeout(() => {
 											setShowStep2Button(true);
+											setIsAnimating(false);
 										}, 600);
 									}, 800);
 								}, 300);
@@ -223,6 +324,7 @@ const LCM = () => {
 
 	// Step 2 -> Step 3
 	const handleContinueButton2Click = () => {
+		setIsAnimating(true);
 		setShowStep2Flexi(false);
 		setShowStep2Button(false);
 		setTimeout(() => {
@@ -245,6 +347,7 @@ const LCM = () => {
 										setShowStep3Flexi(true);
 										setTimeout(() => {
 											setShowStep3Button(true);
+											setIsAnimating(false);
 										}, 600);
 									}, 600);
 								}, 500);
@@ -258,6 +361,7 @@ const LCM = () => {
 
 	// Step 3 -> Step 4
 	const handleContinueButton3Click = () => {
+		setIsAnimating(true);
 		setShowStep3Flexi(false);
 		setShowStep3Button(false);
 		setTimeout(() => {
@@ -286,6 +390,7 @@ const LCM = () => {
 											setShowSecondLayerStaticTreeLines(false);
 											setShowSecondLayerStaticTreeNodes(false);
 											setShowConvergingLines(false);
+											setIsAnimating(false);
 										}, 600);
 									}, 500);
 								}, 500);
@@ -299,6 +404,7 @@ const LCM = () => {
 
 	// Step 4 -> Solve Your Own
 	const handleContinueButton4Click = () => {
+		setIsAnimating(true);
 		setShowStep4Flexi(false);
 		setShowStep4Button(false);
 		setTimeout(() => {
@@ -323,6 +429,7 @@ const LCM = () => {
 										setRemoveStaticTrees(true);
 										setRemoveSolveStep(false)
 										setShowSolveFlexi(true);
+										setIsAnimating(false);
 									}, 400);
 								}, 400);
 							}, 100);
@@ -334,7 +441,12 @@ const LCM = () => {
 	}
 
 	// Solve Button Click
-	const handleSolveButtonClickPt1 = () => {		
+	const handleSolveButtonClickPt1 = () => {	
+		setIsAnimating(true);
+		// Clear any existing timeouts from previous solve cycles
+		solveTimeoutsRef.current.forEach(timeoutId => clearTimeout(timeoutId));
+		solveTimeoutsRef.current = [];
+		
 		// Reset the completion refs
 		treeCompletionRef.current = { tree1: false, tree2: false };
 		powersCompletionRef.current = { powers1: false, powers2: false };
@@ -345,8 +457,11 @@ const LCM = () => {
 		setShowSolvingStep3(false);
 		setHighlightAnswer(false);
 		setRemoveSolvingSteps(true);
+		// Reset the remove states so solving steps can animate in properly
+		setRemoveSolvingStep1(false);
+		setRemoveSolvingStep2(false);
 
-		setShowSkipFlexi(false);
+		didSkip ? setShowSkipFlexi(false) : setShowSolveFlexi(false);
 
 		setHideSolveButton(true);
 		setTimeout(() => {
@@ -379,39 +494,41 @@ const LCM = () => {
 		setRemoveSolvingSteps(false);
 		setShowSolvingStep1(true);
 		setInputsModified(false);
-		setTimeout(() => {
+		solveTimeoutsRef.current.push(setTimeout(() => {
 			setShowSolvingStep2(true);
-			setTimeout(() => {
+			solveTimeoutsRef.current.push(setTimeout(() => {
 				setShowSolvingStep3(true);
-				setTimeout(() => {
+				solveTimeoutsRef.current.push(setTimeout(() => {
 					setHighlightAnswer(true);
 					// After showing the final answer, hide powers expressions and show inputs
-					setTimeout(() => {
+					solveTimeoutsRef.current.push(setTimeout(() => {
 						setShowDynamicPowersExpression(false);
 						setRemoveSolvingStep1(true);
-						setTimeout(() => {
+						solveTimeoutsRef.current.push(setTimeout(() => {
 							setRemoveSolvingStep2(true);
-							setTimeout(() => {
-									setTimeout(() => {
-										setRemoveInputs(false);
-										setShowDynamicFactorTreeHeads(false);
-										setShowInputs(true);
-										setHideSolveButton(false);
-										setShowDynamicFactorTrees(false);
-										setHideDynamicFactorTrees(false);
+							solveTimeoutsRef.current.push(setTimeout(() => {
+								solveTimeoutsRef.current.push(setTimeout(() => {
+									setShowDynamicFactorTreeHeads(false);
+									setShowInputs(true);
+									setHideSolveButton(false);
+									setShowDynamicFactorTrees(false);
+									setHideDynamicFactorTrees(false);
 
-										setShowSkipFlexi(true);
-								}, 500);
-							}, 500);
-						}, 500);
-					}, 2000); // Wait 2 seconds to let user see the final answer
-				}, 500);
-			}, 500);
-		}, 500);
+									didSkip ? setShowSkipFlexi(true) : setShowSolveFlexi(true);
+									setIsAnimating(false);
+									// Clear the timeout ref since we've completed
+									solveTimeoutsRef.current = [];
+								}, 500));
+							}, 500));
+						}, 500));
+					}, 2000)); // Wait 2 seconds to let user see the final answer
+				}, 500));
+			}, 500));
+		}, 500));
 	}
 
 	return (
-		<Container text="LCM Explorer" showResetButton={true}>
+		<Container text="LCM Explorer" showResetButton={true} onReset={handleResetButtonClick} disableResetButton={isAnimating}>
 			{/* Elements on Left Container */}
 			<div className="left-container">
 				{!removeInitial12And18 &&
@@ -692,7 +809,7 @@ const LCM = () => {
 						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%] w-[100%] flex justify-center items-center
 							${showSolvingStep3 ? 'fade-in-up-tr-animation' : 'fade-out-down-tr-animation'}
 							`}>LCM = 
-							<span className={`${highlightAnswer ? 'text-[#008545]' : 'text-gray-600'}`}>&nbsp;{inputsModified ? '?' : lcm}</span>
+							<span className='text-[#008545]'>&nbsp;{inputsModified ? '?' : lcm}</span>
 						</div>
 					)}
 				</div>
