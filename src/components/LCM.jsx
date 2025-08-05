@@ -820,7 +820,7 @@ const LCM = () => {
 				<>
 					<FlexiText 
 						className={`${showIntroduction ? '' : 'fade-out-up-animation'}`}
-					>Welcome to the LCM Explorer! Click one of the buttons below to begin the lesson or try solving you own numbers.</FlexiText>
+					>Welcome to the LCM Explorer! Click one of the buttons below to begin the lesson or try solving your own numbers.</FlexiText>
 					<MultiGlowButton
 						buttons={[
 							{ text: 'Begin Lesson', onClick: () => {handleBeginLessonButtonClick()} },
