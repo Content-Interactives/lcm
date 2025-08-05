@@ -24,6 +24,7 @@ import './LCM.css';
 
 // Function Imports
 import { DynamicFactorTree } from './DynamicFactorTrees.jsx'
+import DynamicPowersExpression, { getHighestPowerPrimes } from './DynamicPowersExpression.jsx'
 
 const LCM = () => {
 	// State Management	
@@ -96,35 +97,28 @@ const LCM = () => {
 	const [inputsModified, setInputsModified] = useState(false);
 	const [hideSolveButton, setHideSolveButton] = useState(false);
 	const [hideInitial12And18, setHideInitial12And18] = useState(false);
-	
 	const [removeSolveStep, setRemoveSolveStep] = useState(true);
 
 	// Dynamic Tree States
 	const [showDynamicFactorTrees, setShowDynamicFactorTrees] = useState(false);
 	const [showDynamicFactorTreeHeads, setShowDynamicFactorTreeHeads] = useState(false);
 	const [hideDynamicFactorTrees, setHideDynamicFactorTrees] = useState(false);
-	const [tree1Complete, setTree1Complete] = useState(false);
-	const [tree2Complete, setTree2Complete] = useState(false);
-	const [showTree1Result, setShowTree1Result] = useState(false);
-	const [showTree2Result, setShowTree2Result] = useState(false);
+	const [showDynamicPowersExpression, setShowDynamicPowersExpression] = useState(false);
+	const [lcmStep1, setLcmStep1] = useState('2² × 3²');
+	const [lcmStep2, setLcmStep2] = useState('4 × 9');
+	const [lcm, setLcm] = useState(36);
 
 	// Ref to track tree completion
 	const treeCompletionRef = useRef({ tree1: false, tree2: false });
+	// Ref to track powers expression completion
+	const powersCompletionRef = useRef({ powers1: false, powers2: false });
 
 	// Tree animation callback handler
 	const handleTreeAnimationComplete = (treeId, animationType) => {
 		if (treeId === 'input1-tree') {
-			setTree1Complete(true);
 			treeCompletionRef.current.tree1 = true;
-			setTimeout(() => {
-				setShowTree1Result(true);
-			}, 300); // Small delay after tree completes
 		} else if (treeId === 'input2-tree') {
-			setTree2Complete(true);
 			treeCompletionRef.current.tree2 = true;
-			setTimeout(() => {
-				setShowTree2Result(true);
-			}, 300); // Small delay after tree completes
 		}
 
 		// Check if both trees are complete and trigger the next step
@@ -132,6 +126,23 @@ const LCM = () => {
 			// Both trees are now complete, trigger the next step
 			setTimeout(() => {
 				handleSolveButtonClickPt2();
+			}, 1000); // Delay to allow users to see the results
+		}
+	};
+
+	// Powers expression animation callback handler
+	const handlePowersAnimationComplete = (powersId, animationType) => {
+		if (powersId === 'dynamic-powers-left') {
+			powersCompletionRef.current.powers1 = true;
+		} else if (powersId === 'dynamic-powers-right') {
+			powersCompletionRef.current.powers2 = true;
+		}
+
+		// Check if both powers expressions are complete and trigger the next step
+		if (powersCompletionRef.current.powers1 && powersCompletionRef.current.powers2) {
+			// Both powers expressions are now complete, trigger the next step
+			setTimeout(() => {
+				handleSolveButtonClickPt3();
 			}, 1000); // Delay to allow users to see the results
 		}
 	};
@@ -323,15 +334,19 @@ const LCM = () => {
 	}
 
 	// Solve Button Click
-	const handleSolveButtonClickPt1 = () => {
-		// Reset tree states for new solve
-		setTree1Complete(false);
-		setTree2Complete(false);
-		setShowTree1Result(false);
-		setShowTree2Result(false);
-		
-		// Reset the completion ref
+	const handleSolveButtonClickPt1 = () => {		
+		// Reset the completion refs
 		treeCompletionRef.current = { tree1: false, tree2: false };
+		powersCompletionRef.current = { powers1: false, powers2: false };
+
+		// Hide solving steps if they are showing
+		setShowSolvingStep1(false);
+		setShowSolvingStep2(false);
+		setShowSolvingStep3(false);
+		setHighlightAnswer(false);
+		setRemoveSolvingSteps(true);
+
+		setShowSkipFlexi(false);
 
 		setHideSolveButton(true);
 		setTimeout(() => {
@@ -347,6 +362,52 @@ const LCM = () => {
 
 	const handleSolveButtonClickPt2 = () => {
 		setHideDynamicFactorTrees(true);
+		setTimeout(() => {
+			setShowDynamicPowersExpression(true);
+		}, 800);
+	}
+
+	const handleSolveButtonClickPt3 = () => {
+		const result = getHighestPowerPrimes(parseInt(inputValue1), parseInt(inputValue2));
+		
+		// Update the LCM step values based on the calculated results
+		setLcmStep1(result.powersExpression);
+		setLcmStep2(result.simplifiedExpression);
+		setLcm(result.lcmValue);
+		
+		// Make the solving steps reappear
+		setRemoveSolvingSteps(false);
+		setShowSolvingStep1(true);
+		setInputsModified(false);
+		setTimeout(() => {
+			setShowSolvingStep2(true);
+			setTimeout(() => {
+				setShowSolvingStep3(true);
+				setTimeout(() => {
+					setHighlightAnswer(true);
+					// After showing the final answer, hide powers expressions and show inputs
+					setTimeout(() => {
+						setShowDynamicPowersExpression(false);
+						setRemoveSolvingStep1(true);
+						setTimeout(() => {
+							setRemoveSolvingStep2(true);
+							setTimeout(() => {
+									setTimeout(() => {
+										setRemoveInputs(false);
+										setShowDynamicFactorTreeHeads(false);
+										setShowInputs(true);
+										setHideSolveButton(false);
+										setShowDynamicFactorTrees(false);
+										setHideDynamicFactorTrees(false);
+
+										setShowSkipFlexi(true);
+								}, 500);
+							}, 500);
+						}, 500);
+					}, 2000); // Wait 2 seconds to let user see the final answer
+				}, 500);
+			}, 500);
+		}, 500);
 	}
 
 	return (
@@ -424,9 +485,11 @@ const LCM = () => {
 								if (numValue > 25) {
 									setInputValue1('25');
 									if (value !== '12') setInputsModified(true);
+									setHighlightAnswer(false);
 								} else if (numValue >= 0 || value === '') {
 									setInputValue1(value);
 									if (value !== '12') setInputsModified(true);
+									setHighlightAnswer(false);
 								}
 							}
 						}}
@@ -434,6 +497,7 @@ const LCM = () => {
 							if (e.target.value === '') {
 								setInputValue1('1');
 								setInputsModified(true);
+								setHighlightAnswer(false);
 							}
 						}}
 						onKeyDown={(e) => {
@@ -463,6 +527,17 @@ const LCM = () => {
 							onAnimationComplete={handleTreeAnimationComplete}
 						/>
 					</div>
+				)}
+				{/* Dynamic Powers Expression for Left Container */}
+				{showDynamicPowersExpression && (
+					<DynamicPowersExpression
+						number={inputValue1}
+						show={showDynamicPowersExpression}
+						position={{ left: '50%', top: '0%' }}
+						containerId="dynamic-powers-left"
+						isLeftContainer={true}
+						onAnimationComplete={handlePowersAnimationComplete}
+					/>
 				)}
 			</div>
 
@@ -538,9 +613,11 @@ const LCM = () => {
 								if (numValue > 25) {
 									setInputValue2('25');
 									if (value !== '18') setInputsModified(true);
+									setHighlightAnswer(false);
 								} else if (numValue >= 0 || value === '') {
 									setInputValue2(value);
 									if (value !== '18') setInputsModified(true);
+									setHighlightAnswer(false);
 								}
 							}
 						}}
@@ -548,6 +625,7 @@ const LCM = () => {
 							if (e.target.value === '') {
 								setInputValue2('1');
 								setInputsModified(true);
+								setHighlightAnswer(false);
 							}
 						}}
 						onKeyDown={(e) => {
@@ -578,6 +656,17 @@ const LCM = () => {
 						/>
 					</div>
 				)}
+				{/* Dynamic Powers Expression for Right Container */}
+				{showDynamicPowersExpression && (
+					<DynamicPowersExpression
+						number={inputValue2}
+						show={showDynamicPowersExpression}
+						position={{ left: '50%', top: '0%' }}
+						containerId="dynamic-powers-right"
+						isLeftContainer={false}
+						onAnimationComplete={handlePowersAnimationComplete}
+					/>
+				)}
 			</div>
 
 			{/* Elements Positioned Absolutely */}
@@ -590,20 +679,20 @@ const LCM = () => {
 			{!removeSolvingSteps && (
 				<div className={`absolute top-[0%] left-[50%] translate-x-[-50%] w-[100%] h-[100%]`}>
 					{showSolvingStep1 && (
-						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[32%] left-[50%] translate-x-[-50%]
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[32%] left-[50%] translate-x-[-50%] w-[100%] flex justify-center items-center
 							${removeSolvingStep1 ? 'fade-out-down-tr-animation' : 'fade-in-up-tr-animation'}
-							`}>LCM = 2² × 3²</div>
+							`}>LCM = {lcmStep1}</div>
 					)}
 					{showSolvingStep2 && (
-						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[42%] left-[50%] translate-x-[-50%]
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[42%] left-[50%] translate-x-[-50%] w-[100%] flex justify-center items-center
 							${removeSolvingStep2 ? 'fade-out-down-tr-animation' : 'fade-in-up-tr-animation'}
-							`}>LCM = 4 × 9</div>
+							`}>LCM = {lcmStep2}</div>
 					)}
 					{showSolvingStep3 && (
-						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%]
+						<div className={`powers-expression-font-size text-2xl font-bold text-gray-600 absolute top-[52%] left-[50%] translate-x-[-50%] w-[100%] flex justify-center items-center
 							${showSolvingStep3 ? 'fade-in-up-tr-animation' : 'fade-out-down-tr-animation'}
 							`}>LCM = 
-							<span className={`${highlightAnswer ? 'text-[#008545]' : 'text-gray-600'}`}> 36</span>
+							<span className={`${highlightAnswer ? 'text-[#008545]' : 'text-gray-600'}`}>&nbsp;{inputsModified ? '?' : lcm}</span>
 						</div>
 					)}
 				</div>
