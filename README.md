@@ -20,7 +20,7 @@ This interactive is currently featured in the following locations:
   - 👉 MASTER: [https://test.ck12.co/syy03](https://test.ck12.co/syy03)
 
 - 📘 **CK-12 Flexbooks**  
-  - 👉 PENDING ADDITION
+  - 👉 5.10 Least Common Multiple: [https://flexbooks.ck12.org/cbook/ck-12-middle-school-math-concepts-grade-6/section/5.10/primary/lesson/least-common-multiple-msm6/](https://flexbooks.ck12.org/cbook/ck-12-middle-school-math-concepts-grade-6/section/5.10/primary/lesson/least-common-multiple-msm6/)
 
 ---
 
