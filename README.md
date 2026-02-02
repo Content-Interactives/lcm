@@ -16,7 +16,7 @@ Try it out here:
 This interactive is currently featured in the following locations:
 
 - <img width="20" height="20" alt="image" src="https://github.com/user-attachments/assets/5d12571f-8e12-4441-98ab-c0bc94069a96" /> **CK-12 Intent Response**  
-  - 👉 PRODUCTION: PENDING  
+  - 👉 PRODUCTION: [https://ck12.co/nDEz](https://ck12.co/nDEz) 
   - 👉 MASTER: [https://test.ck12.co/syy03](https://test.ck12.co/syy03)
 
 - 📘 **CK-12 Flexbooks**  
